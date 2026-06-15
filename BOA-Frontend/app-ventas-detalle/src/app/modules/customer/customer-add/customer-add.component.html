@@ -1,0 +1,47 @@
+<div class="mt-8 p-8 bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-xl max-w-4xl mx-auto">
+  <h2 class="text-4xl font-extrabold text-white mb-8 text-center">Agregar Cliente</h2>
+
+  <!-- Mostrar mensaje de error si hay uno -->
+  <div *ngIf="errorMessage" class="error-message text-red-500 text-center mb-6">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Formulario para agregar un cliente -->
+  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div class="form-group">
+        <label for="nombre" class="text-white text-lg font-semibold">Nombre</label>
+        <input id="nombre" formControlName="nombre" type="text"
+               class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white placeholder-gray-400" />
+      </div>
+
+      <div class="form-group">
+        <label for="apellidos" class="text-white text-lg font-semibold">Apellido Paterno</label>
+        <input id="apellidos" formControlName="apellidos" type="text"
+               class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white placeholder-gray-400" />
+      </div>
+
+      <div class="form-group">
+        <label for="celular" class="text-white text-lg font-semibold">Teléfono</label>
+        <input inputmode="numeric" id="celular" formControlName="celular" type="text"
+               class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white placeholder-gray-400" />
+      </div>
+    </div>
+
+    <!-- Botones centrados en la misma fila -->
+    <div class="flex justify-center space-x-4 mt-8">
+      <button type="submit" [disabled]="customerForm.invalid"
+              class="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-lg shadow-lg hover:from-blue-700 hover:to-cyan-600 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-all duration-300 disabled:bg-gray-500">
+        Crear Cliente
+      </button>
+
+      <button
+        class="w-full py-3 px-4 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-bold rounded-lg shadow-lg hover:from-gray-600 hover:to-gray-800 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-all duration-300"
+        type="button"
+        (click)="goBack()"
+      >
+        ⬅ Volver
+      </button>
+    </div>
+  </form>
+</div>

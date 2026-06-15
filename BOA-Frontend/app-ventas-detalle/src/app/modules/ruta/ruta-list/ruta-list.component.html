@@ -1,0 +1,55 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl">
+  <h2 class="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-gray-600 to-blue-600 bg-clip-text text-transparent">
+    Lista de Rutas
+  </h2>
+  <div class="mb-6 text-right">
+    <a routerLink="../add"
+      class="py-3 px-6 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg shadow-xl hover:from-blue-700 hover:to-cyan-600 transform hover:scale-110 transition-all duration-300">
+      Nueva Ruta
+    </a>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full table-auto text-sm text-center bg-gray-800 rounded-lg shadow-lg border-separate border-spacing-1 border border-gray-700">
+      <thead>
+        <tr class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+          <th class="px-1 py-1 text-left rounded-l-lg">ID</th>
+          <th class="px-1 py-1 text-left">Origen</th>
+          <th class="px-1 py-1 text-left">Destino</th>
+          <th class="px-1 py-1 text-left">Distancia (km)</th>
+          <th class="px-1 py-1 text-left">Duración</th>
+          <th class="px-1 py-1 text-left">Tipo</th>
+          <th class="px-1 py-1 text-left rounded-r-lg">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of rutas" class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
+          <td class="px-1 py-1">{{r.id}}</td>
+          <td class="px-1 py-1">{{getNombreAeropuerto(r.aeropuerto_Origen_Id)}}</td>
+          <td class="px-1 py-1">{{getNombreAeropuerto(r.aeropuerto_Destino_Id)}}</td>
+          <td class="px-1 py-1">{{r.distancia}}</td>
+          <td class="px-1 py-1">{{r.duracion_Estimada}}</td>
+          <td class="px-1 py-1">{{r.tipo}}</td>
+          <td class="px-2 py-1">
+            <div class="flex gap-2 justify-center">
+              <a [routerLink]="['../tramos', r.id]"
+                class="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white px-2 py-1 rounded-lg shadow-md hover:from-cyan-700 hover:to-cyan-800 transition-all duration-300"
+                title="Ver Tramos">
+                🔗
+              </a>
+              <a [routerLink]="['../edit', r.id]"
+                class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-2 py-1 rounded-lg shadow-md hover:from-yellow-600 hover:to-yellow-700 transition-all duration-300"
+                title="Editar">
+                ✏️
+              </a>
+              <button (click)="delete(r.id!)"
+                class="bg-gradient-to-r from-red-600 to-red-700 text-white px-2 py-1 rounded-lg shadow-md hover:from-red-700 hover:to-red-800 transition-all duration-300"
+                title="Eliminar">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

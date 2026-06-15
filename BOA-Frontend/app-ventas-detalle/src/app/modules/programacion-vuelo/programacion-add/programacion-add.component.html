@@ -1,0 +1,75 @@
+<div class="container mt-8 max-w-4xl mx-auto px-6">
+  <h2 class="text-4xl font-extrabold mb-8 text-center text-transparent bg-gradient-to-r from-gray-700 to-blue-800 bg-clip-text">
+    Nueva Programación de Vuelo
+  </h2>
+  <div class="space-y-6">
+    <div class="grid grid-cols-3 gap-6">
+      <div>
+        <label class="block text-lg font-semibold text-white">Código de Vuelo</label>
+        <input type="text" [(ngModel)]="programacion.codigo_vuelo" placeholder="Ej: OB-300"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+      <div>
+        <label class="block text-lg font-semibold text-white">Ruta / Tramo</label>
+        <select [(ngModel)]="rutaTramoSeleccionado" (ngModelChange)="onRutaTramoChange()"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300">
+          <option value="0" disabled>Seleccionar ruta y tramo...</option>
+          <option *ngFor="let op of rutaTramoOpciones" [value]="op.rutaTramoId">
+            {{op.label}}
+          </option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-lg font-semibold text-white">Aeronave</label>
+        <select [(ngModel)]="programacion.aeronave_Id"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300">
+          <option value="0" disabled>Seleccionar aeronave...</option>
+          <option *ngFor="let a of aeronaves" [value]="a.id">{{a.modelo}} — {{a.matricula}}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <label class="block text-lg font-semibold text-white">Fecha Salida</label>
+        <input type="date" [(ngModel)]="programacion.fecha_Salida"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+      <div>
+        <label class="block text-lg font-semibold text-white">Hora Salida</label>
+        <input type="time" [(ngModel)]="programacion.hora_Salida"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+      <div>
+        <label class="block text-lg font-semibold text-white">Fecha Llegada</label>
+        <input type="date" [(ngModel)]="programacion.fecha_Llegada"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+      <div>
+        <label class="block text-lg font-semibold text-white">Hora Llegada</label>
+        <input type="time" [(ngModel)]="programacion.hora_Llegada"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-lg font-semibold text-white">Precio Base ($)</label>
+      <input type="number" [(ngModel)]="programacion.precio_Base" min="0"
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+        onwheel="this.blur()"/>
+    </div>
+
+    <div class="text-center">
+      <button (click)="save()"
+        class="py-3 px-6 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg shadow-xl hover:from-blue-700 hover:to-cyan-600 transform hover:scale-110 transition-all duration-300">
+        Guardar Programación
+      </button>
+    </div>
+    <div class="mt-4 text-center">
+      <a routerLink="../list"
+        class="py-3 px-6 bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold rounded-lg shadow-xl hover:from-gray-800 hover:to-gray-700 transform hover:scale-110 transition-all duration-300">
+        Volver
+      </a>
+    </div>
+  </div>
+</div>

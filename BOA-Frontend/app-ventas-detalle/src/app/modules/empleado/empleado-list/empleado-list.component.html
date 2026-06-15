@@ -1,0 +1,42 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl">
+  <h2 class="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-gray-600 to-blue-600 bg-clip-text text-transparent">
+    Lista de Empleados
+  </h2>
+  <div class="mb-6 text-right">
+    <a routerLink="../add"
+      class="py-3 px-6 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg shadow-xl hover:from-blue-700 hover:to-cyan-600 transform hover:scale-110 transition-all duration-300">
+      Nuevo Empleado
+    </a>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full table-auto text-sm text-center bg-gray-800 rounded-lg shadow-lg border-separate border-spacing-1 border border-gray-700">
+      <thead>
+        <tr class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+          <th class="px-1 py-1 text-left rounded-l-lg">ID</th>
+          <th class="px-1 py-1 text-left">Nombre</th>
+          <th class="px-1 py-1 text-left">Apellido</th>
+          <th class="px-1 py-1 text-left">Cargo</th>
+          <th class="px-1 py-1 text-left">Licencia</th>
+          <th class="px-1 py-1 text-left">Estado</th>
+          <th class="px-1 py-1 text-left rounded-r-lg">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of empleados" class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
+          <td class="px-1 py-1">{{e.id}}</td>
+          <td class="px-1 py-1">{{e.nombre}}</td>
+          <td class="px-1 py-1">{{e.apellido}}</td>
+          <td class="px-1 py-1">{{e.cargo}}</td>
+          <td class="px-1 py-1">{{e.licencia}}</td>
+          <td class="px-1 py-1">{{e.estado}}</td>
+          <td class="px-6 py-4">
+            <button (click)="delete(e.id!)"
+              class="bg-gradient-to-r from-red-600 to-red-700 text-white px-1 py-1 rounded-lg shadow-md hover:from-red-700 hover:to-red-800 transition-all duration-300">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

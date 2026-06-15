@@ -1,0 +1,48 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white min-h-screen">
+  <div class="mb-8 p-6 bg-gradient-to-r from-blue-700 to-cyan-600 rounded-lg shadow-xl">
+    <h1 class="text-3xl font-bold">Hola, {{nombreUsuario}}</h1>
+    <p class="text-cyan-200 mt-1">¡Listo para tu próximo vuelo!</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <a routerLink="/dashboard/cliente/buscar-vuelos"
+      class="p-6 bg-blue-700 rounded-lg shadow-xl hover:bg-blue-800 transition-all duration-300 cursor-pointer text-center">
+      <div class="text-5xl mb-4">🔍</div>
+      <h3 class="text-xl font-bold">Buscar Vuelos</h3>
+      <p class="text-blue-200 text-sm mt-2">Encuentra y reserva tu próximo vuelo</p>
+      <button class="mt-4 px-4 py-2 bg-white text-blue-700 rounded-lg font-semibold hover:bg-blue-50">
+        Buscar ahora
+      </button>
+    </a>
+
+    <a routerLink="/dashboard/cliente/mis-reservas"
+      class="p-6 bg-teal-700 rounded-lg shadow-xl hover:bg-teal-800 transition-all duration-300 cursor-pointer text-center">
+      <div class="text-5xl mb-4">🔖</div>
+      <h3 class="text-xl font-bold">Mis Reservas</h3>
+      <p class="text-teal-200 text-sm mt-2">Consulta y gestiona tus reservas activas</p>
+      <button class="mt-4 px-4 py-2 bg-white text-teal-700 rounded-lg font-semibold hover:bg-teal-50">
+        Ver reservas
+      </button>
+    </a>
+
+    <a routerLink="/dashboard/cliente/mis-compras"
+      class="p-6 bg-green-700 rounded-lg shadow-xl hover:bg-green-800 transition-all duration-300 cursor-pointer text-center">
+      <div class="text-5xl mb-4">🛒</div>
+      <h3 class="text-xl font-bold">Mis Compras</h3>
+      <p class="text-green-200 text-sm mt-2">Historial de todos tus pasajes comprados</p>
+      <button class="mt-4 px-4 py-2 bg-white text-green-700 rounded-lg font-semibold hover:bg-green-50">
+        Ver compras
+      </button>
+    </a>
+
+    <a routerLink="/dashboard/cliente/mis-tickets"
+      class="p-6 bg-purple-700 rounded-lg shadow-xl hover:bg-purple-800 transition-all duration-300 cursor-pointer text-center">
+      <div class="text-5xl mb-4">🎫</div>
+      <h3 class="text-xl font-bold">Mis Tickets</h3>
+      <p class="text-purple-200 text-sm mt-2">Tus tarjetas de embarque digitales</p>
+      <button class="mt-4 px-4 py-2 bg-white text-purple-700 rounded-lg font-semibold hover:bg-purple-50">
+        Ver tickets
+      </button>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,96 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white min-h-screen">
+  <h2 class="text-3xl font-bold mb-6">🔍 Buscar Vuelos Disponibles</h2>
+
+  <!-- Filtros -->
+  <div class="bg-gray-800 rounded-lg p-6 mb-6 border border-gray-700">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-gray-300 mb-1">Origen</label>
+        <select [(ngModel)]="origenId"
+          class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+          <option value="0" disabled>Seleccionar origen...</option>
+          <option *ngFor="let a of aeropuertos" [value]="a.id">{{a.ciudad}} ({{a.codigo_IATA}})</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-300 mb-1">Destino</label>
+        <select [(ngModel)]="destinoId"
+          class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+          <option value="0" disabled>Seleccionar destino...</option>
+          <option *ngFor="let a of aeropuertos" [value]="a.id">{{a.ciudad}} ({{a.codigo_IATA}})</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-300 mb-1">Fecha</label>
+        <input type="date" [(ngModel)]="fecha" [min]="hoy"
+          class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none"/>
+      </div>
+      <div class="flex items-end">
+        <button (click)="buscar()"
+          class="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all duration-300">
+          🔍 Buscar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div *ngIf="buscado">
+    <p class="text-gray-400 mb-4" *ngIf="vuelosFiltrados.length > 0">
+      Se encontraron <span class="text-white font-bold">{{vuelosFiltrados.length}}</span> opción(es) disponible(s)
+    </p>
+    <p class="text-gray-400 mb-4" *ngIf="vuelosFiltrados.length === 0">
+      No se encontraron vuelos disponibles para esa ruta y fecha.
+    </p>
+
+    <div *ngFor="let vuelo of vuelosFiltrados"
+      class="bg-gray-800 rounded-lg p-6 mb-4 border border-gray-700 hover:border-cyan-500 transition-all duration-300">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-6 flex-wrap">
+          <div>
+            <span class="text-cyan-400 font-bold text-lg">{{vuelo.codigo_vuelo}}</span>
+            <div class="mt-2">
+              <span *ngIf="tieneEscalas(vuelo)"
+                class="px-3 py-1 bg-yellow-600 rounded-full text-xs font-semibold">
+                {{getEscalas(vuelo).length}} escala(s)
+              </span>
+              <span *ngIf="!tieneEscalas(vuelo)"
+                class="px-3 py-1 bg-green-700 rounded-full text-xs font-semibold">
+                Directo
+              </span>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold">{{getCodigoIATA(vuelo.aeropuerto_Origen_Id)}}</div>
+            <div class="text-sm text-gray-400">{{getCiudad(vuelo.aeropuerto_Origen_Id)}}</div>
+            <div class="text-sm font-semibold text-white">{{vuelo.hora_Salida}}</div>
+          </div>
+          <div class="text-center text-gray-400 px-4">
+            <div class="text-xs text-gray-400">{{getDuracion(vuelo)}}</div>
+            <div class="text-xl">→</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold">{{getCodigoIATA(vuelo.aeropuerto_Destino_Id)}}</div>
+            <div class="text-sm text-gray-400">{{getCiudad(vuelo.aeropuerto_Destino_Id)}}</div>
+            <div class="text-sm font-semibold text-white">{{vuelo.hora_Llegada}}</div>
+          </div>
+        </div>
+        <div class="text-right">
+            <!-- Detalle escalas -->
+                <div *ngIf="tieneEscalas(vuelo)" class="mt-3 text-left">
+  <div *ngFor="let rt of getEscalas(vuelo)" class="text-xs text-gray-300 mt-1">
+    ↳ {{getNombreAeropuerto(rt.tramo?.aeropuerto_Origen_Id)}} → {{getNombreAeropuerto(rt.tramo?.aeropuerto_Destino_Id)}}
+    <span class="text-gray-400">({{rt.tramo?.duracion_Estimada}})</span>
+  </div>
+</div>
+          <div class="text-green-400 font-bold text-xl">Bs. {{vuelo.precio_Base}}</div>
+          <div class="text-xs text-gray-400 mb-3">desde</div>
+          <button (click)="seleccionar(vuelo)"
+            class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all duration-300">
+            🛒 Seleccionar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

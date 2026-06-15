@@ -1,0 +1,134 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white min-h-screen">
+  <h2 class="text-3xl font-bold mb-6">💳 Pago por Código QR</h2>
+
+  <!-- Cargando -->
+  <div *ngIf="cargando" class="text-center py-20">
+    <div class="text-5xl mb-4">⏳</div>
+    <p class="text-gray-300 text-lg">Generando código QR de pago...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="bg-red-900 border border-red-500 rounded-lg p-4 mb-6">
+    <p class="text-red-300">{{error}}</p>
+    <button (click)="volver()"
+      class="mt-3 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600">
+      ← Volver
+    </button>
+  </div>
+
+  <!-- Pago exitoso -->
+  <div *ngIf="pagado" class="text-center py-20">
+    <div class="text-6xl mb-4">✅</div>
+    <h3 class="text-2xl font-bold text-green-400 mb-2">¡Pago confirmado!</h3>
+    <p class="text-gray-300">Código de venta: <span class="text-cyan-400 font-bold">{{codigoVenta}}</span></p>
+    <p class="text-gray-400 text-sm mt-2">Redirigiendo a tus compras...</p>
+  </div>
+
+  <!-- QR y detalles -->
+  <div *ngIf="!cargando && !error && !pagado && idTransaccion" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Columna izquierda: Detalles -->
+    <div>
+      <!-- Detalles de la compra -->
+      <div class="bg-gray-800 rounded-lg p-6 mb-4 border border-gray-700">
+        <h3 class="text-lg font-bold text-cyan-400 mb-4">📋 Detalles de la Compra</h3>
+        <table class="w-full text-sm">
+          <tbody>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 text-gray-400">Vuelo</td>
+              <td class="py-2 font-bold text-right">{{vuelo?.codigo_Vuelo || vuelo?.codigo_vuelo}}</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 text-gray-400">Fecha</td>
+              <td class="py-2 font-bold text-right">{{vuelo?.fecha_Salida}}</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 text-gray-400">Horario</td>
+              <td class="py-2 font-bold text-right">{{vuelo?.hora_Salida}} → {{vuelo?.hora_Llegada}}</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 text-gray-400">Asiento</td>
+              <td class="py-2 font-bold text-right">
+                {{asiento?.asiento?.numero}} ({{asiento?.asiento?.tipoClase?.nombre}})
+              </td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 text-gray-400">Pasajero</td>
+              <td class="py-2 font-bold text-right">{{pasajero?.nombre}} {{pasajero?.apellido}}</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 text-gray-400">Email</td>
+              <td class="py-2 font-bold text-right">{{pasajero?.email}}</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 text-gray-400">Referencia</td>
+              <td class="py-2 font-bold text-right text-cyan-400">{{codigoVenta}}</td>
+            </tr>
+            <tr>
+              <td class="py-3 text-gray-400 font-bold text-base">Total a Pagar</td>
+              <td class="py-3 font-bold text-right text-green-400 text-xl">Bs. {{precio}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Comprador -->
+      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+        <h3 class="text-sm font-bold text-cyan-400 mb-2">👤 Comprador</h3>
+        <p class="font-bold">{{pasajero?.nombre}} {{pasajero?.apellido}}</p>
+        <p class="text-gray-400 text-sm">{{pasajero?.email}}</p>
+      </div>
+    </div>
+
+    <!-- Columna derecha: QR -->
+    <div>
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 text-center">
+        <h3 class="text-lg font-bold text-cyan-400 mb-4">Escanea el código QR para pagar</h3>
+
+        <div *ngIf="qrUrl" class="flex justify-center mb-4">
+          <div class="bg-white p-3 rounded-lg">
+            <img [src]="qrUrl" alt="QR de pago" class="w-56 h-56"/>
+          </div>
+        </div>
+
+        <div *ngIf="!qrUrl" class="py-8 text-gray-400">
+          <div class="text-4xl mb-2">📱</div>
+          <p>Modo simulación - No hay QR disponible</p>
+        </div>
+
+        <div *ngIf="qrUrl" class="mb-4">
+          <span class="px-3 py-1 bg-green-800 text-green-300 rounded-full text-xs font-semibold">
+            ✓ QR Simple - Pago Real
+          </span>
+          <p class="text-gray-400 text-xs mt-2">Escanea con tu app bancaria (Banco Unión, BNB, Mercantil, etc.)</p>
+        </div>
+
+        <button *ngIf="urlPasarela" (click)="abrirPasarela()"
+          class="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all mb-4 w-full">
+          🌐 Pasarela de pago: Libélula
+        </button>
+
+        <p class="text-gray-400 text-xs mb-4">
+          ID Transacción: <span class="text-white">{{idTransaccion}}</span>
+        </p>
+
+        <div class="p-3 bg-blue-900 rounded-lg border border-blue-700">
+          <p class="text-blue-300 text-sm">⏳ Esperando confirmación de pago...</p>
+          <p class="text-blue-400 text-xs mt-1">Verificando automáticamente cada 10 segundos</p>
+        </div>
+
+        <button (click)="verificarPago()"
+          class="mt-4 px-6 py-2 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-600 transition-all w-full">
+          🔄 Verificar pago manualmente
+        </button>
+      </div>
+
+      <div class="mt-4">
+        <button (click)="volver()"
+          class="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-all w-full">
+          ← Volver
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
