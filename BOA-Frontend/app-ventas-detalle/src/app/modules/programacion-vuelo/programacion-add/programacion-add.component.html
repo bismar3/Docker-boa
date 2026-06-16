@@ -3,21 +3,11 @@
     Nueva Programación de Vuelo
   </h2>
   <div class="space-y-6">
-    <div class="grid grid-cols-3 gap-6">
+    <div class="grid grid-cols-2 gap-6">
       <div>
         <label class="block text-lg font-semibold text-white">Código de Vuelo</label>
         <input type="text" [(ngModel)]="programacion.codigo_vuelo" placeholder="Ej: OB-300"
           class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
-      </div>
-      <div>
-        <label class="block text-lg font-semibold text-white">Ruta / Tramo</label>
-        <select [(ngModel)]="rutaTramoSeleccionado" (ngModelChange)="onRutaTramoChange()"
-          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300">
-          <option value="0" disabled>Seleccionar ruta y tramo...</option>
-          <option *ngFor="let op of rutaTramoOpciones" [value]="op.rutaTramoId">
-            {{op.label}}
-          </option>
-        </select>
       </div>
       <div>
         <label class="block text-lg font-semibold text-white">Aeronave</label>
@@ -27,6 +17,17 @@
           <option *ngFor="let a of aeronaves" [value]="a.id">{{a.modelo}} — {{a.matricula}}</option>
         </select>
       </div>
+    </div>
+
+    <div>
+      <label class="block text-lg font-semibold text-white">Ruta</label>
+      <select [(ngModel)]="rutaSeleccionada" (ngModelChange)="onRutaChange()"
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300">
+        <option value="0" disabled>Seleccionar ruta...</option>
+        <option *ngFor="let op of rutaOpciones" [value]="op.rutaId">
+          {{op.label}}
+        </option>
+      </select>
     </div>
 
     <div class="grid grid-cols-2 gap-6">

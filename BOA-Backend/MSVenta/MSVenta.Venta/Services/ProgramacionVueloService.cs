@@ -10,6 +10,7 @@ namespace MSVenta.Venta.Services
     public class ProgramacionVueloService : IProgramacionVueloService
     {
         private readonly ContextDatabase _context;
+
         public ProgramacionVueloService(ContextDatabase context)
         {
             _context = context;
@@ -21,12 +22,106 @@ namespace MSVenta.Venta.Services
         public async Task<ProgramacionVuelo> GetById(int id) =>
             await _context.ProgramacionVuelos.FindAsync(id);
 
+        public async Task<IEnumerable<VueloBusquedaResult>> BuscarPorTramo(int origenId, int destinoId)
+        {
+            var programaciones = await _context.ProgramacionVuelos.ToListAsync();
+            var rutaTramos = await _context.RutaTramos.Include(rt => rt.Tramo).ToListAsync();
+            var todosLosTramos = await _context.Tramos.ToListAsync();
+
+            var resultados = new List<VueloBusquedaResult>();
+
+            foreach (var prog in programaciones.Where(p => p.Estado == "Programado"))
+            {
+                // Opción 1: vuelo directo origen→destino
+                if (prog.Aeropuerto_Origen_Id == origenId && prog.Aeropuerto_Destino_Id == destinoId)
+                {
+                    var tramosDeRuta = rutaTramos
+                        .Where(rt => rt.Ruta_Id == prog.Ruta_Id && rt.Tramo != null)
+                        .ToList();
+
+                    // Solo tramos raíz (sin padre) de esta ruta
+                    var tramosRaiz = tramosDeRuta
+                        .Where(rt => rt.Tramo != null && rt.Tramo.Tramo_Padre_Id == null)
+                        .ToList();
+
+                    // Contar solo hijos directos del tramo raíz
+                    var subTramos = tramosRaiz
+                        .SelectMany(rt => todosLosTramos.Where(t => t.Tramo_Padre_Id == rt.Tramo_Id))
+                        .ToList();
+
+                    var tieneEscalas = subTramos.Count > 0;
+                    var numEscalas = subTramos.Count;
+
+                    resultados.Add(new VueloBusquedaResult
+                    {
+                        ProgramacionId = prog.Id,
+                        Codigo_Vuelo = prog.Codigo_Vuelo,
+                        Aeropuerto_Origen_Id = origenId,
+                        Aeropuerto_Destino_Id = destinoId,
+                        Fecha_Salida = prog.Fecha_Salida,
+                        Hora_Salida = prog.Hora_Salida,
+                        Fecha_Llegada = prog.Fecha_Llegada,
+                        Hora_Llegada = prog.Hora_Llegada,
+                        Precio_Base = prog.Precio_Base,
+                        Estado = prog.Estado,
+                        Ruta_Id = prog.Ruta_Id,
+                        Ruta_Tramo_Id = prog.Ruta_Tramo_Id,
+                        Tramo_Id = null,
+                        Es_Tramo_Parcial = false,
+                        Duracion_Estimada = null,
+                        Tiene_Escalas = tieneEscalas,
+                        Num_Escalas = numEscalas
+                    });
+                    continue;
+                }
+
+                // Opción 2: buscar en sub-tramos hijos
+                var subTramosHijos = todosLosTramos.Where(t =>
+                    t.Aeropuerto_Origen_Id == origenId &&
+                    t.Aeropuerto_Destino_Id == destinoId &&
+                    t.Tramo_Padre_Id != null).ToList();
+
+                foreach (var subTramo in subTramosHijos)
+                {
+                    // Buscar si el tramo padre pertenece a la ruta de esta programación
+                    var rtDelPadre = rutaTramos.FirstOrDefault(rt =>
+                        rt.Ruta_Id == prog.Ruta_Id &&
+                        rt.Tramo_Id == subTramo.Tramo_Padre_Id);
+
+                    if (rtDelPadre != null)
+                    {
+                        resultados.Add(new VueloBusquedaResult
+                        {
+                            ProgramacionId = prog.Id,
+                            Codigo_Vuelo = prog.Codigo_Vuelo,
+                            Aeropuerto_Origen_Id = origenId,
+                            Aeropuerto_Destino_Id = destinoId,
+                            Fecha_Salida = prog.Fecha_Salida,
+                            Hora_Salida = prog.Hora_Salida,
+                            Fecha_Llegada = prog.Fecha_Llegada,
+                            Hora_Llegada = prog.Hora_Llegada,
+                            Precio_Base = prog.Precio_Base,
+                            Estado = prog.Estado,
+                            Ruta_Id = prog.Ruta_Id,
+                            Ruta_Tramo_Id = rtDelPadre.Id,
+                            Tramo_Id = subTramo.Id,
+                            Es_Tramo_Parcial = true,
+                            Duracion_Estimada = subTramo.Duracion_Estimada,
+                            Tiene_Escalas = false,
+                            Num_Escalas = 0
+                        });
+                    }
+                }
+            }
+
+            return resultados;
+        }
+
         public async Task Create(ProgramacionVuelo p)
         {
             _context.ProgramacionVuelos.Add(p);
             await _context.SaveChangesAsync();
 
-            // Generar asientos para esta programacion
             var asientos = await _context.Asientos
                 .Where(a => a.Aeronave_Id == p.Aeronave_Id)
                 .ToListAsync();
@@ -40,7 +135,6 @@ namespace MSVenta.Venta.Services
                     Estado = "Disponible"
                 });
             }
-
             await _context.SaveChangesAsync();
         }
 

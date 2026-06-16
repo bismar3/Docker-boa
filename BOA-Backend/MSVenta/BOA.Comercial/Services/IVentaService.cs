@@ -10,6 +10,7 @@ namespace BOA.Comercial.Services
         Task<IEnumerable<Venta>> GetByClienteId(int clienteId);
         Task<Venta> GetById(int id);
         Task<IEnumerable<VentaDetalle>> GetAllDetalle();
+        Task<IEnumerable<VentaDetalle>> GetDetalleByClienteId(int clienteId);
         Task<Venta> Create(Venta v);
         Task Update(Venta v);
         Task Delete(int id);

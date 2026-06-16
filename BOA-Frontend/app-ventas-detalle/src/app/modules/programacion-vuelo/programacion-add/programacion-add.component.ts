@@ -1,21 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { ProgramacionVueloService } from '../service/programacion-vuelo.service';
 import { AeronaveService } from '../../aeronave/service/aeronave.service';
 import { RutaService } from '../../ruta/service/ruta.service';
-import { RutaTramoService, RutaTramo } from '../../ruta/service/ruta-tramo.service';
+import { RutaTramoService } from '../../ruta/service/ruta-tramo.service';
 import { AeropuertoService } from '../../aeropuerto/service/aeropuerto.service';
 import { ProgramacionVuelo } from '../../../interfaces/programacion-vuelo.interface';
 import { Aeronave } from '../../../interfaces/aeronave.interface';
 import { Ruta } from '../../../interfaces/ruta.interface';
 import { Aeropuerto } from '../../../interfaces/aeropuerto.interface';
 
-interface RutaTramoOpcion {
-  rutaTramoId: number;
+interface RutaOpcion {
   rutaId: number;
+  rutaTramoId: number;
   label: string;
+  origenId: number;
+  destinoId: number;
 }
 
 @Component({
@@ -38,11 +41,12 @@ export class ProgramacionAddComponent implements OnInit {
     precio_Base: 0,
     estado: 'Programado'
   };
+
   aeronaves: Aeronave[] = [];
   rutas: Ruta[] = [];
   aeropuertos: Aeropuerto[] = [];
-  rutaTramoOpciones: RutaTramoOpcion[] = [];
-  rutaTramoSeleccionado: number = 0;
+  rutaOpciones: RutaOpcion[] = [];
+  rutaSeleccionada: number = 0;
 
   constructor(
     private programacionService: ProgramacionVueloService,
@@ -50,56 +54,71 @@ export class ProgramacionAddComponent implements OnInit {
     private rutaService: RutaService,
     private rutaTramoService: RutaTramoService,
     private aeropuertoService: AeropuertoService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.aeropuertoService.getAll().subscribe(ap => {
-      this.aeropuertos = ap;
-      this.aeronaveService.getAll().subscribe(an => {
-        this.aeronaves = an;
-        this.rutaService.getAll().subscribe(rutas => {
-          this.rutas = rutas;
-          this.cargarTodasRutaTramos(rutas);
-        });
-      });
+    forkJoin({
+      aeropuertos: this.aeropuertoService.getAll(),
+      aeronaves: this.aeronaveService.getAll(),
+      rutas: this.rutaService.getAll()
+    }).subscribe(({ aeropuertos, aeronaves, rutas }) => {
+      this.aeropuertos = aeropuertos;
+      this.aeronaves = aeronaves;
+      this.rutas = rutas;
+      this.cargarRutas(rutas);
     });
   }
 
-  cargarTodasRutaTramos(rutas: Ruta[]): void {
-    this.rutaTramoOpciones = [];
+  cargarRutas(rutas: Ruta[]): void {
+    this.rutaOpciones = [];
     let pendientes = rutas.length;
     if (pendientes === 0) return;
 
     rutas.forEach(ruta => {
       this.rutaTramoService.getByRutaId(ruta.id!).subscribe(rts => {
-        rts.forEach(rt => {
-          const origenRuta = this.aeropuertos.find(a => a.id === ruta.aeropuerto_Origen_Id);
-          const destinoRuta = this.aeropuertos.find(a => a.id === ruta.aeropuerto_Destino_Id);
-          const origenTramo = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Origen_Id);
-          const destinoTramo = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Destino_Id);
+        const origenRuta = this.aeropuertos.find(a => a.id === ruta.aeropuerto_Origen_Id);
+        const destinoRuta = this.aeropuertos.find(a => a.id === ruta.aeropuerto_Destino_Id);
 
-          const subTramos = rt.tramo?.tramo_Padre_Id ? 0 :
-            this.rutas.length; // placeholder
+        // Construir descripción de tramos
+        const tramosDesc = rts
+          .sort((a, b) => a.orden - b.orden)
+          .map(rt => {
+            const o = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Origen_Id);
+            const d = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Destino_Id);
+            return `${o?.codigo_IATA || '?'}→${d?.codigo_IATA || '?'}`;
+          }).join(', ');
 
-          const label = `${origenRuta?.codigo_IATA || '?'} → ${destinoRuta?.codigo_IATA || '?'} | Tramo ${rt.orden}: ${origenTramo?.codigo_IATA || '?'} → ${destinoTramo?.codigo_IATA || '?'}`;
+        const tipoRuta = ruta.tipo || '';
+        const numTramos = rts.length;
 
-          this.rutaTramoOpciones.push({
-            rutaTramoId: rt.id!,
-            rutaId: ruta.id!,
-            label
-          });
+        const label = `${origenRuta?.codigo_IATA || '?'} → ${destinoRuta?.codigo_IATA || '?'} (${origenRuta?.ciudad || '?'} → ${destinoRuta?.ciudad || '?'}) | ${numTramos} tramo(s): ${tramosDesc} — ${tipoRuta}`;
+
+        // Usar el primer ruta_tramo como referencia
+        const primerRutaTramo = rts.sort((a, b) => a.orden - b.orden)[0];
+
+        this.rutaOpciones.push({
+          rutaId: ruta.id!,
+          rutaTramoId: primerRutaTramo?.id || 0,
+          label,
+          origenId: ruta.aeropuerto_Origen_Id,
+          destinoId: ruta.aeropuerto_Destino_Id
         });
+
         pendientes--;
+        if (pendientes === 0) this.cdr.markForCheck();
       });
     });
   }
 
-  onRutaTramoChange(): void {
-    const opcion = this.rutaTramoOpciones.find(o => o.rutaTramoId === this.rutaTramoSeleccionado);
+  onRutaChange(): void {
+    const opcion = this.rutaOpciones.find(o => o.rutaId === Number(this.rutaSeleccionada));
     if (opcion) {
-      this.programacion.ruta_Tramo_Id = opcion.rutaTramoId;
       this.programacion.ruta_Id = opcion.rutaId;
+      this.programacion.ruta_Tramo_Id = opcion.rutaTramoId;
+      this.programacion.aeropuerto_Origen_Id = opcion.origenId;
+      this.programacion.aeropuerto_Destino_Id = opcion.destinoId;
     }
   }
 

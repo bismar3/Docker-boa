@@ -47,44 +47,48 @@
       class="bg-gray-800 rounded-lg p-6 mb-4 border border-gray-700 hover:border-cyan-500 transition-all duration-300">
       <div class="flex items-center justify-between flex-wrap gap-4">
         <div class="flex items-center gap-6 flex-wrap">
+
+          <!-- Código y badge -->
           <div>
-            <span class="text-cyan-400 font-bold text-lg">{{vuelo.codigo_vuelo}}</span>
-            <div class="mt-2">
-              <span *ngIf="tieneEscalas(vuelo)"
+            <span class="text-cyan-400 font-bold text-lg">{{vuelo.codigo_Vuelo}}</span>
+            <div class="mt-2 flex gap-2">
+              <span *ngIf="vuelo.tiene_Escalas"
                 class="px-3 py-1 bg-yellow-600 rounded-full text-xs font-semibold">
-                {{getEscalas(vuelo).length}} escala(s)
+                {{vuelo.num_Escalas}} escala(s)
               </span>
-              <span *ngIf="!tieneEscalas(vuelo)"
+              <span *ngIf="!vuelo.tiene_Escalas"
                 class="px-3 py-1 bg-green-700 rounded-full text-xs font-semibold">
                 Directo
               </span>
             </div>
           </div>
+
+          <!-- Origen -->
           <div class="text-center">
             <div class="text-2xl font-bold">{{getCodigoIATA(vuelo.aeropuerto_Origen_Id)}}</div>
             <div class="text-sm text-gray-400">{{getCiudad(vuelo.aeropuerto_Origen_Id)}}</div>
             <div class="text-sm font-semibold text-white">{{vuelo.hora_Salida}}</div>
           </div>
+
+          <!-- Duración -->
           <div class="text-center text-gray-400 px-4">
             <div class="text-xs text-gray-400">{{getDuracion(vuelo)}}</div>
-            <div class="text-xl">→</div>
+            <div class="text-xl">✈</div>
           </div>
+
+          <!-- Destino -->
           <div class="text-center">
             <div class="text-2xl font-bold">{{getCodigoIATA(vuelo.aeropuerto_Destino_Id)}}</div>
             <div class="text-sm text-gray-400">{{getCiudad(vuelo.aeropuerto_Destino_Id)}}</div>
             <div class="text-sm font-semibold text-white">{{vuelo.hora_Llegada}}</div>
           </div>
+
         </div>
+
+        <!-- Precio y botón -->
         <div class="text-right">
-            <!-- Detalle escalas -->
-                <div *ngIf="tieneEscalas(vuelo)" class="mt-3 text-left">
-  <div *ngFor="let rt of getEscalas(vuelo)" class="text-xs text-gray-300 mt-1">
-    ↳ {{getNombreAeropuerto(rt.tramo?.aeropuerto_Origen_Id)}} → {{getNombreAeropuerto(rt.tramo?.aeropuerto_Destino_Id)}}
-    <span class="text-gray-400">({{rt.tramo?.duracion_Estimada}})</span>
-  </div>
-</div>
           <div class="text-green-400 font-bold text-xl">Bs. {{vuelo.precio_Base}}</div>
-          <div class="text-xs text-gray-400 mb-3">desde</div>
+          <div class="text-xs text-gray-400 mb-3">precio base</div>
           <button (click)="seleccionar(vuelo)"
             class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all duration-300">
             🛒 Seleccionar

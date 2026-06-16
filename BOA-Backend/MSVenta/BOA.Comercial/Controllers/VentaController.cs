@@ -45,15 +45,13 @@ namespace BOA.Comercial.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(int id)
+        [HttpGet("detalle/cliente/{clienteId}")]
+        public async Task<ActionResult> GetDetalleByClienteId(int clienteId)
         {
             try
             {
-                var item = await _ventaService.GetById(id);
-                if (item == null)
-                    return NotFound(new { message = "Venta no encontrada." });
-                return Ok(item);
+                var items = await _ventaService.GetDetalleByClienteId(clienteId);
+                return Ok(items);
             }
             catch (Exception ex)
             {
@@ -68,6 +66,22 @@ namespace BOA.Comercial.Controllers
             {
                 var items = await _ventaService.GetByClienteId(clienteId);
                 return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetById(int id)
+        {
+            try
+            {
+                var item = await _ventaService.GetById(id);
+                if (item == null)
+                    return NotFound(new { message = "Venta no encontrada." });
+                return Ok(item);
             }
             catch (Exception ex)
             {

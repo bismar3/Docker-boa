@@ -1,0 +1,107 @@
+<div class="flex items-center justify-center min-h-screen bg-white">
+  <div class="flex max-w-6xl w-full bg-gray-800 rounded-xl shadow-xl overflow-hidden">
+
+    <!-- Sección izquierda -->
+    <div class="w-1/2 relative bg-cover bg-center hidden md:block">
+      <img src="https://i.pinimg.com/1200x/49/e3/52/49e35203907c7688fc7f945e93e9b1f6.jpg" alt="" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent flex flex-col items-start justify-end p-8">
+        <h1 class="text-white text-3xl font-bold mb-2">✈ BoA</h1>
+        <p class="text-gray-300 text-sm">Boliviana de Aviación</p>
+        <p class="text-gray-400 text-xs mt-4">Crea tu cuenta para reservar vuelos, consultar tickets y disfrutar de todos nuestros servicios.</p>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="w-full md:w-1/2 p-10 bg-gray-900 overflow-y-auto max-h-screen">
+      <h2 class="text-3xl font-bold text-gray-100 mb-2 text-center">Crear Cuenta</h2>
+      <p class="text-center text-gray-400 text-sm mb-6">Completa los datos para registrarte como pasajero</p>
+
+      <!-- Éxito -->
+      <div *ngIf="exito" class="bg-green-700 text-white p-4 rounded-lg mb-4 text-center">
+        ✅ Cuenta creada exitosamente. Redirigiendo al login...
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="error" class="bg-red-700 text-white p-4 rounded-lg mb-4 text-center">
+        {{ error }}
+      </div>
+
+      <div *ngIf="!exito" class="space-y-4">
+        <!-- Datos personales -->
+        <p class="text-xs text-gray-400 uppercase font-semibold tracking-widest">Datos personales</p>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Nombre</label>
+            <input type="text" [(ngModel)]="nombre" placeholder="Tu nombre"
+              class="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Apellido</label>
+            <input type="text" [(ngModel)]="apellido" placeholder="Tu apellido"
+              class="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">CI / Documento</label>
+            <input type="text" [(ngModel)]="documento" placeholder="Número de documento"
+              class="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Fecha de Nacimiento</label>
+            <input type="date" [(ngModel)]="fechaNacimiento"
+              class="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Correo Electrónico</label>
+            <input type="email" [(ngModel)]="email" placeholder="correo@ejemplo.com"
+              class="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Teléfono (opcional)</label>
+            <input type="text" [(ngModel)]="telefono" placeholder="+591..."
+              class="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          </div>
+        </div>
+
+        <!-- Datos de acceso -->
+        <p class="text-xs text-gray-400 uppercase font-semibold tracking-widest pt-2">Datos de acceso</p>
+
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Nombre de Usuario</label>
+          <input type="text" [(ngModel)]="username" placeholder="Elige un nombre único"
+            class="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Contraseña</label>
+            <input type="password" [(ngModel)]="password" placeholder="Mín. 6 caracteres"
+              class="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Confirmar Contraseña</label>
+            <input type="password" [(ngModel)]="confirmarPassword" placeholder="Repite la contraseña"
+              class="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          </div>
+        </div>
+
+        <button (click)="registrar()" [disabled]="cargando"
+          class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all mt-2">
+          {{ cargando ? 'Creando cuenta...' : '✅ Crear Cuenta' }}
+        </button>
+
+        <div class="text-center mt-4">
+          <a routerLink="/auth/login" class="text-blue-400 hover:underline text-sm">
+            ¿Ya tienes cuenta? Iniciar sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

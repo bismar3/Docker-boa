@@ -7,5 +7,7 @@ namespace MSVenta.Venta.Services
     public interface IAsientoService
     {
         Task<IEnumerable<AsientoProgramacion>> GetByProgramacion(int programacionId);
+        Task<AsientoProgramacion> GetById(int id);
+        Task Update(AsientoProgramacion asiento);
     }
 }

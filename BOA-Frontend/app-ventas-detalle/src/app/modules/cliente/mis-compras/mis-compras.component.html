@@ -1,1 +1,60 @@
-<p>mis-compras works!</p>
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl min-h-screen">
+
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="text-3xl font-bold">🛍️ Mis Compras</h2>
+    <button (click)="buscarVuelos()"
+      class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      🔍 Buscar vuelos
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="text-center text-gray-400 py-10">Cargando...</div>
+
+  <div *ngIf="!cargando && compras.length === 0" class="text-center text-gray-400 py-10">
+    No tienes compras confirmadas aún.
+  </div>
+
+  <div *ngIf="!cargando && compras.length > 0" class="grid gap-4">
+    <div *ngFor="let v of compras"
+      class="bg-gray-800 rounded-2xl border border-gray-700 shadow-lg overflow-hidden">
+
+      <div (click)="verDetalle(v)"
+        class="flex justify-between items-center p-5 cursor-pointer hover:bg-gray-700 transition-all">
+        <div class="flex gap-6 items-center flex-wrap">
+          <div>
+            <p class="text-orange-400 font-bold">{{ v.codigo_Venta }}</p>
+            <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-600">Confirmada</span>
+          </div>
+          <div class="text-gray-400 text-sm">
+            <p>Vuelo ID: <span class="text-cyan-400 font-bold">{{ v.programacion_Vuelo_Id }}</span></p>
+            <p>Pago: <span class="text-white">{{ v.metodo_Pago }}</span></p>
+          </div>
+          <div>
+            <p class="text-white font-bold text-lg">${{ v.monto_Total.toFixed(2) }}</p>
+          </div>
+        </div>
+        <span class="text-gray-400">{{ ventaSeleccionada?.id === v.id ? '▲' : '▼' }}</span>
+      </div>
+
+      <div *ngIf="ventaSeleccionada?.id === v.id"
+        class="border-t border-gray-700 p-5 bg-gray-900 grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <p class="text-gray-400">Pasajero</p>
+          <p class="text-white font-semibold">{{ v.pasajero_Nombre }} {{ v.pasajero_Apellido }}</p>
+        </div>
+        <div>
+          <p class="text-gray-400">Asiento</p>
+          <p class="text-white font-semibold">{{ v.asiento_Id || '-' }}</p>
+        </div>
+        <div>
+          <p class="text-gray-400">Ticket</p>
+          <p class="text-purple-400 font-semibold">{{ v.numero_Ticket }}</p>
+        </div>
+        <div>
+          <p class="text-gray-400">Estado transacción</p>
+          <p class="text-green-400 font-semibold">{{ v.transaccion_Estado }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

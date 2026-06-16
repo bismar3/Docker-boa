@@ -11,6 +11,7 @@ namespace MSVenta.Venta.Controllers
     public class ProgramacionVueloController : ControllerBase
     {
         private readonly IProgramacionVueloService _programacionVueloService;
+
         public ProgramacionVueloController(IProgramacionVueloService programacionVueloService)
         {
             _programacionVueloService = programacionVueloService;
@@ -22,6 +23,20 @@ namespace MSVenta.Venta.Controllers
             try
             {
                 var items = await _programacionVueloService.GetAll();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("buscar")]
+        public async Task<ActionResult> Buscar([FromQuery] int origen, [FromQuery] int destino)
+        {
+            try
+            {
+                var items = await _programacionVueloService.BuscarPorTramo(origen, destino);
                 return Ok(items);
             }
             catch (Exception ex)
@@ -52,7 +67,8 @@ namespace MSVenta.Venta.Controllers
             try
             {
                 await _programacionVueloService.Create(programacionVuelo);
-                return CreatedAtAction(nameof(GetById), new { id = programacionVuelo.Id }, new { message = "Programación creada exitosamente.", data = programacionVuelo });
+                return CreatedAtAction(nameof(GetById), new { id = programacionVuelo.Id },
+                    new { message = "Programación creada exitosamente.", data = programacionVuelo });
             }
             catch (Exception ex)
             {

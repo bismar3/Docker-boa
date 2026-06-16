@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -12,7 +12,7 @@ import { environment } from '../../../../environments/environment.development';
   styleUrls: ['./pago-qr.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PagoQrComponent implements OnInit {
+export class PagoQrComponent implements OnInit, OnDestroy {
   vuelo: any = null;
   asiento: any = null;
   precio: number = 0;
@@ -70,9 +70,12 @@ export class PagoQrComponent implements OnInit {
       clienteId: this.usuarioId,
       programacionVueloId: this.vuelo.id,
       montoTotal: this.precio,
+      asientoId: this.asiento.id,
+      pasajeroNombre: this.pasajero.nombre,
+      pasajeroApellido: this.pasajero.apellido,
       asientos: [
         {
-          concepto: `Asiento ${this.asiento.asiento.numero} - ${this.asiento.asiento.tipoClase.nombre}`,
+          concepto: `Asiento ${this.asiento.asiento?.numero || this.asiento.numero} - ${this.asiento.asiento?.tipoClase?.nombre || ''}`,
           cantidad: 1,
           costo_unitario: this.precio,
           descuento_unitario: 0
@@ -94,7 +97,6 @@ export class PagoQrComponent implements OnInit {
         this.modo = response.modo;
         this.cargando = false;
 
-        // Iniciar verificacion automatica cada 10 segundos
         this.intervalVerificacion = setInterval(() => {
           this.verificarPago();
         }, 10000);

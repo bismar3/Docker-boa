@@ -10,6 +10,7 @@ namespace BOA.Comercial.Services
         Task<IEnumerable<Ticket>> GetByVentaId(int ventaId);
         Task<Ticket> GetById(int id);
         Task Create(Ticket t);
+        Task Update(Ticket t);
         Task Delete(int id);
     }
 }

@@ -32,7 +32,7 @@ namespace BOA.Comercial.Services
             var tickets = await _context.Tickets.ToListAsync();
             var transacciones = await _context.Transacciones.ToListAsync();
 
-            var resultado = ventas.Select(v =>
+            return ventas.Select(v =>
             {
                 var cliente = clientes.FirstOrDefault(c => c.Id == v.Cliente_Id);
                 var ticket = tickets.FirstOrDefault(t => t.Venta_Id == v.Id);
@@ -43,7 +43,7 @@ namespace BOA.Comercial.Services
                     Id = v.Id,
                     Codigo_Venta = v.Codigo_Venta,
                     Cliente_Id = v.Cliente_Id,
-                    Cliente_Nombre = cliente != null ? $"{cliente.Nombre} {cliente.Apellido}" : "Sin cliente",
+                    Cliente_Nombre = cliente != null ? $"{cliente.Nombre} {cliente.Apellido}" : "-",
                     Cliente_Documento = cliente?.Documento_Identidad ?? "-",
                     Programacion_Vuelo_Id = v.Programacion_Vuelo_Id,
                     Numero_Ticket = ticket?.Numero_Ticket ?? "-",
@@ -56,8 +56,39 @@ namespace BOA.Comercial.Services
                     Transaccion_Estado = transaccion?.Estado ?? "-"
                 };
             }).OrderByDescending(v => v.Id).ToList();
+        }
 
-            return resultado;
+        public async Task<IEnumerable<VentaDetalle>> GetDetalleByClienteId(int clienteId)
+        {
+            var ventas = await _context.Ventas.Where(v => v.Cliente_Id == clienteId).ToListAsync();
+            var clientes = await _context.Clientes.ToListAsync();
+            var tickets = await _context.Tickets.ToListAsync();
+            var transacciones = await _context.Transacciones.ToListAsync();
+
+            return ventas.Select(v =>
+            {
+                var cliente = clientes.FirstOrDefault(c => c.Id == v.Cliente_Id);
+                var ticket = tickets.FirstOrDefault(t => t.Venta_Id == v.Id);
+                var transaccion = transacciones.FirstOrDefault(t => t.Venta_Id == v.Id);
+
+                return new VentaDetalle
+                {
+                    Id = v.Id,
+                    Codigo_Venta = v.Codigo_Venta,
+                    Cliente_Id = v.Cliente_Id,
+                    Cliente_Nombre = cliente != null ? $"{cliente.Nombre} {cliente.Apellido}" : "-",
+                    Cliente_Documento = cliente?.Documento_Identidad ?? "-",
+                    Programacion_Vuelo_Id = v.Programacion_Vuelo_Id,
+                    Numero_Ticket = ticket?.Numero_Ticket ?? "-",
+                    Asiento_Id = ticket?.Asiento_Id,
+                    Pasajero_Nombre = ticket?.Pasajero_Nombre ?? "-",
+                    Pasajero_Apellido = ticket?.Pasajero_Apellido ?? "-",
+                    Metodo_Pago = transaccion?.Metodo_Pago ?? "-",
+                    Monto_Total = v.Monto_Total,
+                    Estado = v.Estado,
+                    Transaccion_Estado = transaccion?.Estado ?? "-"
+                };
+            }).OrderByDescending(v => v.Id).ToList();
         }
 
         public async Task<Venta> Create(Venta v)

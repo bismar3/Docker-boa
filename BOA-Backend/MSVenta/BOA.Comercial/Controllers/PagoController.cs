@@ -20,12 +20,14 @@ namespace BOA.Comercial.Controllers
         private readonly ITransaccionService _transaccionService;
         private readonly IClienteService _clienteService;
         private readonly HttpClient _httpClient;
+        private readonly RabbitMQPublisher _rabbitPublisher;
 
         private const string LIBELULA_APPKEY = "11bb10ce-68ba-4af1-8eb7-4e6624fed729";
         private const string LIBELULA_URL = "https://api.libelula.bo/rest/deuda/registrar";
         private const string LIBELULA_VERIFICAR_URL = "https://api.libelula.bo/rest/deuda/consultar_pagos";
         private const string CALLBACK_URL = "https://daybed-ivory-rewire.ngrok-free.dev/api/pago/callback";
         private const string URL_RETORNO = "https://daybed-ivory-rewire.ngrok-free.dev/dashboard/cliente/mis-compras";
+        private const string OPERACIONES_URL = "http://localhost:6002";
 
         public PagoController(
             IVentaService ventaService,
@@ -38,6 +40,7 @@ namespace BOA.Comercial.Controllers
             _transaccionService = transaccionService;
             _clienteService = clienteService;
             _httpClient = new HttpClient();
+            _rabbitPublisher = new RabbitMQPublisher();
         }
 
         [HttpPost("registrar")]
@@ -60,6 +63,19 @@ namespace BOA.Comercial.Controllers
                     Estado = "Pendiente"
                 };
                 var ventaCreada = await _ventaService.Create(venta);
+
+                // Crear ticket con estado Emitido
+                var numeroTicket = "TKT-" + Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+                var ticket = new Ticket
+                {
+                    Numero_Ticket = numeroTicket,
+                    Venta_Id = ventaCreada.Id,
+                    Asiento_Id = request.AsientoId,
+                    Estado = "Emitido",
+                    Pasajero_Nombre = request.PasajeroNombre,
+                    Pasajero_Apellido = request.PasajeroApellido
+                };
+                await _ticketService.Create(ticket);
 
                 var payload = new
                 {
@@ -89,7 +105,6 @@ namespace BOA.Comercial.Controllers
                     {
                         var idTransaccion = libelulaResponse.GetProperty("id_transaccion").GetString();
 
-                        // Guardar transacción pendiente con id de Libélula
                         var transaccion = new Transaccion
                         {
                             Venta_Id = ventaCreada.Id,
@@ -113,7 +128,6 @@ namespace BOA.Comercial.Controllers
                 }
                 catch
                 {
-                    // Modo simulación
                     var simId = "SIM-" + Guid.NewGuid().ToString("N").Substring(0, 12).ToUpper();
 
                     var transaccionSim = new Transaccion
@@ -153,7 +167,6 @@ namespace BOA.Comercial.Controllers
         {
             try
             {
-                // Libélula manda transaction_id = nuestro codigo_venta (identificador)
                 var ventas = await _ventaService.GetAll();
                 var venta = ventas.FirstOrDefault(v => v.Codigo_Venta == transaction_id);
 
@@ -172,6 +185,35 @@ namespace BOA.Comercial.Controllers
                     transaccion.Estado = "Aprobado";
                     await _transaccionService.Update(transaccion);
                 }
+
+                // Ticket ya fue creado en RegistrarPago — marcar asiento como ocupado
+                var tickets = await _ticketService.GetByVentaId(venta.Id);
+                var ticket = tickets.FirstOrDefault();
+                if (ticket != null && ticket.Asiento_Id.HasValue)
+                {
+                    try
+                    {
+                        await _httpClient.PutAsync(
+                            $"{OPERACIONES_URL}/api/asiento/{ticket.Asiento_Id}/ocupar",
+                            null
+                        );
+                    }
+                    catch
+                    {
+                        Console.WriteLine("[Asiento] No se pudo marcar como ocupado");
+                    }
+                }
+
+                // Publicar evento en RabbitMQ
+                _rabbitPublisher.PublicarPagoConfirmado(new
+                {
+                    CodigoVenta = venta.Codigo_Venta,
+                    ClienteId = venta.Cliente_Id,
+                    ProgramacionVueloId = venta.Programacion_Vuelo_Id,
+                    Monto = venta.Monto_Total,
+                    Fecha = DateTime.Now,
+                    InvoiceId = invoice_id
+                });
 
                 return Ok(new
                 {
@@ -231,6 +273,9 @@ namespace BOA.Comercial.Controllers
         public int ClienteId { get; set; }
         public int ProgramacionVueloId { get; set; }
         public decimal MontoTotal { get; set; }
+        public int? AsientoId { get; set; }
+        public string PasajeroNombre { get; set; }
+        public string PasajeroApellido { get; set; }
         public List<AsientoDetalle> Asientos { get; set; }
     }
 

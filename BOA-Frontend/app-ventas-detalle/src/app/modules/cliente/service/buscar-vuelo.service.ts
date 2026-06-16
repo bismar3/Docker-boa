@@ -5,11 +5,8 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment.development';
 
 export interface VueloDisponible {
-  id: number;
-  codigo_vuelo: string;
-  aeronave_Id: number;
-  ruta_Id: number;
-  ruta_Tramo_Id: number;
+  programacionId: number;
+  codigo_Vuelo: string;
   aeropuerto_Origen_Id: number;
   aeropuerto_Destino_Id: number;
   fecha_Salida: string;
@@ -17,40 +14,39 @@ export interface VueloDisponible {
   fecha_Llegada: string;
   hora_Llegada: string;
   precio_Base: number;
-  asientos_Vendidos: number;
   estado: string;
+  ruta_Id: number;
+  ruta_Tramo_Id: number;
+  tramo_Id: number | null;
+  es_Tramo_Parcial: boolean;
+  duracion_Estimada: string | null;
+  tiene_Escalas: boolean;
+  num_Escalas: number;
 }
-
-const httpOptions = (token: string) => ({
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  })
-});
 
 @Injectable({ providedIn: 'root' })
 export class BuscarVueloService {
   private url: string = `${environment.URL_SERVICIOS}/programacionvuelo`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  public buscar(origenId: number, destinoId: number, fecha: string): Observable<VueloDisponible[]> {
-    const token = sessionStorage.getItem('token');
-    if (token) return this.http.get<VueloDisponible[]>(
-      `${this.url}?origen=${origenId}&destino=${destinoId}&fecha=${fecha}`,
-      httpOptions(token)
-    ).pipe(catchError(this.handleError('buscar', [])));
-    return of([]);
+  private getHeaders(): HttpHeaders {
+    const token = sessionStorage.getItem('token') || '';
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
   }
 
-  public getAll(): Observable<VueloDisponible[]> {
-    const token = sessionStorage.getItem('token');
-    if (token) return this.http.get<VueloDisponible[]>(this.url, httpOptions(token))
-      .pipe(catchError(this.handleError('getAll', [])));
-    return of([]);
+  public buscarPorTramo(origenId: number, destinoId: number): Observable<VueloDisponible[]> {
+    return this.http.get<VueloDisponible[]>(
+      `${this.url}/buscar?origen=${origenId}&destino=${destinoId}`,
+      { headers: this.getHeaders() }
+    ).pipe(catchError(() => of([])));
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => { console.error(error); return of(result as T); };
+  public getAll(): Observable<any[]> {
+    return this.http.get<any[]>(this.url, { headers: this.getHeaders() })
+      .pipe(catchError(() => of([])));
   }
 }

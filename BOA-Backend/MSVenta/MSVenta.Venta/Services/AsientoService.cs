@@ -10,6 +10,7 @@ namespace MSVenta.Venta.Services
     public class AsientoService : IAsientoService
     {
         private readonly ContextDatabase _context;
+
         public AsientoService(ContextDatabase context)
         {
             _context = context;
@@ -23,5 +24,14 @@ namespace MSVenta.Venta.Services
                 .OrderBy(ap => ap.Asiento.Fila)
                 .ThenBy(ap => ap.Asiento.Numero)
                 .ToListAsync();
+
+        public async Task<AsientoProgramacion> GetById(int id) =>
+            await _context.AsientoProgramaciones.FindAsync(id);
+
+        public async Task Update(AsientoProgramacion asiento)
+        {
+            _context.AsientoProgramaciones.Update(asiento);
+            await _context.SaveChangesAsync();
+        }
     }
 }

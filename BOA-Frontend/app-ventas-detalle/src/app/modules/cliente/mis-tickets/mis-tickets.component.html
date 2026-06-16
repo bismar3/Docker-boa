@@ -1,1 +1,170 @@
-<p>mis-tickets works!</p>
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl min-h-screen">
+
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="text-3xl font-bold">🎫 Mis Tickets</h2>
+    <button (click)="buscarVuelos()"
+      class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      🔍 Buscar vuelos
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="text-center text-gray-400 py-10">Cargando...</div>
+
+  <div *ngIf="!cargando && tickets.length === 0" class="text-center text-gray-400 py-10">
+    No tienes tickets registrados.
+  </div>
+
+  <div *ngIf="!cargando && tickets.length > 0" class="grid gap-4">
+    <div *ngFor="let t of tickets"
+      class="bg-gray-800 rounded-2xl border border-gray-700 shadow-lg p-5">
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div class="flex gap-6 flex-wrap">
+          <div>
+            <p class="text-gray-400 text-xs mb-1">N° TICKET</p>
+            <p class="text-purple-400 font-bold">{{ t.numero_Ticket }}</p>
+            <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-600">Emitido</span>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-1">VUELO</p>
+            <p class="text-cyan-400 font-bold">{{ t.vuelo?.codigo_Vuelo }}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-1">RUTA</p>
+            <p class="text-white font-semibold">{{ t.origen?.codigo_IATA }} → {{ t.destino?.codigo_IATA }}</p>
+            <p class="text-gray-400 text-xs">{{ t.origen?.ciudad }} → {{ t.destino?.ciudad }}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-1">SALIDA</p>
+            <p class="text-white">{{ t.vuelo?.fecha_Salida }}</p>
+            <p class="text-gray-400 text-xs">{{ t.vuelo?.hora_Salida }}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-1">PASAJERO</p>
+            <p class="text-white font-semibold">{{ t.pasajero_Nombre }} {{ t.pasajero_Apellido }}</p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-xs mb-1">MONTO</p>
+            <p class="text-white font-bold">${{ t.monto_Total.toFixed(2) }}</p>
+          </div>
+        </div>
+        <button (click)="verBoardingPass(t)"
+          class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+          🖨️ Boarding Pass
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BOARDING PASS -->
+<div *ngIf="ticketSeleccionado"
+  class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+
+  <div class="bg-white text-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden" id="boarding-pass">
+
+    <!-- Header -->
+    <div class="bg-orange-500 text-white p-4 flex justify-between items-center">
+      <div>
+        <p class="text-xs font-semibold opacity-80">BOLIVIANA DE AVIACIÓN</p>
+        <p class="text-xs opacity-70">BoA — Sistema de Pasajes Aéreos</p>
+      </div>
+      <p class="text-xl font-bold tracking-widest">BOARDING PASS</p>
+    </div>
+
+    <!-- Cuerpo -->
+    <div class="p-6 grid grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <div>
+          <p class="text-xs text-gray-500 uppercase">Pasajero</p>
+          <p class="text-2xl font-bold text-gray-800">
+            {{ ticketSeleccionado.pasajero_Nombre | uppercase }} {{ ticketSeleccionado.pasajero_Apellido | uppercase }}
+          </p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500 uppercase">Comprador</p>
+          <p class="font-semibold">{{ ticketSeleccionado.cliente_Nombre }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500 uppercase">Método de Pago</p>
+          <p class="font-semibold">{{ ticketSeleccionado.metodo_Pago }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500 uppercase">Monto Pagado</p>
+          <p class="font-bold text-orange-500 text-lg">Bs. {{ ticketSeleccionado.monto_Total.toFixed(2) }}</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center justify-center border-l border-dashed border-gray-300 pl-6">
+        <p class="text-5xl font-black text-gray-800">{{ ticketSeleccionado.origen?.codigo_IATA }}</p>
+        <p class="text-sm text-gray-500">{{ ticketSeleccionado.origen?.ciudad }}</p>
+        <p class="text-3xl my-2">✈</p>
+        <p class="text-5xl font-black text-gray-800">{{ ticketSeleccionado.destino?.codigo_IATA }}</p>
+        <p class="text-sm text-gray-500">{{ ticketSeleccionado.destino?.ciudad }}</p>
+      </div>
+    </div>
+
+    <!-- Datos del vuelo -->
+    <div class="px-6 pb-4 grid grid-cols-3 gap-4 text-sm border-t border-gray-200 pt-4">
+      <div>
+        <p class="text-xs text-gray-500 uppercase">N° Vuelo</p>
+        <p class="font-bold">{{ ticketSeleccionado.vuelo?.codigo_Vuelo }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 uppercase">Fecha Salida</p>
+        <p class="font-bold">{{ ticketSeleccionado.vuelo?.fecha_Salida }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 uppercase">Hora Salida</p>
+        <p class="font-bold">{{ ticketSeleccionado.vuelo?.hora_Salida }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 uppercase">Hora Llegada</p>
+        <p class="font-bold">{{ ticketSeleccionado.vuelo?.hora_Llegada }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 uppercase">Asiento</p>
+        <p class="font-bold">{{ ticketSeleccionado.asiento_Id || '-' }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 uppercase">Documento</p>
+        <p class="font-bold">{{ ticketSeleccionado.cliente_Documento }}</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-gray-100 px-6 py-4 flex justify-between items-center border-t border-dashed border-gray-300">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 bg-gray-800 flex items-center justify-center rounded text-white text-xs text-center">
+          QR
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">N° TICKET</p>
+          <p class="font-bold text-lg">{{ ticketSeleccionado.numero_Ticket }}</p>
+          <p class="text-xs text-gray-500 mt-1">CÓDIGO DE VENTA</p>
+          <p class="font-semibold text-orange-500">{{ ticketSeleccionado.codigo_Venta }}</p>
+        </div>
+      </div>
+      <div class="text-right">
+        <p class="text-xs text-gray-500">ORIGEN → DESTINO</p>
+        <p class="text-sm font-semibold">{{ ticketSeleccionado.origen?.nombre }} → {{ ticketSeleccionado.destino?.nombre }}</p>
+        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 mt-1 inline-block">✅ EMITIDO</span>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-gray-400 py-2 px-4">
+      Boliviana de Aviación (BoA) — Este documento es válido como tarjeta de embarque digital. Por favor preséntelo en el mostrador de abordaje.
+    </p>
+
+    <!-- Botones -->
+    <div class="flex gap-3 p-4 border-t border-gray-200">
+      <button (click)="imprimir()"
+        class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-xl font-semibold transition-all">
+        🖨️ Descargar / Imprimir
+      </button>
+      <button (click)="cerrarModal()"
+        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-xl font-semibold transition-all">
+        ✕ Cerrar
+      </button>
+    </div>
+  </div>
+</div>
