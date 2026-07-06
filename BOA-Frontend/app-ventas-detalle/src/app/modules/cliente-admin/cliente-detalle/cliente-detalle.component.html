@@ -1,0 +1,83 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl min-h-screen">
+
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="text-3xl font-bold">👤 Detalle del Cliente</h2>
+    <button (click)="volver()"
+      class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      ← Volver
+    </button>
+  </div>
+
+  <div *ngIf="cliente" class="bg-gray-800 rounded-2xl p-6 mb-8 border border-gray-700">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div>
+        <p class="text-xs text-gray-400 uppercase">Nombre</p>
+        <p class="font-bold">{{ cliente.nombre }} {{ cliente.apellido }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400 uppercase">Documento</p>
+        <p class="font-bold">{{ cliente.documento_Identidad }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400 uppercase">Email</p>
+        <p class="font-bold">{{ cliente.email }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400 uppercase">Estado</p>
+        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-600">
+          {{ cliente.estado }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen -->
+  <div class="grid grid-cols-2 gap-4 mb-8">
+    <div class="bg-blue-700 rounded-2xl p-5 text-center shadow-lg">
+      <p class="text-sm text-blue-200 font-semibold">Vuelos Comprados</p>
+      <p class="text-3xl font-extrabold text-white mt-1">{{ totalVuelos }}</p>
+    </div>
+    <div class="bg-green-700 rounded-2xl p-5 text-center shadow-lg">
+      <p class="text-sm text-green-200 font-semibold">Total Gastado</p>
+      <p class="text-3xl font-extrabold text-white mt-1">${{ totalGastado.toFixed(2) }}</p>
+    </div>
+  </div>
+
+  <h3 class="text-xl font-bold mb-4">📋 Historial de Compras</h3>
+
+  <div *ngIf="cargando" class="text-center text-gray-400 py-10">Cargando...</div>
+
+  <div *ngIf="!cargando" class="overflow-x-auto">
+    <table class="min-w-full table-auto text-sm text-center bg-gray-800 rounded-lg shadow-lg border-separate border-spacing-1 border border-gray-700">
+      <thead>
+        <tr class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+          <th class="px-2 py-2 text-left rounded-l-lg">CÓDIGO</th>
+          <th class="px-2 py-2 text-left">VUELO</th>
+          <th class="px-2 py-2 text-left">ASIENTO</th>
+          <th class="px-2 py-2 text-left">PAGO</th>
+          <th class="px-2 py-2 text-left">MONTO</th>
+          <th class="px-2 py-2 text-left rounded-r-lg">ESTADO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let h of historial"
+          class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
+          <td class="px-2 py-2 font-bold text-orange-400">{{ h.codigo_Venta }}</td>
+          <td class="px-2 py-2 text-cyan-400 font-bold">ID: {{ h.programacion_Vuelo_Id }}</td>
+          <td class="px-2 py-2">{{ h.asiento_Id || '-' }}</td>
+          <td class="px-2 py-2">{{ h.metodo_Pago }}</td>
+          <td class="px-2 py-2 font-bold">${{ h.monto_Total.toFixed(2) }}</td>
+          <td class="px-2 py-2">
+            <span class="px-2 py-1 rounded-full text-xs font-semibold"
+              [ngClass]="getEstadoClass(h.estado)">
+              {{ h.estado }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="historial.length === 0">
+          <td colspan="6" class="px-2 py-6 text-gray-400">No tiene compras registradas</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>  

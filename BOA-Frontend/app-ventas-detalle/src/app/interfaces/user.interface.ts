@@ -1,9 +1,3 @@
-// export interface User {
-//   username: string ;
-//   password: string ;
-//   token?: string;
-// }
-
 import { Rol } from "./rol.interface";
 
 export interface User {
@@ -11,6 +5,11 @@ export interface User {
   fullname?: string;
   username: string;
   password?: string;
+  email?: string;
+  estado?: string;
+  documento_Identidad?: string;
+  telefono?: string;
+  fecha_Nacimiento?: string;
   roles?: Rol[];
   token?: string;
 }

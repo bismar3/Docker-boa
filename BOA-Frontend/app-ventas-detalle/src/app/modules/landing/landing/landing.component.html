@@ -1,0 +1,329 @@
+<div class="min-h-screen bg-gray-900 text-white">
+
+  <!-- Header -->
+  <header class="bg-gray-950 px-6 py-4 flex justify-between items-center border-b border-gray-800">
+    <div class="flex items-center gap-2">
+      <span class="text-2xl">✈</span>
+      <span class="text-xl font-bold">BoA</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <button (click)="irLogin()"
+        class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white px-5 py-2 rounded-xl text-sm font-semibold transition-all">
+        Iniciar sesión
+      </button>
+      <button (click)="irRegistro()"
+        class="bg-white text-gray-900 hover:bg-gray-200 px-5 py-2 rounded-xl text-sm font-semibold transition-all">
+        Registrarse
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-gray-950 px-6 py-16">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+
+      <!-- Lado izquierdo -->
+      <div>
+        <p class="text-cyan-400 text-sm font-semibold tracking-widest mb-2">🌐 LA AEROLÍNEA DE BOLIVIA</p>
+        <h1 class="text-5xl font-extrabold mb-4">Tu vuelo,<br/>tu aventura</h1>
+        <p class="text-gray-400 text-lg mb-8">Conectamos Bolivia con el mundo. Reserva tu pasaje de forma rápida y segura.</p>
+        <div class="flex gap-10">
+          <div>
+            <p class="text-3xl font-extrabold">15+</p>
+            <p class="text-gray-400 text-sm">Destinos</p>
+          </div>
+          <div>
+            <p class="text-3xl font-extrabold">50K+</p>
+            <p class="text-gray-400 text-sm">Pasajeros/año</p>
+          </div>
+          <div>
+            <p class="text-3xl font-extrabold">99%</p>
+            <p class="text-gray-400 text-sm">Puntualidad</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buscador -->
+      <div class="bg-white text-gray-900 rounded-2xl shadow-2xl p-8">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="text-xl">🔍</span>
+          <h2 class="text-xl font-bold">Buscar vuelos disponibles</h2>
+        </div>
+
+        <div class="space-y-4">
+
+          <!-- Origen -->
+          <div class="relative">
+            <label class="block text-sm font-semibold text-gray-600 mb-1">📍 Origen</label>
+            <input type="text" [(ngModel)]="origenTexto" (input)="filtrarOrigen()"
+              (focus)="filtrarOrigen()"
+              placeholder="Ciudad o código IATA..."
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+            <div *ngIf="sugerenciasOrigen.length > 0"
+              class="absolute z-20 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 overflow-hidden">
+              <div *ngFor="let a of sugerenciasOrigen; let i = index"
+                (mousedown)="$event.preventDefault(); seleccionarOrigen(a)"
+                [class.bg-blue-600]="i === 0"
+                [class.text-white]="i === 0"
+                class="px-4 py-3 cursor-pointer border-b border-gray-100 last:border-0 hover:bg-blue-50 hover:text-gray-900 transition-colors">
+                <span class="font-bold" [class.text-blue-600]="i !== 0" [class.text-white]="i === 0">{{ a.codigo_IATA }}</span>
+                <span class="ml-2" [class.text-gray-600]="i !== 0" [class.text-blue-100]="i === 0">{{ a.ciudad }} — {{ a.nombre }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Destino -->
+          <div class="relative">
+            <label class="block text-sm font-semibold text-gray-600 mb-1">🎯 Destino</label>
+            <input type="text" [(ngModel)]="destinoTexto" (input)="filtrarDestino()"
+              (focus)="filtrarDestino()"
+              placeholder="Ciudad o código IATA..."
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+            <div *ngIf="sugerenciasDestino.length > 0"
+              class="absolute z-20 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 overflow-hidden">
+              <div *ngFor="let a of sugerenciasDestino; let i = index"
+                (mousedown)="$event.preventDefault(); seleccionarDestino(a)"
+                [class.bg-blue-600]="i === 0"
+                [class.text-white]="i === 0"
+                class="px-4 py-3 cursor-pointer border-b border-gray-100 last:border-0 hover:bg-blue-50 hover:text-gray-900 transition-colors">
+                <span class="font-bold" [class.text-blue-600]="i !== 0" [class.text-white]="i === 0">{{ a.codigo_IATA }}</span>
+                <span class="ml-2" [class.text-gray-600]="i !== 0" [class.text-blue-100]="i === 0">{{ a.ciudad }} — {{ a.nombre }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fecha -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-600 mb-1">📅 Fecha de salida</label>
+            <input type="date" [(ngModel)]="fecha"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+          </div>
+
+          <!-- Pasajeros y Clase -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="relative">
+              <label class="block text-sm font-semibold text-gray-600 mb-1">👥 Pasajeros</label>
+              <button (click)="mostrarPasajeros = !mostrarPasajeros; mostrarClase = false"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl text-left text-gray-700 hover:border-blue-400 transition-all">
+                {{ totalPasajeros }}
+              </button>
+              <div *ngIf="mostrarPasajeros"
+                class="absolute z-20 w-64 bg-white border border-gray-200 rounded-xl shadow-lg mt-1 p-4">
+                <div class="flex justify-between items-center mb-3">
+                  <div>
+                    <p class="font-semibold">Adultos</p>
+                    <p class="text-xs text-gray-400">+12 años</p>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <button (click)="cambiarAdultos(-1)" class="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-100 font-bold">-</button>
+                    <span class="font-bold w-4 text-center">{{ adultos }}</span>
+                    <button (click)="cambiarAdultos(1)" class="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-100 font-bold">+</button>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="font-semibold">Niños</p>
+                    <p class="text-xs text-gray-400">2-11 años</p>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <button (click)="cambiarNinos(-1)" class="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-100 font-bold">-</button>
+                    <span class="font-bold w-4 text-center">{{ ninos }}</span>
+                    <button (click)="cambiarNinos(1)" class="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-100 font-bold">+</button>
+                  </div>
+                </div>
+                <button (click)="mostrarPasajeros = false"
+                  class="w-full mt-3 bg-blue-600 text-white py-2 rounded-xl text-sm font-semibold">
+                  Confirmar
+                </button>
+              </div>
+            </div>
+
+            <div class="relative">
+              <label class="block text-sm font-semibold text-gray-600 mb-1">💺 Clase</label>
+              <button (click)="mostrarClase = !mostrarClase; mostrarPasajeros = false"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl text-left text-gray-700 hover:border-blue-400 transition-all">
+                {{ clase }}
+              </button>
+              <div *ngIf="mostrarClase"
+                class="absolute z-20 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1">
+                <div *ngFor="let c of ['Economica', 'Ejecutiva', 'Primera Clase']"
+                  (click)="seleccionarClase(c)"
+                  class="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-0 text-gray-700">
+                  {{ c }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button (click)="buscar()" [disabled]="buscando"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2">
+            {{ buscando ? '🔄 Buscando...' : '🔍 Buscar vuelos' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultados de búsqueda -->
+    <div *ngIf="buscado" class="max-w-6xl mx-auto mt-10">
+      <p class="text-gray-400 mb-4" *ngIf="vuelosEncontrados.length > 0">
+        Se encontraron <span class="text-white font-bold">{{ vuelosEncontrados.length }}</span> vuelo(s) disponible(s)
+      </p>
+      <p class="text-gray-400 mb-4" *ngIf="vuelosEncontrados.length === 0">
+        No se encontraron vuelos para esa ruta.
+      </p>
+
+      <div *ngFor="let vuelo of vuelosEncontrados"
+        class="bg-gray-800 rounded-2xl p-6 mb-4 border border-gray-700 hover:border-cyan-500 transition-all">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+
+          <!-- Info vuelo -->
+          <div class="flex items-center gap-6 flex-wrap">
+            <div>
+              <span class="text-cyan-400 font-bold text-lg">{{ vuelo.codigo_Vuelo }}</span>
+              <div class="mt-1">
+                <span *ngIf="vuelo.tiene_Escalas"
+                  class="px-2 py-1 bg-yellow-600 rounded-full text-xs font-semibold">
+                  {{ vuelo.num_Escalas }} escala(s)
+                </span>
+                <span *ngIf="!vuelo.tiene_Escalas"
+                  class="px-2 py-1 bg-green-700 rounded-full text-xs font-semibold">
+                  Directo
+                </span>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <div class="text-2xl font-bold">{{ getCodigoIATA(vuelo.aeropuerto_Origen_Id) }}</div>
+              <div class="text-sm text-gray-400">{{ getCiudad(vuelo.aeropuerto_Origen_Id) }}</div>
+              <div class="text-sm font-semibold">{{ vuelo.hora_Salida }}</div>
+            </div>
+
+            <div class="text-center text-gray-400 px-2">
+              <div class="text-xs">✈</div>
+            </div>
+
+            <div class="text-center">
+              <div class="text-2xl font-bold">{{ getCodigoIATA(vuelo.aeropuerto_Destino_Id) }}</div>
+              <div class="text-sm text-gray-400">{{ getCiudad(vuelo.aeropuerto_Destino_Id) }}</div>
+              <div class="text-sm font-semibold">{{ vuelo.hora_Llegada }}</div>
+            </div>
+
+            <div class="text-sm text-gray-400">
+              <div>📅 {{ vuelo.fecha_Salida }}</div>
+              <div>👥 {{ totalPasajeros }}</div>
+            </div>
+          </div>
+
+          <!-- Precio y acciones -->
+          <div class="text-right">
+            <div class="text-green-400 font-bold text-xl">Bs. {{ vuelo.precio_Base }}</div>
+            <div class="text-xs text-gray-400 mb-3">precio base</div>
+            <div class="flex gap-2">
+              <button
+                class="px-3 py-2 border border-gray-500 text-gray-300 rounded-lg text-sm hover:bg-gray-700 transition-all">
+                Ver escalas
+              </button>
+              <button (click)="seleccionarVuelo(vuelo)"
+                class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-cyan-600 transition-all">
+                Seleccionar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Destinos populares -->
+  <section class="bg-gray-100 text-gray-900 px-6 py-16">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-2">Destinos populares</h2>
+      <p class="text-gray-500 text-center mb-10">Descubre los destinos más buscados de Bolivia</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <button (click)="buscarPorDestino('Buenos Aires')"
+          class="rounded-2xl shadow-lg bg-gradient-to-br from-blue-900 to-blue-700 text-white p-6 h-40 flex flex-col justify-end text-left hover:scale-105 transition-all">
+          <p class="font-bold text-xl">Buenos Aires</p>
+          <p class="text-sm text-blue-200">✈ Aeropuerto Internacional de Argentina</p>
+        </button>
+        <button (click)="buscarPorDestino('Cochabamba')"
+          class="rounded-2xl shadow-lg bg-gradient-to-br from-teal-600 to-emerald-500 text-white p-6 h-40 flex flex-col justify-end text-left hover:scale-105 transition-all">
+          <p class="font-bold text-xl">Cochabamba</p>
+          <p class="text-sm text-emerald-100">✈ Aeropuerto Internacional Jorge Wilstermann</p>
+        </button>
+        <button (click)="buscarPorDestino('La Paz')"
+          class="rounded-2xl shadow-lg bg-gradient-to-br from-orange-600 to-amber-500 text-white p-6 h-40 flex flex-col justify-end text-left hover:scale-105 transition-all">
+          <p class="font-bold text-xl">La Paz</p>
+          <p class="text-sm text-orange-100">✈ Aeropuerto Internacional El Alto</p>
+        </button>
+        <button (click)="buscarPorDestino('Los Angeles')"
+          class="rounded-2xl shadow-lg bg-gradient-to-br from-blue-600 to-cyan-500 text-white p-6 h-40 flex flex-col justify-end text-left hover:scale-105 transition-all">
+          <p class="font-bold text-xl">Los Ángeles</p>
+          <p class="text-sm text-cyan-100">✈ Aeropuerto Internacional de Los Ángeles</p>
+        </button>
+        <button (click)="buscarPorDestino('Oruro')"
+          class="rounded-2xl shadow-lg bg-gradient-to-br from-purple-700 to-fuchsia-600 text-white p-6 h-40 flex flex-col justify-end text-left hover:scale-105 transition-all">
+          <p class="font-bold text-xl">Oruro</p>
+          <p class="text-sm text-fuchsia-100">✈ Aeropuerto Juan Mendoza</p>
+        </button>
+        <button (click)="buscarPorDestino('Caracas')"
+          class="rounded-2xl shadow-lg bg-gradient-to-br from-green-700 to-lime-600 text-white p-6 h-40 flex flex-col justify-end text-left hover:scale-105 transition-all">
+          <p class="font-bold text-xl">Caracas</p>
+          <p class="text-sm text-lime-100">✈ Aeropuerto de Caracas</p>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Por qué volar con BoA -->
+  <section class="bg-gray-100 text-gray-900 px-6 py-16 border-t border-gray-200">
+    <div class="max-w-6xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-2">¿Por qué volar con BoA?</h2>
+      <p class="text-gray-500 mb-10">La aerolínea de Bolivia a tu servicio</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-8">
+        <div>
+          <p class="text-4xl mb-2">🛡️</p>
+          <p class="font-bold">Seguridad garantizada</p>
+          <p class="text-sm text-gray-500 mt-1">Flota moderna con estándares internacionales de mantenimiento.</p>
+        </div>
+        <div>
+          <p class="text-4xl mb-2">💰</p>
+          <p class="font-bold">Mejores precios</p>
+          <p class="text-sm text-gray-500 mt-1">Tarifas competitivas para todas las rutas nacionales.</p>
+        </div>
+        <div>
+          <p class="text-4xl mb-2">⏱️</p>
+          <p class="font-bold">Puntualidad</p>
+          <p class="text-sm text-gray-500 mt-1">Comprometidos con la puntualidad en cada vuelo.</p>
+        </div>
+        <div>
+          <p class="text-4xl mb-2">🎧</p>
+          <p class="font-bold">Atención 24/7</p>
+          <p class="text-sm text-gray-500 mt-1">Soporte al pasajero disponible en todo momento.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-950 px-6 py-8 border-t border-gray-800">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm text-gray-400">
+      <div>
+        <p class="text-white font-bold mb-2">✈ BoA</p>
+        <p>Boliviana de Aviación — La aerolínea del Estado Plurinacional de Bolivia.</p>
+      </div>
+      <div>
+        <p class="text-white font-semibold mb-2">Acceso rápido</p>
+        <p class="hover:text-white cursor-pointer">Inicio</p>
+        <p class="hover:text-white cursor-pointer" (click)="irLogin()">Iniciar sesión</p>
+        <p class="hover:text-white cursor-pointer" (click)="irRegistro()">Registrarse</p>
+      </div>
+      <div>
+        <p class="text-white font-semibold mb-2">Contacto</p>
+        <p>📧 info&#64;boa.bo</p>
+        <p>📞 +591 76661807</p>
+        <p>📍 La Paz, Bolivia</p>
+      </div>
+    </div>
+    <p class="text-center text-gray-600 text-xs mt-6">© 2026 Boliviana de Aviación. Todos los derechos reservados.</p>
+  </footer>
+</div>

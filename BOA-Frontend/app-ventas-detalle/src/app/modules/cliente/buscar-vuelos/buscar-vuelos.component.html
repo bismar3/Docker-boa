@@ -4,22 +4,43 @@
   <!-- Filtros -->
   <div class="bg-gray-800 rounded-lg p-6 mb-6 border border-gray-700">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div>
+
+      <!-- Origen -->
+      <div class="relative">
         <label class="block text-sm font-semibold text-gray-300 mb-1">Origen</label>
-        <select [(ngModel)]="origenId"
-          class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
-          <option value="0" disabled>Seleccionar origen...</option>
-          <option *ngFor="let a of aeropuertos" [value]="a.id">{{a.ciudad}} ({{a.codigo_IATA}})</option>
-        </select>
+        <input type="text" [(ngModel)]="origenTexto" (input)="filtrarOrigen()" (focus)="filtrarOrigen()"
+          placeholder="Ciudad o país..."
+          class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none"/>
+        <div *ngIf="sugerenciasOrigen.length > 0"
+          class="absolute z-20 w-full bg-gray-900 border border-gray-600 rounded-lg shadow-lg mt-1 overflow-hidden">
+          <div *ngFor="let a of sugerenciasOrigen; let i = index"
+            (mousedown)="$event.preventDefault(); seleccionarOrigen(a)"
+            [class.bg-cyan-700]="i === 0"
+            class="px-4 py-2 cursor-pointer border-b border-gray-700 last:border-0 hover:bg-gray-700 transition-colors">
+            <p class="font-bold text-white text-sm">{{ a.ciudad }}, {{ a.pais }}</p>
+            <p class="text-gray-400 text-xs">✈ {{ a.nombre }} ({{ a.codigo_IATA }})</p>
+          </div>
+        </div>
       </div>
-      <div>
+
+      <!-- Destino -->
+      <div class="relative">
         <label class="block text-sm font-semibold text-gray-300 mb-1">Destino</label>
-        <select [(ngModel)]="destinoId"
-          class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
-          <option value="0" disabled>Seleccionar destino...</option>
-          <option *ngFor="let a of aeropuertos" [value]="a.id">{{a.ciudad}} ({{a.codigo_IATA}})</option>
-        </select>
+        <input type="text" [(ngModel)]="destinoTexto" (input)="filtrarDestino()" (focus)="filtrarDestino()"
+          placeholder="Ciudad o país..."
+          class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none"/>
+        <div *ngIf="sugerenciasDestino.length > 0"
+          class="absolute z-20 w-full bg-gray-900 border border-gray-600 rounded-lg shadow-lg mt-1 overflow-hidden">
+          <div *ngFor="let a of sugerenciasDestino; let i = index"
+            (mousedown)="$event.preventDefault(); seleccionarDestino(a)"
+            [class.bg-cyan-700]="i === 0"
+            class="px-4 py-2 cursor-pointer border-b border-gray-700 last:border-0 hover:bg-gray-700 transition-colors">
+            <p class="font-bold text-white text-sm">{{ a.ciudad }}, {{ a.pais }}</p>
+            <p class="text-gray-400 text-xs">✈ {{ a.nombre }} ({{ a.codigo_IATA }})</p>
+          </div>
+        </div>
       </div>
+
       <div>
         <label class="block text-sm font-semibold text-gray-300 mb-1">Fecha</label>
         <input type="date" [(ngModel)]="fecha" [min]="hoy"
@@ -48,7 +69,6 @@
       <div class="flex items-center justify-between flex-wrap gap-4">
         <div class="flex items-center gap-6 flex-wrap">
 
-          <!-- Código y badge -->
           <div>
             <span class="text-cyan-400 font-bold text-lg">{{vuelo.codigo_Vuelo}}</span>
             <div class="mt-2 flex gap-2">
@@ -63,20 +83,17 @@
             </div>
           </div>
 
-          <!-- Origen -->
           <div class="text-center">
             <div class="text-2xl font-bold">{{getCodigoIATA(vuelo.aeropuerto_Origen_Id)}}</div>
             <div class="text-sm text-gray-400">{{getCiudad(vuelo.aeropuerto_Origen_Id)}}</div>
             <div class="text-sm font-semibold text-white">{{vuelo.hora_Salida}}</div>
           </div>
 
-          <!-- Duración -->
           <div class="text-center text-gray-400 px-4">
             <div class="text-xs text-gray-400">{{getDuracion(vuelo)}}</div>
             <div class="text-xl">✈</div>
           </div>
 
-          <!-- Destino -->
           <div class="text-center">
             <div class="text-2xl font-bold">{{getCodigoIATA(vuelo.aeropuerto_Destino_Id)}}</div>
             <div class="text-sm text-gray-400">{{getCiudad(vuelo.aeropuerto_Destino_Id)}}</div>
@@ -85,7 +102,6 @@
 
         </div>
 
-        <!-- Precio y botón -->
         <div class="text-right">
           <div class="text-green-400 font-bold text-xl">Bs. {{vuelo.precio_Base}}</div>
           <div class="text-xs text-gray-400 mb-3">precio base</div>

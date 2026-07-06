@@ -47,8 +47,30 @@ export class SeleccionarAsientoComponent implements OnInit {
 
   ngOnInit(): void {
     this.programacionId = Number(this.route.snapshot.paramMap.get('id'));
-    this.vuelo = history.state.vuelo;
+    this.vuelo = this.resolverVuelo();
     this.cargarAsientos();
+  }
+
+  private resolverVuelo(): any {
+    // 1) Caso normal: viene por navegación directa desde landing/consultar-vuelo
+    if (history.state?.vuelo) {
+      return history.state.vuelo;
+    }
+
+    // 2) Fallback: viene de un login intermedio o recarga de página,
+    // donde el state de Angular Router se pierde
+    const vueloPendienteRaw = sessionStorage.getItem('vuelo_pendiente');
+    if (vueloPendienteRaw) {
+      try {
+        const vuelo = JSON.parse(vueloPendienteRaw);
+        sessionStorage.removeItem('vuelo_pendiente');
+        return vuelo;
+      } catch {
+        sessionStorage.removeItem('vuelo_pendiente');
+      }
+    }
+
+    return null;
   }
 
   cargarAsientos(): void {

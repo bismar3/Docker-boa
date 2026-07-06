@@ -2,6 +2,7 @@
 using MSVenta.Venta.Models;
 using MSVenta.Venta.Services;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MSVenta.Venta.Controllers
@@ -11,6 +12,7 @@ namespace MSVenta.Venta.Controllers
     public class AeropuertoController : ControllerBase
     {
         private readonly IAeropuertoService _aeropuertoService;
+
         public AeropuertoController(IAeropuertoService aeropuertoService)
         {
             _aeropuertoService = aeropuertoService;
@@ -23,6 +25,40 @@ namespace MSVenta.Venta.Controllers
             {
                 var items = await _aeropuertoService.GetAll();
                 return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("geocode")]
+        public async Task<ActionResult> Geocode([FromQuery] string ciudad, [FromQuery] string pais)
+        {
+            try
+            {
+                var resultado = await _aeropuertoService.GeocodeCiudad(ciudad, pais);
+                if (resultado.Latitud == null || resultado.Longitud == null)
+                    return NotFound(new { message = "No se encontraron coordenadas para esa ciudad." });
+
+                return Ok(new { latitud = resultado.Latitud, longitud = resultado.Longitud });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("buscar")]
+        public async Task<ActionResult> BuscarAeropuertos([FromQuery] string texto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(texto) || texto.Length < 2)
+                    return Ok(new List<AeropuertoSugerencia>());
+
+                var resultados = await _aeropuertoService.BuscarAeropuertos(texto);
+                return Ok(resultados);
             }
             catch (Exception ex)
             {

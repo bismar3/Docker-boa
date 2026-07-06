@@ -2,6 +2,7 @@
 using MSVenta.Venta.Models;
 using MSVenta.Venta.Repositories;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MSVenta.Venta.Services
@@ -9,6 +10,7 @@ namespace MSVenta.Venta.Services
     public class TripulacionService : ITripulacionService
     {
         private readonly ContextDatabase _context;
+
         public TripulacionService(ContextDatabase context)
         {
             _context = context;
@@ -19,6 +21,12 @@ namespace MSVenta.Venta.Services
 
         public async Task<Tripulacion> GetById(int id) =>
             await _context.Tripulaciones.FindAsync(id);
+
+        public async Task<IEnumerable<Tripulacion>> GetByProgramacion(int programacionId) =>
+            await _context.Tripulaciones
+                .Include(t => t.Empleado)
+                .Where(t => t.Programacion_Vuelo_Id == programacionId)
+                .ToListAsync();
 
         public async Task Create(Tripulacion t)
         {

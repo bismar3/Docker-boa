@@ -12,6 +12,7 @@ namespace MSVenta.Venta.Services
         Task Create(ProgramacionVuelo p);
         Task Update(ProgramacionVuelo p);
         Task Delete(int id);
+        Task RegenerarAsientos(int programacionId);
     }
 
     public class VueloBusquedaResult

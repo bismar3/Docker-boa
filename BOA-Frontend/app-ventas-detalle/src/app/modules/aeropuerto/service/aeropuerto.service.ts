@@ -5,6 +5,14 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment.development';
 import { Aeropuerto } from '../../../interfaces/aeropuerto.interface';
 
+export interface AeropuertoSugerencia {
+  nombre: string;
+  ciudad: string;
+  pais: string;
+  latitud: number;
+  longitud: number;
+}
+
 const httpOptions = (token: string) => ({
   headers: new HttpHeaders({
     'Content-Type': 'application/json',
@@ -28,6 +36,12 @@ export class AeropuertoService {
       );
     }
     return of([]);
+  }
+
+  public getAllPublic(): Observable<Aeropuerto[]> {
+    return this.http.get<Aeropuerto[]>(this.url).pipe(
+      catchError(this.handleError('getAllPublic', []))
+    );
   }
 
   public getById(id: number): Observable<Aeropuerto> {
@@ -68,6 +82,19 @@ export class AeropuertoService {
       );
     }
     return of();
+  }
+
+  public buscarAeropuertos(texto: string): Observable<AeropuertoSugerencia[]> {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      return this.http.get<AeropuertoSugerencia[]>(
+        `${this.url}/buscar?texto=${encodeURIComponent(texto)}`,
+        httpOptions(token)
+      ).pipe(
+        catchError(this.handleError('buscarAeropuertos', []))
+      );
+    }
+    return of([]);
   }
 
   private handleError<T>(operation = 'operation', result?: T) {

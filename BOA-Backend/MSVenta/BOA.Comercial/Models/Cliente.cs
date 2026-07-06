@@ -12,5 +12,6 @@ namespace BOA.Comercial.Models
         public string Email { get; set; }
         public string Telefono { get; set; }
         public int? Usuario_Id { get; set; }
+        public string Estado { get; set; }
     }
 }

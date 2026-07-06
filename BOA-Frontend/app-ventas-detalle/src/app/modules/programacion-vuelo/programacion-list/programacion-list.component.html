@@ -27,7 +27,7 @@
         <tr *ngFor="let p of programaciones" class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
           <td class="px-2 py-2">{{p.id}}</td>
           <td class="px-2 py-2">
-            <span class="text-cyan-400 font-bold">{{p.codigo_vuelo}}</span>
+            <span class="text-cyan-400 font-bold">{{p.codigo_Vuelo}}</span>
           </td>
           <td class="px-2 py-2">{{getRuta(p.ruta_Id)}}</td>
           <td class="px-2 py-2">{{getNombreAeronave(p.aeronave_Id)}}</td>
@@ -47,17 +47,21 @@
           </td>
           <td class="px-2 py-2">
             <div class="flex gap-1 justify-center">
-              <button title="Ver"
+              <button [routerLink]="['../view', p.id]" title="Ver"
                 class="bg-cyan-600 text-white px-2 py-1 rounded-lg hover:bg-cyan-700 transition-all duration-300">
                 👁️
               </button>
-              <button title="Reprogramar"
+              <button [routerLink]="['../reprogramar', p.id]" title="Reprogramar"
                 class="bg-gray-600 text-white px-2 py-1 rounded-lg hover:bg-gray-700 transition-all duration-300">
                 📅
               </button>
-              <button title="Editar"
+              <button [routerLink]="['../edit', p.id]" title="Editar"
                 class="bg-yellow-500 text-white px-2 py-1 rounded-lg hover:bg-yellow-600 transition-all duration-300">
                 ✏️
+              </button>
+              <button (click)="regenerarAsientos(p.id!)" title="Regenerar Asientos"
+                class="bg-purple-600 text-white px-2 py-1 rounded-lg hover:bg-purple-700 transition-all duration-300">
+                💺
               </button>
               <button (click)="delete(p.id!)" title="Eliminar"
                 class="bg-red-600 text-white px-2 py-1 rounded-lg hover:bg-red-700 transition-all duration-300">

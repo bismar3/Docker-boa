@@ -5,6 +5,17 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment.development';
 import { Ruta } from '../../../interfaces/ruta.interface';
 
+export interface RutaCalculo {
+  distanciaKm: number;
+  duracionEstimada: string;
+}
+
+export interface RutaLlegadaCalculo {
+  fechaLlegada: string;
+  horaLlegada: string;
+  duracionTotalMinutos: number;
+}
+
 const httpOptions = (token: string) => ({
   headers: new HttpHeaders({
     'Content-Type': 'application/json',
@@ -45,6 +56,28 @@ export class RutaService {
     const token = sessionStorage.getItem('token');
     if (token) return this.http.delete(`${this.url}/${id}`, httpOptions(token)).pipe(catchError(this.handleError('delete')));
     return of();
+  }
+
+  public calcularDistancia(origenId: number, destinoId: number): Observable<RutaCalculo | null> {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      return this.http.get<RutaCalculo>(
+        `${this.url}/calcular-distancia?origenId=${origenId}&destinoId=${destinoId}`,
+        httpOptions(token)
+      ).pipe(catchError(this.handleError<RutaCalculo | null>('calcularDistancia', null)));
+    }
+    return of(null);
+  }
+
+  public calcularLlegada(rutaId: number, fechaSalida: string, horaSalida: string): Observable<RutaLlegadaCalculo | null> {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      return this.http.get<RutaLlegadaCalculo>(
+        `${this.url}/calcular-llegada?rutaId=${rutaId}&fechaSalida=${fechaSalida}&horaSalida=${horaSalida}`,
+        httpOptions(token)
+      ).pipe(catchError(this.handleError<RutaLlegadaCalculo | null>('calcularLlegada', null)));
+    }
+    return of(null);
   }
 
   private handleError<T>(operation = 'operation', result?: T) {

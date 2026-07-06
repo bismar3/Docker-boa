@@ -3,26 +3,38 @@ import { Rol } from '../../../interfaces/rol.interface';
 import { RolService } from '../rol.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-rol-list',
-  imports: [
-    CommonModule,
-    RouterModule,
-  ],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './rol-list.component.html',
   styleUrl: './rol-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RolListComponent {
   @Input() public roles: Rol[] = [];
+  searchTerm: string = '';
 
   constructor(
     private rolesService: RolService,
     private cdr: ChangeDetectorRef,
-    private router:Router
+    private router: Router
   ) {}
+
+  get filteredRoles(): Rol[] {
+    if (!this.searchTerm.trim()) return this.roles;
+    const texto = this.searchTerm.toLowerCase();
+    return this.roles.filter(r =>
+      r.nombre_Rol?.toLowerCase().includes(texto) ||
+      r.descripcion?.toLowerCase().includes(texto)
+    );
+  }
+
+  onSearchChange(): void {
+    this.cdr.markForCheck();
+  }
 
   deleteRol(rol_id: number): void {
     this.rolesService.deleteRol(rol_id).subscribe({
@@ -33,7 +45,6 @@ export class RolListComponent {
           text: 'El rol ha sido eliminado exitosamente.',
           confirmButtonText: 'OK',
         }).then(() => {
-          // Recargar la lista de productos
           this.reloadRoles();
         });
         this.cdr.markForCheck();
@@ -54,7 +65,7 @@ export class RolListComponent {
   reloadRoles(): void {
     this.rolesService.getRoles().subscribe({
       next: (roles) => {
-        this.roles = roles; // Actualiza la lista de productos
+        this.roles = roles;
         this.cdr.markForCheck();
       },
       error: (err) => {
@@ -64,7 +75,7 @@ export class RolListComponent {
     });
   }
 
-  createRole():void{
+  createRole(): void {
     this.router.navigate(['/dashboard/roles/add']);
   }
 }

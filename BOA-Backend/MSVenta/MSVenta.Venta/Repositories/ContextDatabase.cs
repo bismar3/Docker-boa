@@ -19,6 +19,7 @@ namespace MSVenta.Venta.Repositories
         public DbSet<Tripulacion> Tripulaciones { get; set; }
         public DbSet<AsientoProgramacion> AsientoProgramaciones { get; set; }
         public DbSet<ProgramacionPrecio> ProgramacionPrecios { get; set; }
+        public DbSet<Salida> Salidas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +35,7 @@ namespace MSVenta.Venta.Repositories
             modelBuilder.Entity<Tripulacion>().ToTable("tripulaciones");
             modelBuilder.Entity<AsientoProgramacion>().ToTable("asiento_programacion");
             modelBuilder.Entity<ProgramacionPrecio>().ToTable("programacion_precios");
+            modelBuilder.Entity<Salida>().ToTable("salidas");
 
             // Tramo
             modelBuilder.Entity<Tramo>()

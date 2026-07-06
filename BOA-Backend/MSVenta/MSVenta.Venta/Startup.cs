@@ -18,7 +18,6 @@ namespace MSVenta.Venta
             Configuration = configuration;
         }
         public IConfiguration Configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -26,8 +25,7 @@ namespace MSVenta.Venta
             {
                 opt.UseMySQL(Configuration["mysql:cn"]);
             });
-
-            services.AddScoped<IAeropuertoService, AeropuertoService>();
+            services.AddHttpClient<IAeropuertoService, AeropuertoService>();
             services.AddScoped<IAeronaveService, AeronaveService>();
             services.AddScoped<ITipoClaseService, TipoClaseService>();
             services.AddScoped<IEmpleadoService, EmpleadoService>();
@@ -37,10 +35,9 @@ namespace MSVenta.Venta
             services.AddScoped<ITramoService, TramoService>();
             services.AddScoped<IRutaTramoService, RutaTramoService>();
             services.AddScoped<IAsientoService, AsientoService>();
-
+            services.AddScoped<ISalidaService, SalidaService>();
             services.AddProxyHttp();
         }
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

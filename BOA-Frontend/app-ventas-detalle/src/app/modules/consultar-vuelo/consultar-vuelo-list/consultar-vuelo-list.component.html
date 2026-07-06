@@ -1,0 +1,47 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl min-h-screen">
+
+  <h2 class="text-3xl font-bold mb-8 flex items-center gap-2">
+    🔎 Consultar Vuelos
+  </h2>
+
+  <div class="flex flex-wrap gap-3 items-center mb-6 bg-gray-800 p-4 rounded-2xl">
+    <div class="flex items-center gap-2 bg-gray-700 rounded-xl px-3 py-2 flex-1 min-w-48">
+      <span>🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="filtroTexto"
+        placeholder="Buscar por código de vuelo..."
+        class="bg-transparent outline-none text-white w-full text-sm"/>
+    </div>
+    <button (click)="filtrar()"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      Filtrar
+    </button>
+    <button (click)="limpiar()"
+      class="border border-gray-500 text-gray-300 hover:bg-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      Limpiar
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="text-center text-gray-400 py-10">Cargando...</div>
+
+  <div *ngIf="!cargando" class="grid gap-4">
+    <div *ngFor="let p of programacionesFiltradas"
+      (click)="verDetalle(p)"
+      class="bg-gray-800 rounded-2xl p-5 border border-gray-700 hover:border-cyan-500 cursor-pointer transition-all">
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div class="flex items-center gap-6">
+          <span class="text-cyan-400 font-bold text-lg">{{ p.codigo_Vuelo }}</span>
+          <span class="text-white font-semibold">{{ getCodigoIATA(p.aeropuerto_Origen_Id) }} → {{ getCodigoIATA(p.aeropuerto_Destino_Id) }}</span>
+          <span class="text-gray-400 text-sm">{{ p.fecha_Salida }} {{ p.hora_Salida }}</span>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="getEstadoClass(p.estado)">
+          {{ p.estado }}
+        </span>
+      </div>
+    </div>
+    <div *ngIf="programacionesFiltradas.length === 0" class="text-center text-gray-400 py-10">
+      No hay vuelos registrados.
+    </div>
+  </div>
+</div>

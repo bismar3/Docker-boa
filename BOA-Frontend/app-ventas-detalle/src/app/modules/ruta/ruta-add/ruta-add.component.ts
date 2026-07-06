@@ -24,6 +24,8 @@ export class RutaAddComponent implements OnInit {
     tipo: 'Nacional'
   };
   aeropuertos: Aeropuerto[] = [];
+  calculando: boolean = false;
+  calculoAutomatico: boolean = false;
 
   constructor(
     private rutaService: RutaService,
@@ -37,6 +39,34 @@ export class RutaAddComponent implements OnInit {
       this.aeropuertos = data;
       this.cdr.markForCheck();
     });
+  }
+
+  onCambioAeropuerto(): void {
+    this.calculoAutomatico = false;
+
+    if (this.ruta.aeropuerto_Origen_Id === 0 || this.ruta.aeropuerto_Destino_Id === 0) {
+      return;
+    }
+
+    if (this.ruta.aeropuerto_Origen_Id === this.ruta.aeropuerto_Destino_Id) {
+      return;
+    }
+
+    this.calculando = true;
+    this.cdr.markForCheck();
+
+    this.rutaService.calcularDistancia(this.ruta.aeropuerto_Origen_Id, this.ruta.aeropuerto_Destino_Id)
+      .subscribe(resultado => {
+        this.calculando = false;
+
+        if (resultado) {
+          this.ruta.distancia = resultado.distanciaKm;
+          this.ruta.duracion_Estimada = resultado.duracionEstimada;
+          this.calculoAutomatico = true;
+        }
+
+        this.cdr.markForCheck();
+      });
   }
 
   save(): void {

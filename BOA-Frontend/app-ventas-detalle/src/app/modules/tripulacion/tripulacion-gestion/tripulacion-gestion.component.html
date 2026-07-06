@@ -1,0 +1,116 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl min-h-screen">
+
+  <h2 class="text-3xl font-bold mb-2 flex items-center gap-2">
+    👥 Gestionar Tripulación
+  </h2>
+  <p class="text-gray-400 mb-6">Seleccione una programación de vuelo para asignar tripulación.</p>
+
+  <!-- Selector de vuelo -->
+  <div class="flex gap-3 mb-8">
+    <select [(ngModel)]="programacionSeleccionada"
+      class="flex-1 px-4 py-3 bg-gray-800 text-white rounded-xl border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      <option value="0" disabled>Seleccionar programación de vuelo...</option>
+      <option *ngFor="let p of programaciones" [value]="p.id">{{ getLabelVuelo(p) }}</option>
+    </select>
+    <button (click)="verTripulacion()"
+      class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white px-6 py-3 rounded-xl font-semibold transition-all">
+      Ver Tripulación
+    </button>
+  </div>
+
+  <!-- Tarjeta del vuelo -->
+  <div *ngIf="vueloActual" class="bg-gray-800 rounded-2xl overflow-hidden border border-gray-700 mb-8">
+    <div class="bg-gradient-to-r from-blue-600 to-cyan-500 p-5">
+      <p class="font-bold text-lg">✈ {{ getLabelVuelo(vueloActual) }}</p>
+      <p class="text-sm text-blue-100">Aeronave: {{ getNombreAeronave(vueloActual.aeronave_Id) }}</p>
+    </div>
+
+    <!-- Cards de cargos -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-5">
+      <div class="border-2 border-blue-500 rounded-2xl p-5 text-center">
+        <p class="text-4xl font-extrabold">{{ totalPilotos }}</p>
+        <p class="text-gray-300 mb-3">Piloto(s)</p>
+        <button (click)="abrirAsignar('Piloto')"
+          class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+          + Asignar Piloto
+        </button>
+      </div>
+      <div class="border-2 border-cyan-400 rounded-2xl p-5 text-center">
+        <p class="text-4xl font-extrabold">{{ totalCopilotos }}</p>
+        <p class="text-gray-300 mb-3">Copiloto(s)</p>
+        <button (click)="abrirAsignar('Copiloto')"
+          class="border border-cyan-400 text-cyan-300 hover:bg-cyan-500 hover:text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+          + Asignar Copiloto
+        </button>
+      </div>
+      <div class="border-2 border-gray-500 rounded-2xl p-5 text-center">
+        <p class="text-4xl font-extrabold">{{ totalAuxiliares }}</p>
+        <p class="text-gray-300 mb-3">Auxiliar(es)</p>
+        <button (click)="abrirAsignar('Auxiliar')"
+          class="border border-gray-500 text-gray-300 hover:bg-gray-600 hover:text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+          + Asignar Auxiliar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div *ngIf="vueloActual" class="overflow-x-auto">
+    <table class="min-w-full table-auto text-sm text-center bg-gray-800 rounded-lg shadow-lg border-separate border-spacing-1 border border-gray-700">
+      <thead>
+        <tr class="bg-gradient-to-r from-blue-700 to-cyan-600 text-white">
+          <th class="px-2 py-2 text-left rounded-l-lg">#</th>
+          <th class="px-2 py-2 text-left">NOMBRE COMPLETO</th>
+          <th class="px-2 py-2 text-left">CARGO</th>
+          <th class="px-2 py-2 text-left">LICENCIA</th>
+          <th class="px-2 py-2 text-left rounded-r-lg">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of tripulacionActual; let i = index"
+          class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
+          <td class="px-2 py-2">{{ i + 1 }}</td>
+          <td class="px-2 py-2 font-semibold">{{ t.empleado?.nombre }} {{ t.empleado?.apellido }}</td>
+          <td class="px-2 py-2">
+            <span class="px-2 py-1 rounded-full text-xs font-semibold" [ngClass]="getCargoClass(t.cargo)">
+              {{ t.cargo }}
+            </span>
+          </td>
+          <td class="px-2 py-2">{{ t.empleado?.licencia || '-' }}</td>
+          <td class="px-2 py-2">
+            <button (click)="remover(t)"
+              class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-semibold transition-all">
+              👤 Remover
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="tripulacionActual.length === 0">
+          <td colspan="5" class="px-2 py-6 text-gray-400">No hay tripulación asignada</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal asignar -->
+  <div *ngIf="mostrarSelector"
+    class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+    <div class="bg-gray-800 rounded-2xl p-6 w-full max-w-md border border-gray-700">
+      <h3 class="text-xl font-bold mb-4">Asignar {{ cargoSeleccionado }}</h3>
+      <select [(ngModel)]="empleadoSeleccionado"
+        class="w-full px-4 py-3 bg-gray-900 text-white rounded-xl border border-gray-700 mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        <option value="0" disabled>Seleccionar empleado...</option>
+        <option *ngFor="let e of empleados" [value]="e.id">{{ e.nombre }} {{ e.apellido }} ({{ e.cargo }})</option>
+      </select>
+      <div class="flex gap-3">
+        <button (click)="asignar()"
+          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl font-semibold transition-all">
+          ✅ Asignar
+        </button>
+        <button (click)="cerrarAsignar()"
+          class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-xl font-semibold transition-all">
+          ✕ Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

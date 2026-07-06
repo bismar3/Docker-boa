@@ -31,13 +31,13 @@ export class ProgramacionVueloService {
 
   public create(p: ProgramacionVuelo): Observable<ProgramacionVuelo> {
     const token = sessionStorage.getItem('token');
-    if (token) return this.http.post<ProgramacionVuelo>(this.url, p, httpOptions(token)).pipe(catchError(this.handleError<ProgramacionVuelo>('create')));
+    if (token) return this.http.post<ProgramacionVuelo>(this.url, p, httpOptions(token));
     return of();
   }
 
   public update(p: ProgramacionVuelo): Observable<ProgramacionVuelo> {
     const token = sessionStorage.getItem('token');
-    if (token) return this.http.put<ProgramacionVuelo>(`${this.url}/${p.id}`, p, httpOptions(token)).pipe(catchError(this.handleError<ProgramacionVuelo>('update')));
+    if (token) return this.http.put<ProgramacionVuelo>(`${this.url}/${p.id}`, p, httpOptions(token));
     return of();
   }
 
@@ -45,6 +45,14 @@ export class ProgramacionVueloService {
     const token = sessionStorage.getItem('token');
     if (token) return this.http.delete(`${this.url}/${id}`, httpOptions(token)).pipe(catchError(this.handleError('delete')));
     return of();
+  }
+
+  public regenerarAsientos(id: number): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      return this.http.post(`${this.url}/${id}/regenerar-asientos`, {}, httpOptions(token));
+    }
+    return of(null);
   }
 
   private handleError<T>(operation = 'operation', result?: T) {

@@ -42,11 +42,17 @@
               </ng-container>
               <span *ngIf="getSubTramos(t.id!).length === 0">—</span>
             </td>
-            <td class="px-6 py-4">
-              <button (click)="delete(t.id!)"
-                class="bg-gradient-to-r from-red-600 to-red-700 text-white px-1 py-1 rounded-lg shadow-md hover:from-red-700 hover:to-red-800 transition-all duration-300">
-                Eliminar
-              </button>
+            <td class="px-2 py-2">
+              <div class="flex gap-1 justify-center">
+                <button [routerLink]="['../edit', t.id]"
+                  class="bg-yellow-500 text-white px-2 py-1 rounded-lg shadow-md hover:bg-yellow-600 transition-all duration-300">
+                  Editar
+                </button>
+                <button (click)="delete(t.id!)"
+                  class="bg-gradient-to-r from-red-600 to-red-700 text-white px-2 py-1 rounded-lg shadow-md hover:from-red-700 hover:to-red-800 transition-all duration-300">
+                  Eliminar
+                </button>
+              </div>
             </td>
           </tr>
         </ng-container>

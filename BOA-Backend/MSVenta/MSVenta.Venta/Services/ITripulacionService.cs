@@ -8,6 +8,7 @@ namespace MSVenta.Venta.Services
     {
         Task<IEnumerable<Tripulacion>> GetAll();
         Task<Tripulacion> GetById(int id);
+        Task<IEnumerable<Tripulacion>> GetByProgramacion(int programacionId);
         Task Create(Tripulacion tripulacion);
         Task Delete(int id);
     }

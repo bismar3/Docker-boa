@@ -30,7 +30,10 @@ namespace MSVenta.Venta.Services
 
             var resultados = new List<VueloBusquedaResult>();
 
-            foreach (var prog in programaciones.Where(p => p.Estado == "Programado"))
+            // Estados que representan un vuelo todavía vendible/reservable
+            var estadosValidos = new[] { "Programado", "Reprogramado" };
+
+            foreach (var prog in programaciones.Where(p => estadosValidos.Contains(p.Estado)))
             {
                 // Opción 1: vuelo directo origen→destino
                 if (prog.Aeropuerto_Origen_Id == origenId && prog.Aeropuerto_Destino_Id == destinoId)
@@ -39,12 +42,10 @@ namespace MSVenta.Venta.Services
                         .Where(rt => rt.Ruta_Id == prog.Ruta_Id && rt.Tramo != null)
                         .ToList();
 
-                    // Solo tramos raíz (sin padre) de esta ruta
                     var tramosRaiz = tramosDeRuta
                         .Where(rt => rt.Tramo != null && rt.Tramo.Tramo_Padre_Id == null)
                         .ToList();
 
-                    // Contar solo hijos directos del tramo raíz
                     var subTramos = tramosRaiz
                         .SelectMany(rt => todosLosTramos.Where(t => t.Tramo_Padre_Id == rt.Tramo_Id))
                         .ToList();
@@ -83,7 +84,6 @@ namespace MSVenta.Venta.Services
 
                 foreach (var subTramo in subTramosHijos)
                 {
-                    // Buscar si el tramo padre pertenece a la ruta de esta programación
                     var rtDelPadre = rutaTramos.FirstOrDefault(rt =>
                         rt.Ruta_Id == prog.Ruta_Id &&
                         rt.Tramo_Id == subTramo.Tramo_Padre_Id);
@@ -122,8 +122,26 @@ namespace MSVenta.Venta.Services
             _context.ProgramacionVuelos.Add(p);
             await _context.SaveChangesAsync();
 
+            await GenerarAsientosParaVuelo(p.Id, p.Aeronave_Id);
+        }
+
+        public async Task RegenerarAsientos(int programacionId)
+        {
+            var prog = await _context.ProgramacionVuelos.FindAsync(programacionId);
+            if (prog == null) return;
+
+            var yaExisten = await _context.AsientoProgramaciones
+                .AnyAsync(ap => ap.Programacion_Vuelo_Id == programacionId);
+
+            if (yaExisten) return; // evita duplicar si ya tiene asientos generados
+
+            await GenerarAsientosParaVuelo(programacionId, prog.Aeronave_Id);
+        }
+
+        private async Task GenerarAsientosParaVuelo(int programacionId, int aeronaveId)
+        {
             var asientos = await _context.Asientos
-                .Where(a => a.Aeronave_Id == p.Aeronave_Id)
+                .Where(a => a.Aeronave_Id == aeronaveId)
                 .ToListAsync();
 
             foreach (var asiento in asientos)
@@ -131,7 +149,7 @@ namespace MSVenta.Venta.Services
                 _context.AsientoProgramaciones.Add(new AsientoProgramacion
                 {
                     Asiento_Id = asiento.Id,
-                    Programacion_Vuelo_Id = p.Id,
+                    Programacion_Vuelo_Id = programacionId,
                     Estado = "Disponible"
                 });
             }

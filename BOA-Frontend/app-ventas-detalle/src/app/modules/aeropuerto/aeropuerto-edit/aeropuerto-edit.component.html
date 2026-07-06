@@ -1,0 +1,80 @@
+<div class="container mt-8 max-w-4xl mx-auto px-6">
+  <h2 class="text-4xl font-extrabold mb-8 text-center text-transparent bg-gradient-to-r from-gray-700 to-blue-800 bg-clip-text">
+    Editar Aeropuerto
+  </h2>
+
+  <div *ngIf="cargando" class="text-center text-gray-400">Cargando...</div>
+
+  <div *ngIf="!cargando" class="space-y-8">
+
+    <div class="mb-6 relative">
+      <label class="block text-lg font-semibold text-white">🔍 Buscar otro Aeropuerto (opcional)</label>
+      <input type="text" [(ngModel)]="textoBusqueda" (input)="onBuscarInput()"
+        placeholder="Ej: El Alto, Viru Viru, Jorge Wilstermann..."
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+
+      <p *ngIf="buscando" class="text-cyan-400 text-sm mt-2">🔄 Buscando...</p>
+      <p *ngIf="seleccionRealizada" class="text-green-400 text-sm mt-2">✅ Datos actualizados desde la selección</p>
+
+      <div *ngIf="sugerencias.length > 0"
+        class="absolute z-20 w-full bg-gray-800 border border-gray-600 rounded-xl shadow-lg mt-1 overflow-hidden">
+        <div *ngFor="let s of sugerencias; let i = index"
+          (mousedown)="$event.preventDefault(); seleccionarSugerencia(s)"
+          [class.bg-cyan-700]="i === 0"
+          class="px-4 py-3 cursor-pointer border-b border-gray-700 last:border-0 hover:bg-gray-700 transition-colors">
+          <p class="font-bold text-white">{{ s.nombre }}</p>
+          <p class="text-gray-300 text-sm">{{ s.ciudad }}, {{ s.pais }}</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="border-gray-700"/>
+
+    <div class="mb-6">
+      <label class="block text-lg font-semibold text-white">Código IATA</label>
+      <input type="text" [(ngModel)]="aeropuerto.codigo_IATA" placeholder="Ej: LPB"
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+    </div>
+    <div class="mb-6">
+      <label class="block text-lg font-semibold text-white">Nombre</label>
+      <input type="text" [(ngModel)]="aeropuerto.nombre" placeholder="Nombre del aeropuerto"
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+    </div>
+    <div class="mb-6">
+      <label class="block text-lg font-semibold text-white">Ciudad</label>
+      <input type="text" [(ngModel)]="aeropuerto.ciudad" placeholder="Ciudad"
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+    </div>
+    <div class="mb-6">
+      <label class="block text-lg font-semibold text-white">País</label>
+      <input type="text" [(ngModel)]="aeropuerto.pais" placeholder="País"
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <label class="block text-lg font-semibold text-white">Latitud</label>
+        <input type="number" step="any" [(ngModel)]="aeropuerto.latitud" placeholder="Ej: -17.7834217"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+      <div>
+        <label class="block text-lg font-semibold text-white">Longitud</label>
+        <input type="number" step="any" [(ngModel)]="aeropuerto.longitud" placeholder="Ej: -63.1820853"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <button (click)="save()"
+        class="py-3 px-6 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg shadow-xl hover:from-blue-700 hover:to-cyan-600 transform hover:scale-110 transition-all duration-300">
+        Guardar Cambios
+      </button>
+    </div>
+    <div class="mt-4 text-center">
+      <a routerLink="/dashboard/aeropuerto/list"
+        class="py-3 px-6 bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold rounded-lg shadow-xl hover:from-gray-800 hover:to-gray-700 transform hover:scale-110 transition-all duration-300">
+        Volver
+      </a>
+    </div>
+  </div>
+</div>

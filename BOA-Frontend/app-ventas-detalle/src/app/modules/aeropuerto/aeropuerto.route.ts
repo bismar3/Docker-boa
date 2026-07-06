@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AeropuertoListComponent } from './aeropuerto-list/aeropuerto-list.component';
 import { AeropuertoAddComponent } from './aeropuerto-add/aeropuerto-add.component';
+import { AeropuertoEditComponent } from './aeropuerto-edit/aeropuerto-edit.component';
 
 export const aeropuerto_routes: Routes = [
   {
@@ -10,6 +11,10 @@ export const aeropuerto_routes: Routes = [
   {
     path: 'add',
     component: AeropuertoAddComponent
+  },
+  {
+    path: 'edit/:id',
+    component: AeropuertoEditComponent
   },
   {
     path: '**',

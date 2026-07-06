@@ -3,6 +3,6 @@ export interface Aeronave {
   matricula: string;
   modelo: string;
   fabricante: string;
-  capacidad_total: number;
+  capacidad_Total: number;
   estado: string;
 }

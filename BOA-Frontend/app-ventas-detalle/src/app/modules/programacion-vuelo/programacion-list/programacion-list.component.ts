@@ -71,8 +71,10 @@ export class ProgramacionListComponent implements OnInit {
   getEstadoClass(estado: string): string {
     switch (estado) {
       case 'Programado': return 'bg-blue-600';
+      case 'Reprogramado': return 'bg-yellow-600';
       case 'Salido': return 'bg-green-600';
       case 'Completo': return 'bg-gray-600';
+      case 'PendienteReprogramacion': return 'bg-red-600';
       default: return 'bg-gray-600';
     }
   }
@@ -81,5 +83,17 @@ export class ProgramacionListComponent implements OnInit {
     if (confirm('¿Eliminar esta programación?')) {
       this.programacionService.delete(id).subscribe(() => this.load());
     }
+  }
+
+  regenerarAsientos(id: number): void {
+    this.programacionService.regenerarAsientos(id).subscribe({
+      next: (res: any) => {
+        alert(res?.message || 'Asientos regenerados correctamente.');
+      },
+      error: (err) => {
+        console.error('Error al regenerar asientos:', err);
+        alert('Error al regenerar asientos.');
+      }
+    });
   }
 }

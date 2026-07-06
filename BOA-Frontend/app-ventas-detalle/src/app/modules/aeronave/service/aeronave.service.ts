@@ -5,6 +5,20 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment.development';
 import { Aeronave } from '../../../interfaces/aeronave.interface';
 
+export interface ClaseConfig {
+  tipo_Clase_Id: number;
+  cantidad: number;
+  columnas_Por_Fila: number;
+}
+
+export interface AeronaveConAsientos {
+  matricula: string;
+  modelo: string;
+  fabricante: string;
+  estado: string;
+  clases: ClaseConfig[];
+}
+
 const httpOptions = (token: string) => ({
   headers: new HttpHeaders({
     'Content-Type': 'application/json',
@@ -30,6 +44,11 @@ export class AeronaveService {
   public create(aeronave: Aeronave): Observable<Aeronave> {
     const token = sessionStorage.getItem('token');
     if (token) return this.http.post<Aeronave>(this.url, aeronave, httpOptions(token)).pipe(catchError(this.handleError<Aeronave>('create')));
+    return of();
+  }
+  public createConAsientos(dto: AeronaveConAsientos): Observable<any> {
+    const token = sessionStorage.getItem('token');
+    if (token) return this.http.post(`${this.url}/con-asientos`, dto, httpOptions(token));
     return of();
   }
   public update(id: number, aeronave: Aeronave): Observable<Aeronave> {

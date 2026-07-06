@@ -1,0 +1,77 @@
+<p>ingreso-list works!</p>
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl min-h-screen">
+
+  <h2 class="text-3xl font-bold mb-8 flex items-center gap-2">
+    📈 Gestionar Ingresos
+  </h2>
+
+  <!-- Cards resumen -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+    <div class="bg-green-700 rounded-2xl p-5 text-center shadow-lg">
+      <p class="text-sm text-green-200 font-semibold">Total Ingresos</p>
+      <p class="text-4xl font-extrabold text-green-300 mt-1">${{ totalIngresos.toFixed(2) }}</p>
+    </div>
+    <div class="bg-blue-700 rounded-2xl p-5 text-center shadow-lg">
+      <p class="text-sm text-blue-200 font-semibold">Total Registros</p>
+      <p class="text-4xl font-extrabold text-white mt-1">{{ totalRegistros }}</p>
+    </div>
+  </div>
+
+  <!-- Filtro -->
+  <div class="flex flex-wrap gap-3 items-center mb-6 bg-gray-800 p-4 rounded-2xl">
+    <div class="flex items-center gap-2 bg-gray-700 rounded-xl px-3 py-2 flex-1 min-w-48">
+      <span>🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="filtroTexto"
+        placeholder="Buscar por código de venta o vuelo..."
+        class="bg-transparent outline-none text-white w-full text-sm"/>
+    </div>
+    <button (click)="filtrar()"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      Filtrar
+    </button>
+    <button (click)="limpiar()"
+      class="border border-gray-500 text-gray-300 hover:bg-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      Limpiar
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="text-center text-gray-400 py-10">Cargando...</div>
+
+  <!-- Tabla -->
+  <div *ngIf="!cargando" class="overflow-x-auto">
+    <table class="min-w-full table-auto text-sm text-center bg-gray-800 rounded-lg shadow-lg border-separate border-spacing-1 border border-gray-700">
+      <thead>
+        <tr class="bg-gradient-to-r from-green-600 to-emerald-500 text-white">
+          <th class="px-2 py-2 text-left rounded-l-lg">#</th>
+          <th class="px-2 py-2 text-left">CÓDIGO VENTA</th>
+          <th class="px-2 py-2 text-left">VUELO</th>
+          <th class="px-2 py-2 text-left">CONCEPTO</th>
+          <th class="px-2 py-2 text-left">MONTO</th>
+          <th class="px-2 py-2 text-left">FECHA</th>
+          <th class="px-2 py-2 text-left rounded-r-lg">ESTADO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of ingresosFiltrados"
+          class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
+          <td class="px-2 py-2">{{ i.id }}</td>
+          <td class="px-2 py-2 font-bold text-green-400">{{ i.codigo_Venta }}</td>
+          <td class="px-2 py-2 text-cyan-400 font-bold">ID: {{ i.programacion_Vuelo_Id }}</td>
+          <td class="px-2 py-2">{{ i.concepto }}</td>
+          <td class="px-2 py-2 text-white font-bold">${{ i.monto.toFixed(2) }}</td>
+          <td class="px-2 py-2 text-gray-400 text-xs">{{ i.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td class="px-2 py-2">
+            <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-600">
+              {{ i.estado }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="ingresosFiltrados.length === 0">
+          <td colspan="7" class="px-2 py-6 text-gray-400">No hay ingresos registrados</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

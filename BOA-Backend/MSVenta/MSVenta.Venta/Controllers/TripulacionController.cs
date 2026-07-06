@@ -11,6 +11,7 @@ namespace MSVenta.Venta.Controllers
     public class TripulacionController : ControllerBase
     {
         private readonly ITripulacionService _tripulacionService;
+
         public TripulacionController(ITripulacionService tripulacionService)
         {
             _tripulacionService = tripulacionService;
@@ -22,6 +23,20 @@ namespace MSVenta.Venta.Controllers
             try
             {
                 var items = await _tripulacionService.GetAll();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("vuelo/{programacionId}")]
+        public async Task<ActionResult> GetByProgramacion(int programacionId)
+        {
+            try
+            {
+                var items = await _tripulacionService.GetByProgramacion(programacionId);
                 return Ok(items);
             }
             catch (Exception ex)

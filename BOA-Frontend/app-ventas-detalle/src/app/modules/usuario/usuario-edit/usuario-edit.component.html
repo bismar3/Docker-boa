@@ -1,0 +1,130 @@
+<div class="container mt-8 max-w-4xl mx-auto px-6">
+  <h2 class="text-4xl font-extrabold mb-8 text-center text-transparent bg-gradient-to-r from-gray-700 to-blue-800 bg-clip-text">
+    Editar Usuario
+  </h2>
+
+  <div *ngIf="cargando" class="text-center text-gray-400">Cargando...</div>
+
+  <form *ngIf="!cargando" [formGroup]="userForm" (ngSubmit)="save()" class="space-y-6">
+
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <label for="username" class="block text-lg font-semibold text-white">Username</label>
+        <input
+          type="text"
+          id="username"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+          formControlName="username"
+          placeholder="Username"
+        />
+        <div *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched" class="text-red-500 text-sm mt-2">
+          El username es requerido (máximo 30 caracteres).
+        </div>
+      </div>
+      <div>
+        <label for="fullname" class="block text-lg font-semibold text-white">Nombre Completo</label>
+        <input
+          type="text"
+          id="fullname"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+          formControlName="fullname"
+          placeholder="Nombre completo"
+        />
+        <div *ngIf="userForm.get('fullname')?.invalid && userForm.get('fullname')?.touched" class="text-red-500 text-sm mt-2">
+          El nombre completo es requerido (máximo 30 caracteres).
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label for="password" class="block text-lg font-semibold text-white">Nueva Contraseña (opcional)</label>
+      <input
+        type="password"
+        id="password"
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+        formControlName="password"
+        placeholder="Dejar vacío para no cambiarla"
+      />
+    </div>
+
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <label for="email" class="block text-lg font-semibold text-white">Email</label>
+        <input
+          type="email"
+          id="email"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+          formControlName="email"
+          placeholder="correo@ejemplo.com"
+        />
+        <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-red-500 text-sm mt-2">
+          Ingresá un email válido.
+        </div>
+      </div>
+      <div>
+        <label for="documento_Identidad" class="block text-lg font-semibold text-white">Documento de Identidad</label>
+        <input
+          type="text"
+          id="documento_Identidad"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+          formControlName="documento_Identidad"
+          placeholder="Ej: 12345678"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <label for="telefono" class="block text-lg font-semibold text-white">Teléfono</label>
+        <input
+          type="text"
+          id="telefono"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+          formControlName="telefono"
+          placeholder="Ej: 70000000"
+        />
+      </div>
+      <div>
+        <label for="fecha_Nacimiento" class="block text-lg font-semibold text-white">Fecha de Nacimiento</label>
+        <input
+          type="date"
+          id="fecha_Nacimiento"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+          formControlName="fecha_Nacimiento"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label for="estado" class="block text-lg font-semibold text-white">Estado</label>
+      <select
+        id="estado"
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+        formControlName="estado"
+      >
+        <option value="Activo">Activo</option>
+        <option value="Inactivo">Inactivo</option>
+        <option value="Bloqueado">Bloqueado</option>
+      </select>
+    </div>
+
+    <div class="text-center">
+      <button
+        type="submit"
+        class="py-3 px-6 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg shadow-xl hover:from-blue-700 hover:to-cyan-600 transform hover:scale-110 transition-all duration-300"
+        [disabled]="userForm.invalid"
+      >
+        Guardar Cambios
+      </button>
+    </div>
+    <div class="mt-4 text-center">
+      <button
+        type="button"
+        (click)="goBack()"
+        class="py-3 px-6 bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold rounded-lg shadow-xl hover:from-gray-800 hover:to-gray-700 transform hover:scale-110 transition-all duration-300"
+      >
+        Volver
+      </button>
+    </div>
+  </form>
+</div>

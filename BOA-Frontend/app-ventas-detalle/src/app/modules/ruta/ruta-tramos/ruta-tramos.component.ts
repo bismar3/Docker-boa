@@ -23,6 +23,7 @@ export class RutaTramosComponent implements OnInit {
   ruta!: Ruta;
   rutaTramos: RutaTramo[] = [];
   tramosDisponibles: Tramo[] = [];
+  todosLosTramos: Tramo[] = [];
   aeropuertos: Aeropuerto[] = [];
   rutaId!: number;
 
@@ -52,7 +53,7 @@ export class RutaTramosComponent implements OnInit {
       rutaTramos: this.rutaTramoService.getByRutaId(this.rutaId)
     }).subscribe(({ aeropuertos, ruta, tramos, rutaTramos }) => {
       this.aeropuertos = aeropuertos;
-      this.ruta = ruta;
+      this.todosLosTramos = tramos;
       this.tramosDisponibles = tramos.filter(t => !t.tramo_Padre_Id);
       this.rutaTramos = rutaTramos;
       this.nuevoTramo.orden = rutaTramos.length + 1;
@@ -79,7 +80,7 @@ export class RutaTramosComponent implements OnInit {
   }
 
   getSubTramos(id: number): Tramo[] {
-    return this.tramosDisponibles.filter(t => t.tramo_Padre_Id === id);
+    return this.todosLosTramos.filter(t => t.tramo_Padre_Id === id);
   }
 
   agregarTramo(): void {

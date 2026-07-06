@@ -4,40 +4,40 @@
       Crear Usuario
     </h2>
 
-    <form [formGroup]="userForm" (ngSubmit)="createUser()" class="space-y-6">
+    <form [formGroup]="userForm" (ngSubmit)="createUser()" class="space-y-5">
 
-      <!-- Nombre -->
-      <div class="mb-5">
-        <label for="username" class="block text-sm font-medium text-gray-300">Nombre</label>
+      <!-- Username -->
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-300">Username</label>
         <input
           type="text"
           id="username"
           class="w-full px-4 py-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg shadow-md focus:ring-2 focus:ring-cyan-500 focus:outline-none text-gray-200 placeholder-gray-400 transition-all duration-300"
           formControlName="username"
-          placeholder="Nombre del usuario"
+          placeholder="Username del usuario"
         />
         <div *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched" class="text-red-400 text-sm mt-1">
-          El nombre es requerido (máximo 30 caracteres).
+          El username es requerido (máximo 30 caracteres).
         </div>
       </div>
 
-      <!-- Apellidos -->
-      <div class="mb-5">
-        <label for="fullname" class="block text-sm font-medium text-gray-300">Apellidos</label>
+      <!-- Nombre Completo -->
+      <div>
+        <label for="fullname" class="block text-sm font-medium text-gray-300">Nombre Completo</label>
         <input
           type="text"
           id="fullname"
           class="w-full px-4 py-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg shadow-md focus:ring-2 focus:ring-cyan-500 focus:outline-none text-gray-200 placeholder-gray-400 transition-all duration-300"
           formControlName="fullname"
-          placeholder="Apellidos del usuario"
+          placeholder="Nombre y apellidos"
         />
         <div *ngIf="userForm.get('fullname')?.invalid && userForm.get('fullname')?.touched" class="text-red-400 text-sm mt-1">
-          El apellido es requerido (máximo 30 caracteres).
+          El nombre completo es requerido (máximo 30 caracteres).
         </div>
       </div>
 
       <!-- Password -->
-      <div class="mb-5">
+      <div>
         <label for="password" class="block text-sm font-medium text-gray-300">Contraseña</label>
         <input
           type="password"
@@ -51,7 +51,71 @@
         </div>
       </div>
 
-      <!-- Botón para Crear Usuario -->
+      <!-- Email -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
+        <input
+          type="email"
+          id="email"
+          class="w-full px-4 py-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg shadow-md focus:ring-2 focus:ring-cyan-500 focus:outline-none text-gray-200 placeholder-gray-400 transition-all duration-300"
+          formControlName="email"
+          placeholder="correo@ejemplo.com"
+        />
+        <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-red-400 text-sm mt-1">
+          Ingresá un email válido.
+        </div>
+      </div>
+
+      <!-- Documento de Identidad -->
+      <div>
+        <label for="documento_Identidad" class="block text-sm font-medium text-gray-300">Documento de Identidad</label>
+        <input
+          type="text"
+          id="documento_Identidad"
+          class="w-full px-4 py-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg shadow-md focus:ring-2 focus:ring-cyan-500 focus:outline-none text-gray-200 placeholder-gray-400 transition-all duration-300"
+          formControlName="documento_Identidad"
+          placeholder="Ej: 12345678"
+        />
+      </div>
+
+      <!-- Teléfono -->
+      <div>
+        <label for="telefono" class="block text-sm font-medium text-gray-300">Teléfono</label>
+        <input
+          type="text"
+          id="telefono"
+          class="w-full px-4 py-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg shadow-md focus:ring-2 focus:ring-cyan-500 focus:outline-none text-gray-200 placeholder-gray-400 transition-all duration-300"
+          formControlName="telefono"
+          placeholder="Ej: 70000000"
+        />
+      </div>
+
+      <!-- Fecha de Nacimiento -->
+      <div>
+        <label for="fecha_Nacimiento" class="block text-sm font-medium text-gray-300">Fecha de Nacimiento</label>
+        <input
+          type="date"
+          id="fecha_Nacimiento"
+          class="w-full px-4 py-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg shadow-md focus:ring-2 focus:ring-cyan-500 focus:outline-none text-gray-200 transition-all duration-300"
+          formControlName="fecha_Nacimiento"
+        />
+      </div>
+
+      <!-- Estado -->
+      <div>
+        <label for="estado" class="block text-sm font-medium text-gray-300">Estado</label>
+        <select
+          id="estado"
+          class="w-full px-4 py-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg shadow-md focus:ring-2 focus:ring-cyan-500 focus:outline-none text-gray-200 transition-all duration-300"
+          formControlName="estado"
+        >
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
+          <option value="Bloqueado">Bloqueado</option>
+        </select>
+      </div>
+
+      <!-- Botón Crear -->
       <button
         type="submit"
         class="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-opacity-50 transition-all duration-300"
@@ -59,16 +123,15 @@
       >
         Agregar Usuario
       </button>
+
       <!-- Botón Volver -->
       <button
-      class="w-full py-2 px-4 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-bold rounded-lg shadow-lg
-             hover:from-gray-600 hover:to-gray-800 transform hover:scale-105 focus:outline-none focus:ring-2
-             focus:ring-gray-500 focus:ring-opacity-50 transition-all duration-300"
-      type="button"
-      (click)="goBack()"
-    >
-      ⬅ Volver
-    </button>
+        class="w-full py-2 px-4 bg-gradient-to-r from-gray-700 to-gray-900 text-white font-bold rounded-lg shadow-lg hover:from-gray-600 hover:to-gray-800 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-all duration-300"
+        type="button"
+        (click)="goBack()"
+      >
+        ⬅ Volver
+      </button>
     </form>
   </div>
 </div>

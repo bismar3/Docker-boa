@@ -1,6 +1,6 @@
 export interface ProgramacionVuelo {
   id?: number;
-  codigo_vuelo: string;
+  codigo_Vuelo: string;
   aeronave_Id: number;
   ruta_Id: number;
   ruta_Tramo_Id: number;

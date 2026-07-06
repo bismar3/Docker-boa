@@ -32,6 +32,11 @@ export class TramoService {
     if (token) return this.http.post<Tramo>(this.url, tramo, httpOptions(token)).pipe(catchError(this.handleError<Tramo>('create')));
     return of();
   }
+  public update(tramo: Tramo): Observable<Tramo> {
+    const token = sessionStorage.getItem('token');
+    if (token) return this.http.put<Tramo>(`${this.url}/${tramo.id}`, tramo, httpOptions(token)).pipe(catchError(this.handleError<Tramo>('update')));
+    return of();
+  }
   public delete(id: number): Observable<any> {
     const token = sessionStorage.getItem('token');
     if (token) return this.http.delete(`${this.url}/${id}`, httpOptions(token)).pipe(catchError(this.handleError('delete')));

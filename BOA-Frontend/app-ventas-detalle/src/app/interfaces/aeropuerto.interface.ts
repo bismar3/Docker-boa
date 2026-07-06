@@ -4,4 +4,6 @@ export interface Aeropuerto {
   nombre: string;
   ciudad: string;
   pais: string;
+  latitud?: number;
+  longitud?: number;
 }

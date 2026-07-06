@@ -30,7 +30,7 @@ interface RutaOpcion {
 })
 export class ProgramacionAddComponent implements OnInit {
   programacion: ProgramacionVuelo = {
-    codigo_vuelo: '',
+    codigo_Vuelo: '',
     aeronave_Id: 0,
     ruta_Id: 0,
     ruta_Tramo_Id: 0,
@@ -47,6 +47,8 @@ export class ProgramacionAddComponent implements OnInit {
   aeropuertos: Aeropuerto[] = [];
   rutaOpciones: RutaOpcion[] = [];
   rutaSeleccionada: number = 0;
+  calculandoLlegada: boolean = false;
+  llegadaCalculada: boolean = false;
 
   constructor(
     private programacionService: ProgramacionVueloService,
@@ -81,7 +83,6 @@ export class ProgramacionAddComponent implements OnInit {
         const origenRuta = this.aeropuertos.find(a => a.id === ruta.aeropuerto_Origen_Id);
         const destinoRuta = this.aeropuertos.find(a => a.id === ruta.aeropuerto_Destino_Id);
 
-        // Construir descripción de tramos
         const tramosDesc = rts
           .sort((a, b) => a.orden - b.orden)
           .map(rt => {
@@ -95,7 +96,6 @@ export class ProgramacionAddComponent implements OnInit {
 
         const label = `${origenRuta?.codigo_IATA || '?'} → ${destinoRuta?.codigo_IATA || '?'} (${origenRuta?.ciudad || '?'} → ${destinoRuta?.ciudad || '?'}) | ${numTramos} tramo(s): ${tramosDesc} — ${tipoRuta}`;
 
-        // Usar el primer ruta_tramo como referencia
         const primerRutaTramo = rts.sort((a, b) => a.orden - b.orden)[0];
 
         this.rutaOpciones.push({
@@ -120,6 +120,38 @@ export class ProgramacionAddComponent implements OnInit {
       this.programacion.aeropuerto_Origen_Id = opcion.origenId;
       this.programacion.aeropuerto_Destino_Id = opcion.destinoId;
     }
+    this.intentarCalcularLlegada();
+  }
+
+  onFechaHoraSalidaChange(): void {
+    this.intentarCalcularLlegada();
+  }
+
+  private intentarCalcularLlegada(): void {
+    this.llegadaCalculada = false;
+
+    if (!this.programacion.ruta_Id || !this.programacion.fecha_Salida || !this.programacion.hora_Salida) {
+      return;
+    }
+
+    this.calculandoLlegada = true;
+    this.cdr.markForCheck();
+
+    this.rutaService.calcularLlegada(
+      this.programacion.ruta_Id,
+      this.programacion.fecha_Salida,
+      this.programacion.hora_Salida
+    ).subscribe(resultado => {
+      this.calculandoLlegada = false;
+
+      if (resultado) {
+        this.programacion.fecha_Llegada = resultado.fechaLlegada;
+        this.programacion.hora_Llegada = resultado.horaLlegada;
+        this.llegadaCalculada = true;
+      }
+
+      this.cdr.markForCheck();
+    });
   }
 
   getNombreAeropuerto(id: number): string {

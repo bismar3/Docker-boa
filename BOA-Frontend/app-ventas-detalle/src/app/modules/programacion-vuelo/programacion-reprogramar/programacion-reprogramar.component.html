@@ -1,0 +1,62 @@
+<div class="container mt-8 max-w-2xl mx-auto px-6 text-white">
+  <h2 class="text-4xl font-extrabold mb-8 text-center text-transparent bg-gradient-to-r from-gray-700 to-blue-800 bg-clip-text">
+    Reprogramar Vuelo
+  </h2>
+
+  <div *ngIf="cargando" class="text-center text-gray-400">Cargando...</div>
+
+  <div *ngIf="!cargando && programacion" class="space-y-6 bg-gray-800 rounded-lg p-8 shadow-xl border border-gray-700">
+    <div class="text-center mb-4">
+      <p class="text-cyan-400 font-bold text-xl">{{ programacion.codigo_Vuelo }}</p>
+      <p class="text-gray-400 text-sm">Fecha y hora actuales: {{ programacion.fecha_Salida }} — {{ programacion.hora_Salida }}</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <label class="block text-lg font-semibold text-white">Nueva Fecha Salida</label>
+        <input type="date" [(ngModel)]="programacion.fecha_Salida" (ngModelChange)="onFechaHoraSalidaChange()"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+      <div>
+        <label class="block text-lg font-semibold text-white">Nueva Hora Salida</label>
+        <input type="time" [(ngModel)]="programacion.hora_Salida" (ngModelChange)="onFechaHoraSalidaChange()"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+
+      <div class="col-span-2">
+        <p *ngIf="calculandoLlegada" class="text-cyan-400 text-sm">🔄 Calculando llegada según ruta y tramos...</p>
+        <p *ngIf="llegadaCalculada" class="text-green-400 text-sm">✅ Fecha y hora de llegada recalculadas automáticamente</p>
+      </div>
+
+      <div>
+        <label class="block text-lg font-semibold text-white">Nueva Fecha Llegada</label>
+        <input type="date" [(ngModel)]="programacion.fecha_Llegada"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+      <div>
+        <label class="block text-lg font-semibold text-white">Nueva Hora Llegada</label>
+        <input type="time" [(ngModel)]="programacion.hora_Llegada"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-lg font-semibold text-white">Motivo de Reprogramación *</label>
+      <textarea [(ngModel)]="motivo" rows="3" placeholder="Ej: Condiciones climáticas, mantenimiento de aeronave..."
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"></textarea>
+    </div>
+
+    <div class="text-center">
+      <button (click)="guardar()"
+        class="py-3 px-6 bg-gradient-to-r from-yellow-600 to-orange-500 text-white font-semibold rounded-lg shadow-xl hover:from-yellow-700 hover:to-orange-600 transform hover:scale-110 transition-all duration-300">
+        Confirmar Reprogramación
+      </button>
+    </div>
+    <div class="mt-4 text-center">
+      <a routerLink="/dashboard/programacion-vuelo/list"
+        class="py-3 px-6 bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold rounded-lg shadow-xl hover:from-gray-800 hover:to-gray-700 transform hover:scale-110 transition-all duration-300">
+        Cancelar
+      </a>
+    </div>
+  </div>
+</div>

@@ -16,7 +16,7 @@
     <div class="grid grid-cols-2 gap-6 mb-6">
       <div>
         <label class="block text-lg font-semibold text-white">Aeropuerto Origen</label>
-        <select [(ngModel)]="tramo.aeropuerto_Origen_Id"
+        <select [(ngModel)]="tramo.aeropuerto_Origen_Id" (ngModelChange)="onAeropuertoChange()"
           class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300">
           <option value="0" disabled>Seleccionar origen...</option>
           <option *ngFor="let a of aeropuertos" [value]="a.id">{{a.nombre}} ({{a.codigo_IATA}})</option>
@@ -24,13 +24,17 @@
       </div>
       <div>
         <label class="block text-lg font-semibold text-white">Aeropuerto Destino</label>
-        <select [(ngModel)]="tramo.aeropuerto_Destino_Id"
+        <select [(ngModel)]="tramo.aeropuerto_Destino_Id" (ngModelChange)="onAeropuertoChange()"
           class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300">
           <option value="0" disabled>Seleccionar destino...</option>
           <option *ngFor="let a of aeropuertos" [value]="a.id">{{a.nombre}} ({{a.codigo_IATA}})</option>
         </select>
       </div>
     </div>
+
+    <p *ngIf="calculando" class="text-cyan-400 text-sm">🔄 Calculando duración de vuelo...</p>
+    <p *ngIf="calculoAutomatico" class="text-green-400 text-sm">✅ Duración calculada automáticamente — podés ajustarla si querés</p>
+
     <div class="grid grid-cols-3 gap-6 mb-6">
       <div>
         <label class="block text-lg font-semibold text-white">Duración de vuelo</label>

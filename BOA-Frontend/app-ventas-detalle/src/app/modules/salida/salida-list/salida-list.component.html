@@ -1,0 +1,83 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl min-h-screen">
+
+  <h2 class="text-3xl font-bold mb-2 flex items-center gap-2">
+    🛫 Gestionar Salidas
+  </h2>
+  <p class="text-gray-400 mb-6">Historial de Salidas</p>
+
+  <!-- Registrar nueva salida -->
+  <div class="bg-gray-800 rounded-2xl p-5 mb-8 border border-gray-700">
+    <p class="text-sm text-gray-400 mb-3 font-semibold">✈ Registrar nueva salida</p>
+    <div class="flex gap-3">
+      <select [(ngModel)]="programacionSeleccionada"
+        class="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        <option value="0" disabled>Seleccionar vuelo programado...</option>
+        <option *ngFor="let p of programacionesDisponibles" [value]="p.id">{{ getLabelVuelo(p) }}</option>
+      </select>
+      <button (click)="registrarSalida()"
+        class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all">
+        ✅ Registrar Salida
+      </button>
+    </div>
+    <p *ngIf="programacionesDisponibles.length === 0" class="text-gray-500 text-sm mt-3">
+      No hay vuelos pendientes de registrar salida.
+    </p>
+  </div>
+
+  <!-- Filtro -->
+  <div class="flex flex-wrap gap-3 items-center mb-6 bg-gray-800 p-4 rounded-2xl">
+    <div class="flex items-center gap-2 bg-gray-700 rounded-xl px-3 py-2 flex-1 min-w-48">
+      <span>🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="filtroTexto"
+        placeholder="Buscar por código de vuelo..."
+        class="bg-transparent outline-none text-white w-full text-sm"/>
+    </div>
+    <button (click)="filtrar()"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      Filtrar
+    </button>
+    <button (click)="limpiar()"
+      class="border border-gray-500 text-gray-300 hover:bg-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      Limpiar
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="text-center text-gray-400 py-10">Cargando...</div>
+
+  <!-- Tabla -->
+  <div *ngIf="!cargando" class="overflow-x-auto">
+    <table class="min-w-full table-auto text-sm text-center bg-gray-800 rounded-lg shadow-lg border-separate border-spacing-1 border border-gray-700">
+      <thead>
+        <tr class="bg-gradient-to-r from-blue-700 to-cyan-600 text-white">
+          <th class="px-2 py-2 text-left rounded-l-lg">#</th>
+          <th class="px-2 py-2 text-left">VUELO</th>
+          <th class="px-2 py-2 text-left">RUTA</th>
+          <th class="px-2 py-2 text-left">FECHA SALIDA</th>
+          <th class="px-2 py-2 text-left">RECAUDADO</th>
+          <th class="px-2 py-2 text-left">PASAJEROS</th>
+          <th class="px-2 py-2 text-left rounded-r-lg">REGISTRADO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of salidasFiltradas"
+          class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
+          <td class="px-2 py-2">{{ s.id }}</td>
+          <td class="px-2 py-2 font-bold text-cyan-400">{{ s.codigo_Vuelo }}</td>
+          <td class="px-2 py-2">{{ s.origen }} → {{ s.destino }}</td>
+          <td class="px-2 py-2">
+            <div>{{ s.fecha_Salida }}</div>
+            <div class="text-gray-400 text-xs">{{ s.hora_Salida }}</div>
+          </td>
+          <td class="px-2 py-2 text-green-400 font-bold">Bs. {{ s.monto_Total.toFixed(2) }}</td>
+          <td class="px-2 py-2">{{ s.cantidad_Pasajes }}</td>
+          <td class="px-2 py-2 text-gray-400 text-xs">{{ s.created_At | date:'dd/MM/yyyy HH:mm' }}</td>
+        </tr>
+        <tr *ngIf="salidasFiltradas.length === 0">
+          <td colspan="7" class="px-2 py-6 text-gray-400">No hay salidas registradas</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

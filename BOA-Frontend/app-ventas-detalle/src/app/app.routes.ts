@@ -3,6 +3,12 @@ import { DashboardLayoutComponent } from './shared/layouts/dashboardLayout/dashb
 
 export const routes: Routes = [
   {
+    path: '',
+    loadComponent: () =>
+      import('./modules/landing/landing/landing.component').then(m => m.LandingComponent),
+    pathMatch: 'full'
+  },
+  {
     path: 'auth',
     loadChildren: () =>
       import('./modules/auth/auth.route').then(m => m.auth_routes),
@@ -89,11 +95,53 @@ export const routes: Routes = [
           import('./modules/cliente/cliente.route').then(m => m.cliente_routes),
         data: { icon: 'pi pi-ticket', title: 'Buscar Vuelos', description: 'Buscar Vuelos Disponibles', permission: 'compras' },
       },
+      {
+        path: 'ingresos',
+        loadChildren: () =>
+          import('./modules/ingreso/ingreso.route').then(m => m.ingreso_routes),
+        data: { icon: 'pi pi-arrow-up', title: 'Ingresos', description: 'Flujo de Ingresos', permission: 'ingresos' },
+      },
+      {
+        path: 'egresos',
+        loadChildren: () =>
+          import('./modules/egreso/egreso.route').then(m => m.egreso_routes),
+        data: { icon: 'pi pi-arrow-down', title: 'Egresos', description: 'Flujo de Egresos', permission: 'egresos' },
+      },
+      {
+        path: 'reportes',
+        loadChildren: () =>
+          import('./modules/reportes/reportes.route').then(m => m.reportes_routes),
+        data: { icon: 'pi pi-chart-bar', title: 'Reportes', description: 'Informes y Estadísticas', permission: 'reportes' },
+      },
+      {
+        path: 'cliente-admin',
+        loadChildren: () =>
+          import('./modules/cliente-admin/cliente-admin.route').then(m => m.cliente_admin_routes),
+        data: { icon: 'pi pi-users', title: 'Clientes', description: 'Base de Pasajeros', permission: 'clientes' },
+      },
+      {
+        path: 'tripulacion',
+        loadChildren: () =>
+          import('./modules/tripulacion/tripulacion.route').then(m => m.tripulacion_routes),
+        data: { icon: 'pi pi-users', title: 'Tripulación', description: 'Asignación de Crew', permission: 'tripulaciones' },
+      },
+      {
+        path: 'salidas',
+        loadChildren: () =>
+          import('./modules/salida/salida.route').then(m => m.salida_routes),
+        data: { icon: 'pi pi-sign-out', title: 'Salidas', description: 'Control de Abordaje', permission: 'salidas' },
+      },
+      {
+        path: 'consultar-vuelo',
+        loadChildren: () =>
+          import('./modules/consultar-vuelo/consultar-vuelo.route').then(m => m.consultar_vuelo_routes),
+        data: { icon: 'pi pi-search', title: 'Consultar Vuelos', description: 'Ocupación y Pasajeros', permission: 'asientos' },
+      },
     ],
   },
   {
     path: '**',
-    redirectTo: 'auth',
+    redirectTo: '',
     pathMatch: 'full',
   },
 ];

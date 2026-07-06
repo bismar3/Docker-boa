@@ -6,7 +6,7 @@
     <div class="grid grid-cols-2 gap-6">
       <div>
         <label class="block text-lg font-semibold text-white">Código de Vuelo</label>
-        <input type="text" [(ngModel)]="programacion.codigo_vuelo" placeholder="Ej: OB-300"
+        <input type="text" [(ngModel)]="programacion.codigo_Vuelo" placeholder="Ej: OB-300"
           class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
       </div>
       <div>
@@ -33,14 +33,20 @@
     <div class="grid grid-cols-2 gap-6">
       <div>
         <label class="block text-lg font-semibold text-white">Fecha Salida</label>
-        <input type="date" [(ngModel)]="programacion.fecha_Salida"
+        <input type="date" [(ngModel)]="programacion.fecha_Salida" (ngModelChange)="onFechaHoraSalidaChange()"
           class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
       </div>
       <div>
         <label class="block text-lg font-semibold text-white">Hora Salida</label>
-        <input type="time" [(ngModel)]="programacion.hora_Salida"
+        <input type="time" [(ngModel)]="programacion.hora_Salida" (ngModelChange)="onFechaHoraSalidaChange()"
           class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
       </div>
+
+      <div class="col-span-2">
+        <p *ngIf="calculandoLlegada" class="text-cyan-400 text-sm">🔄 Calculando llegada según ruta y tramos...</p>
+        <p *ngIf="llegadaCalculada" class="text-green-400 text-sm">✅ Fecha y hora de llegada calculadas automáticamente — podés ajustarlas si querés</p>
+      </div>
+
       <div>
         <label class="block text-lg font-semibold text-white">Fecha Llegada</label>
         <input type="date" [(ngModel)]="programacion.fecha_Llegada"
@@ -57,6 +63,7 @@
       <label class="block text-lg font-semibold text-white">Precio Base ($)</label>
       <input type="number" [(ngModel)]="programacion.precio_Base" min="0"
         class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"
+        style="appearance: textfield; -moz-appearance: textfield;"
         onwheel="this.blur()"/>
     </div>
 

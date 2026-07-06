@@ -1,0 +1,72 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white rounded-lg shadow-xl min-h-screen">
+
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="text-3xl font-bold">✈ {{ vuelo?.codigo_Vuelo }}</h2>
+    <button (click)="volver()"
+      class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+      ← Volver
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="text-center text-gray-400 py-10">Cargando...</div>
+
+  <div *ngIf="!cargando">
+    <!-- Resumen -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <div class="bg-blue-700 rounded-2xl p-5 text-center shadow-lg">
+        <p class="text-sm text-blue-200 font-semibold">Total Asientos</p>
+        <p class="text-3xl font-extrabold text-white mt-1">{{ totalAsientos }}</p>
+      </div>
+      <div class="bg-red-700 rounded-2xl p-5 text-center shadow-lg">
+        <p class="text-sm text-red-200 font-semibold">Ocupados</p>
+        <p class="text-3xl font-extrabold text-white mt-1">{{ asientosOcupados }}</p>
+      </div>
+      <div class="bg-green-700 rounded-2xl p-5 text-center shadow-lg">
+        <p class="text-sm text-green-200 font-semibold">Disponibles</p>
+        <p class="text-3xl font-extrabold text-white mt-1">{{ asientosDisponibles }}</p>
+      </div>
+      <div class="bg-cyan-700 rounded-2xl p-5 text-center shadow-lg">
+        <p class="text-sm text-cyan-200 font-semibold">% Ocupación</p>
+        <p class="text-3xl font-extrabold text-white mt-1">{{ porcentajeOcupacion }}%</p>
+      </div>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="bg-gray-800 rounded-2xl p-5 mb-8 border border-gray-700">
+      <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+        <div class="bg-gradient-to-r from-green-500 to-cyan-500 h-4 transition-all"
+          [style.width.%]="porcentajeOcupacion">
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de pasajeros -->
+    <h3 class="text-xl font-bold mb-4">👥 Pasajeros Confirmados</h3>
+    <div class="overflow-x-auto">
+      <table class="min-w-full table-auto text-sm text-center bg-gray-800 rounded-lg shadow-lg border-separate border-spacing-1 border border-gray-700">
+        <thead>
+          <tr class="bg-gradient-to-r from-blue-700 to-cyan-600 text-white">
+            <th class="px-2 py-2 text-left rounded-l-lg">CÓDIGO</th>
+            <th class="px-2 py-2 text-left">PASAJERO</th>
+            <th class="px-2 py-2 text-left">ASIENTO</th>
+            <th class="px-2 py-2 text-left">PAGO</th>
+            <th class="px-2 py-2 text-left rounded-r-lg">MONTO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of ventas"
+            class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
+            <td class="px-2 py-2 font-bold text-orange-400">{{ v.codigo_Venta }}</td>
+            <td class="px-2 py-2">{{ v.pasajero_Nombre }} {{ v.pasajero_Apellido }}</td>
+            <td class="px-2 py-2 text-cyan-400 font-bold">{{ v.asiento_Id || '-' }}</td>
+            <td class="px-2 py-2">{{ v.metodo_Pago }}</td>
+            <td class="px-2 py-2 font-bold">${{ v.monto_Total.toFixed(2) }}</td>
+          </tr>
+          <tr *ngIf="ventas.length === 0">
+            <td colspan="5" class="px-2 py-6 text-gray-400">No hay pasajeros confirmados aún</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

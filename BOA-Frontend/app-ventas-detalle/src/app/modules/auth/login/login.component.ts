@@ -45,6 +45,20 @@ export default class LoginComponent implements OnInit {
   }
 
   private redirectToDashboard(): void {
+    const vueloPendienteRaw = sessionStorage.getItem('vuelo_pendiente');
+
+    if (vueloPendienteRaw) {
+      try {
+        const vuelo = JSON.parse(vueloPendienteRaw);
+        this.router.navigate(['/dashboard/cliente/seleccionar-asiento', vuelo.programacionId], {
+          state: { vuelo }
+        });
+        return;
+      } catch {
+        sessionStorage.removeItem('vuelo_pendiente');
+      }
+    }
+
     this.router.navigate(['/dashboard']);
   }
 }

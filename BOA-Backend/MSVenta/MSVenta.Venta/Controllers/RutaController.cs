@@ -30,6 +30,47 @@ namespace MSVenta.Venta.Controllers
             }
         }
 
+        [HttpGet("calcular-distancia")]
+        public async Task<ActionResult> CalcularDistancia([FromQuery] int origenId, [FromQuery] int destinoId)
+        {
+            try
+            {
+                if (origenId == 0 || destinoId == 0)
+                    return BadRequest(new { message = "Debe indicar origenId y destinoId." });
+                var resultado = await _rutaService.CalcularDistancia(origenId, destinoId);
+                if (resultado.DistanciaKm == null)
+                    return NotFound(new { message = "No se encontraron coordenadas para uno o ambos aeropuertos." });
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("calcular-llegada")]
+        public async Task<ActionResult> CalcularLlegada([FromQuery] int rutaId, [FromQuery] string fechaSalida, [FromQuery] string horaSalida)
+        {
+            try
+            {
+                if (rutaId == 0 || string.IsNullOrEmpty(fechaSalida) || string.IsNullOrEmpty(horaSalida))
+                    return BadRequest(new { message = "Debe indicar rutaId, fechaSalida y horaSalida." });
+
+                if (!DateTime.TryParse(fechaSalida, out var fecha))
+                    return BadRequest(new { message = "Formato de fecha inválido (use yyyy-MM-dd)." });
+
+                if (!TimeSpan.TryParse(horaSalida, out var hora))
+                    return BadRequest(new { message = "Formato de hora inválido (use HH:mm)." });
+
+                var resultado = await _rutaService.CalcularLlegada(rutaId, fecha, hora);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult> GetById(int id)
         {

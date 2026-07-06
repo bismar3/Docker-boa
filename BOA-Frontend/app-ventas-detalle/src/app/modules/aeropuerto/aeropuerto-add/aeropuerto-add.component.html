@@ -3,10 +3,35 @@
     Nuevo Aeropuerto
   </h2>
   <div class="space-y-8">
+
+    <div class="mb-6 relative">
+      <label class="block text-lg font-semibold text-white">🔍 Buscar Aeropuerto</label>
+      <input type="text" [(ngModel)]="textoBusqueda" (input)="onBuscarInput()"
+        placeholder="Ej: El Alto, Viru Viru, Jorge Wilstermann..."
+        class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+
+      <p *ngIf="buscando" class="text-cyan-400 text-sm mt-2">🔄 Buscando...</p>
+      <p *ngIf="seleccionRealizada" class="text-green-400 text-sm mt-2">✅ Datos cargados desde la selección</p>
+
+      <div *ngIf="sugerencias.length > 0"
+        class="absolute z-20 w-full bg-gray-800 border border-gray-600 rounded-xl shadow-lg mt-1 overflow-hidden">
+        <div *ngFor="let s of sugerencias; let i = index"
+          (mousedown)="$event.preventDefault(); seleccionarSugerencia(s)"
+          [class.bg-cyan-700]="i === 0"
+          class="px-4 py-3 cursor-pointer border-b border-gray-700 last:border-0 hover:bg-gray-700 transition-colors">
+          <p class="font-bold text-white">{{ s.nombre }}</p>
+          <p class="text-gray-300 text-sm">{{ s.ciudad }}, {{ s.pais }}</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="border-gray-700"/>
+
     <div class="mb-6">
       <label class="block text-lg font-semibold text-white">Código IATA</label>
       <input type="text" [(ngModel)]="aeropuerto.codigo_IATA" placeholder="Ej: LPB"
         class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      <p class="text-gray-400 text-xs mt-1">El código IATA no se autocompleta — ingresalo manualmente.</p>
     </div>
     <div class="mb-6">
       <label class="block text-lg font-semibold text-white">Nombre</label>
@@ -23,6 +48,20 @@
       <input type="text" [(ngModel)]="aeropuerto.pais" placeholder="País"
         class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
     </div>
+
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <label class="block text-lg font-semibold text-white">Latitud</label>
+        <input type="number" step="any" [(ngModel)]="aeropuerto.latitud" placeholder="Ej: -17.7834217"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+      <div>
+        <label class="block text-lg font-semibold text-white">Longitud</label>
+        <input type="number" step="any" [(ngModel)]="aeropuerto.longitud" placeholder="Ej: -63.1820853"
+          class="w-full mt-2 px-5 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 shadow-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition duration-300"/>
+      </div>
+    </div>
+
     <div class="text-center">
       <button (click)="save()"
         class="py-3 px-6 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg shadow-xl hover:from-blue-700 hover:to-cyan-600 transform hover:scale-110 transition-all duration-300">

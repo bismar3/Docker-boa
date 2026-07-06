@@ -6,28 +6,41 @@ import {
 } from '@angular/core';
 import { User } from '../../../interfaces/user.interface';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../usuario.service';
 import Swal from 'sweetalert2';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-usuario-list',
-  imports: [
-    CommonModule,
-    RouterModule,
-  ],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './usuario-list.component.html',
   styleUrl: './usuario-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsuarioListComponent {
   @Input() public users: User[] = [];
+  searchTerm: string = '';
 
   constructor(
     private usuarioService: UsuarioService,
     private cdr: ChangeDetectorRef,
-    private router:Router
+    private router: Router
   ) {}
+
+  get filteredUsers(): User[] {
+    if (!this.searchTerm.trim()) return this.users;
+    const texto = this.searchTerm.toLowerCase();
+    return this.users.filter(u =>
+      u.fullname?.toLowerCase().includes(texto) ||
+      u.username?.toLowerCase().includes(texto) ||
+      u.email?.toLowerCase().includes(texto)
+    );
+  }
+
+  onSearchChange(): void {
+    this.cdr.markForCheck();
+  }
 
   deleteUser(user_id: number): void {
     this.usuarioService.deleteUsuario(user_id).subscribe({
@@ -38,7 +51,6 @@ export class UsuarioListComponent {
           text: 'El usuario ha sido eliminado exitosamente.',
           confirmButtonText: 'OK',
         }).then(() => {
-          // Recargar la lista de productos
           this.reloadProducts();
         });
         this.cdr.markForCheck();
@@ -59,7 +71,7 @@ export class UsuarioListComponent {
   reloadProducts(): void {
     this.usuarioService.getUsuarios().subscribe({
       next: (users) => {
-        this.users = users; // Actualiza la lista de productos
+        this.users = users;
         this.cdr.markForCheck();
       },
       error: (err) => {
@@ -68,7 +80,8 @@ export class UsuarioListComponent {
       },
     });
   }
-  createUser(){
+
+  createUser() {
     this.router.navigate(['/dashboard/user/add']);
   }
 }

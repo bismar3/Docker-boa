@@ -18,8 +18,13 @@ export class BuscarVuelosComponent implements OnInit {
   aeropuertos: Aeropuerto[] = [];
   vuelosFiltrados: VueloDisponible[] = [];
 
-  origenId: number = 0;
-  destinoId: number = 0;
+  origenTexto: string = '';
+  destinoTexto: string = '';
+  sugerenciasOrigen: Aeropuerto[] = [];
+  sugerenciasDestino: Aeropuerto[] = [];
+  origenSeleccionado: Aeropuerto | null = null;
+  destinoSeleccionado: Aeropuerto | null = null;
+
   fecha: string = '';
   buscado: boolean = false;
   hoy: string = new Date().toISOString().split('T')[0];
@@ -38,9 +43,46 @@ export class BuscarVuelosComponent implements OnInit {
     });
   }
 
-  getNombreAeropuerto(id: number): string {
-    const a = this.aeropuertos.find(a => a.id === id);
-    return a ? `${a.nombre} (${a.codigo_IATA})` : `ID: ${id}`;
+  filtrarOrigen(): void {
+    const texto = this.origenTexto.toLowerCase();
+    this.origenSeleccionado = null;
+    this.sugerenciasOrigen = texto.length > 1
+      ? this.aeropuertos.filter(a =>
+          a.ciudad.toLowerCase().includes(texto) ||
+          a.pais.toLowerCase().includes(texto) ||
+          a.codigo_IATA.toLowerCase().includes(texto) ||
+          a.nombre.toLowerCase().includes(texto)
+        ).slice(0, 5)
+      : [];
+    this.cdr.markForCheck();
+  }
+
+  filtrarDestino(): void {
+    const texto = this.destinoTexto.toLowerCase();
+    this.destinoSeleccionado = null;
+    this.sugerenciasDestino = texto.length > 1
+      ? this.aeropuertos.filter(a =>
+          a.ciudad.toLowerCase().includes(texto) ||
+          a.pais.toLowerCase().includes(texto) ||
+          a.codigo_IATA.toLowerCase().includes(texto) ||
+          a.nombre.toLowerCase().includes(texto)
+        ).slice(0, 5)
+      : [];
+    this.cdr.markForCheck();
+  }
+
+  seleccionarOrigen(a: Aeropuerto): void {
+    this.origenSeleccionado = a;
+    this.origenTexto = `${a.ciudad} (${a.codigo_IATA})`;
+    this.sugerenciasOrigen = [];
+    this.cdr.markForCheck();
+  }
+
+  seleccionarDestino(a: Aeropuerto): void {
+    this.destinoSeleccionado = a;
+    this.destinoTexto = `${a.ciudad} (${a.codigo_IATA})`;
+    this.sugerenciasDestino = [];
+    this.cdr.markForCheck();
   }
 
   getCodigoIATA(id: number): string {
@@ -54,16 +96,19 @@ export class BuscarVuelosComponent implements OnInit {
   }
 
   buscar(): void {
-    if (!this.origenId || !this.destinoId || !this.fecha) return;
-    if (this.origenId === this.destinoId) return;
+    if (!this.origenSeleccionado || !this.destinoSeleccionado) {
+      alert('Selecciona origen y destino de la lista de sugerencias');
+      return;
+    }
+    if (!this.fecha) return;
+    if (this.origenSeleccionado.id === this.destinoSeleccionado.id) return;
 
     this.buscarVueloService.buscarPorTramo(
-      Number(this.origenId),
-      Number(this.destinoId)
+      this.origenSeleccionado.id!,
+      this.destinoSeleccionado.id!
     ).subscribe(data => {
       this.buscado = true;
 
-      // Filtrar por fecha
       this.vuelosFiltrados = data.filter(v => {
         const partes = v.fecha_Salida.split(' ')[0].split('/');
         const dia = partes[0].padStart(2, '0');
@@ -73,7 +118,6 @@ export class BuscarVuelosComponent implements OnInit {
         return fechaVueloStr === this.fecha;
       });
 
-      // Si no hay exacta buscar ±2 días
       if (this.vuelosFiltrados.length === 0) {
         this.vuelosFiltrados = data.filter(v => {
           const partes = v.fecha_Salida.split(' ')[0].split('/');

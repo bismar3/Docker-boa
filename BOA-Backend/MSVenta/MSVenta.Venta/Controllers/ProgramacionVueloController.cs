@@ -11,7 +11,6 @@ namespace MSVenta.Venta.Controllers
     public class ProgramacionVueloController : ControllerBase
     {
         private readonly IProgramacionVueloService _programacionVueloService;
-
         public ProgramacionVueloController(IProgramacionVueloService programacionVueloService)
         {
             _programacionVueloService = programacionVueloService;
@@ -72,7 +71,23 @@ namespace MSVenta.Venta.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = ex.Message });
+                var detalle = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(500, new { message = ex.Message, detalle = detalle });
+            }
+        }
+
+        [HttpPost("{id}/regenerar-asientos")]
+        public async Task<ActionResult> RegenerarAsientos(int id)
+        {
+            try
+            {
+                await _programacionVueloService.RegenerarAsientos(id);
+                return Ok(new { message = "Asientos regenerados correctamente (o ya existían)." });
+            }
+            catch (Exception ex)
+            {
+                var detalle = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(500, new { message = ex.Message, detalle = detalle });
             }
         }
 
@@ -88,7 +103,8 @@ namespace MSVenta.Venta.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = ex.Message });
+                var detalle = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(500, new { message = ex.Message, detalle = detalle });
             }
         }
 
