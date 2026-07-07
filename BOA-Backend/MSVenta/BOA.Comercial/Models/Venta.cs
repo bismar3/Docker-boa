@@ -1,4 +1,6 @@
-﻿namespace BOA.Comercial.Models
+﻿using System;
+
+namespace BOA.Comercial.Models
 {
     public class Venta
     {
@@ -9,5 +11,6 @@
         public int? Reserva_Id { get; set; }
         public decimal Monto_Total { get; set; }
         public string Estado { get; set; }
+        public DateTime? Created_At { get; set; }
     }
 }

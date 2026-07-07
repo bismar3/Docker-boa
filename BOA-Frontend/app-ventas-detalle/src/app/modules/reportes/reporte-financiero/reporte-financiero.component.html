@@ -1,0 +1,114 @@
+<div class="p-6 bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white min-h-screen">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold flex items-center gap-2">
+      <span class="text-cyan-400">💰</span> Reporte Financiero
+    </h2>
+    <button (click)="volver()" class="text-gray-400 hover:text-white text-sm">← Volver</button>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg p-6 mb-6 border border-gray-700">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-gray-300 mb-1">Desde</label>
+        <input type="date" [(ngModel)]="fechaInicio"
+          class="w-full px-3 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none"/>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-300 mb-1">Hasta</label>
+        <input type="date" [(ngModel)]="fechaFin"
+          class="w-full px-3 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none"/>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mt-4">
+      <button (click)="filtrar()"
+        class="px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all">
+        🔍 Filtrar
+      </button>
+      <button (click)="limpiar()"
+        class="px-5 py-2 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition-all">
+        Limpiar
+      </button>
+      <div class="flex-1"></div>
+      <button (click)="descargarPdf()" [disabled]="descargando"
+        class="px-5 py-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-semibold rounded-lg hover:from-green-700 hover:to-emerald-600 transition-all">
+        {{ descargando ? '⏳ Generando...' : '📥 Descargar PDF' }}
+      </button>
+      <button (click)="abrirModalEmail()"
+        class="px-5 py-2 bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-fuchsia-600 transition-all">
+        📧 Enviar por Correo
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
+      <p class="text-gray-400 text-sm">Total Ingresos</p>
+      <p class="text-3xl font-bold text-green-400">Bs. {{ totalIngresos.toFixed(2) }}</p>
+    </div>
+    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
+      <p class="text-gray-400 text-sm">Total Egresos</p>
+      <p class="text-3xl font-bold text-red-400">Bs. {{ totalEgresos.toFixed(2) }}</p>
+    </div>
+    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
+      <p class="text-gray-400 text-sm">Balance</p>
+      <p class="text-3xl font-bold text-cyan-400">Bs. {{ balance.toFixed(2) }}</p>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto rounded-lg border border-gray-700">
+    <table class="min-w-full table-auto text-sm text-center bg-gray-800">
+      <thead>
+        <tr class="bg-gradient-to-r from-blue-900 to-blue-700 text-white">
+          <th class="px-4 py-3 text-left">Tipo</th>
+          <th class="px-4 py-3 text-left">Código Venta</th>
+          <th class="px-4 py-3 text-left">Concepto/Motivo</th>
+          <th class="px-4 py-3 text-left">Fecha</th>
+          <th class="px-4 py-3 text-left">Monto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of movimientosFiltrados" class="border-t border-gray-700 hover:bg-gray-700 transition-colors">
+          <td class="px-4 py-3 text-left">
+            <span class="px-2 py-1 rounded-full text-xs font-semibold"
+              [class.bg-green-600]="m.tipo === 'Ingreso'"
+              [class.bg-red-600]="m.tipo === 'Egreso'">
+              {{ m.tipo }}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-left">{{ m.codigo_Venta || '-' }}</td>
+          <td class="px-4 py-3 text-left">{{ m.concepto || m.motivo || '-' }}</td>
+          <td class="px-4 py-3 text-left">{{ m.fecha | date:'dd/MM/yyyy' }}</td>
+          <td class="px-4 py-3 text-left">Bs. {{ m.monto }}</td>
+        </tr>
+        <tr *ngIf="movimientosFiltrados.length === 0">
+          <td colspan="5" class="px-4 py-6 text-gray-400">No hay movimientos para mostrar.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="mostrarModalEmail" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700">
+      <h3 class="text-xl font-bold mb-4">📧 Enviar Reporte por Correo</h3>
+      <label class="block text-sm font-semibold text-gray-300 mb-1">Email destino</label>
+      <input type="email" [(ngModel)]="emailDestino" placeholder="ejemplo@tecnoweb.edu"
+        class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:outline-none mb-3"/>
+      <p *ngIf="mensajeEnvio" class="text-sm mb-3"
+        [class.text-green-400]="mensajeEnvio.includes('correctamente')"
+        [class.text-red-400]="!mensajeEnvio.includes('correctamente')">
+        {{ mensajeEnvio }}
+      </p>
+      <div class="flex gap-3">
+        <button (click)="enviarPorCorreo()" [disabled]="enviando"
+          class="flex-1 py-2 bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-fuchsia-600 transition-all">
+          {{ enviando ? '⏳ Enviando...' : 'Enviar' }}
+        </button>
+        <button (click)="cerrarModalEmail()"
+          class="flex-1 py-2 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition-all">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

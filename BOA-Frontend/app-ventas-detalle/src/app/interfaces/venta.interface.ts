@@ -13,4 +13,5 @@ export interface VentaDetalle {
   monto_Total: number;
   estado: string;
   transaccion_Estado: string;
+  created_At?: string;
 }

@@ -40,3 +40,15 @@ C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\obj\Debug\net5.0
 C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\obj\Debug\net5.0\ref\BOA.Finanzas.dll
 C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\obj\Debug\net5.0\BOA.Finanzas.pdb
 C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\obj\Debug\net5.0\BOA.Finanzas.genruntimeconfig.cache
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\HarfBuzzSharp.dll
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\QuestPDF.dll
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\SkiaSharp.dll
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\SkiaSharp.HarfBuzz.dll
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\runtimes\osx\native\libHarfBuzzSharp.dylib
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\runtimes\win-arm64\native\libHarfBuzzSharp.dll
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\runtimes\win-x64\native\libHarfBuzzSharp.dll
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\runtimes\win-x86\native\libHarfBuzzSharp.dll
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\runtimes\osx\native\libSkiaSharp.dylib
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\runtimes\win-arm64\native\libSkiaSharp.dll
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\runtimes\win-x64\native\libSkiaSharp.dll
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\BOA.Finanzas\bin\Debug\net5.0\runtimes\win-x86\native\libSkiaSharp.dll

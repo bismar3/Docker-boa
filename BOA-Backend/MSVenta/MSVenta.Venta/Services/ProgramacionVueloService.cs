@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MSVenta.Venta.Models;
 using MSVenta.Venta.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,13 +30,10 @@ namespace MSVenta.Venta.Services
             var todosLosTramos = await _context.Tramos.ToListAsync();
 
             var resultados = new List<VueloBusquedaResult>();
-
-            // Estados que representan un vuelo todavía vendible/reservable
             var estadosValidos = new[] { "Programado", "Reprogramado" };
 
             foreach (var prog in programaciones.Where(p => estadosValidos.Contains(p.Estado)))
             {
-                // Opción 1: vuelo directo origen→destino
                 if (prog.Aeropuerto_Origen_Id == origenId && prog.Aeropuerto_Destino_Id == destinoId)
                 {
                     var tramosDeRuta = rutaTramos
@@ -76,7 +74,6 @@ namespace MSVenta.Venta.Services
                     continue;
                 }
 
-                // Opción 2: buscar en sub-tramos hijos
                 var subTramosHijos = todosLosTramos.Where(t =>
                     t.Aeropuerto_Origen_Id == origenId &&
                     t.Aeropuerto_Destino_Id == destinoId &&
@@ -133,7 +130,7 @@ namespace MSVenta.Venta.Services
             var yaExisten = await _context.AsientoProgramaciones
                 .AnyAsync(ap => ap.Programacion_Vuelo_Id == programacionId);
 
-            if (yaExisten) return; // evita duplicar si ya tiene asientos generados
+            if (yaExisten) return;
 
             await GenerarAsientosParaVuelo(programacionId, prog.Aeronave_Id);
         }
@@ -154,6 +151,38 @@ namespace MSVenta.Venta.Services
                 });
             }
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<OcupacionVueloResult>> GetOcupacion()
+        {
+            var programaciones = await _context.ProgramacionVuelos.ToListAsync();
+            var asientosProgramacion = await _context.AsientoProgramaciones.ToListAsync();
+
+            var resultado = new List<OcupacionVueloResult>();
+
+            foreach (var prog in programaciones)
+            {
+                var asientosDeEsteVuelo = asientosProgramacion
+                    .Where(ap => ap.Programacion_Vuelo_Id == prog.Id)
+                    .ToList();
+
+                var total = asientosDeEsteVuelo.Count;
+                var ocupados = asientosDeEsteVuelo.Count(ap => ap.Estado == "Ocupado");
+                var porcentaje = total > 0 ? Math.Round((double)ocupados / total * 100, 1) : 0;
+
+                resultado.Add(new OcupacionVueloResult
+                {
+                    ProgramacionId = prog.Id,
+                    Codigo_Vuelo = prog.Codigo_Vuelo,
+                    Fecha_Salida = prog.Fecha_Salida,
+                    Hora_Salida = prog.Hora_Salida,
+                    Total_Asientos = total,
+                    Asientos_Ocupados = ocupados,
+                    Porcentaje_Ocupacion = porcentaje
+                });
+            }
+
+            return resultado.OrderByDescending(r => r.Fecha_Salida);
         }
 
         public async Task Update(ProgramacionVuelo p)

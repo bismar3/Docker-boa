@@ -48,6 +48,10 @@
               "target": "Package",
               "version": "[5.0.4, )"
             },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2023.12.6, )"
+            },
             "RabbitMQ.Client": {
               "target": "Package",
               "version": "[7.2.1, )"
@@ -55,6 +59,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[5.6.3, )"
+            },
+            "System.Net.Http.Json": {
+              "target": "Package",
+              "version": "[5.0.0, )"
             }
           },
           "imports": [

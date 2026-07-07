@@ -53,7 +53,8 @@ namespace BOA.Comercial.Services
                     Metodo_Pago = transaccion?.Metodo_Pago ?? "-",
                     Monto_Total = v.Monto_Total,
                     Estado = v.Estado,
-                    Transaccion_Estado = transaccion?.Estado ?? "-"
+                    Transaccion_Estado = transaccion?.Estado ?? "-",
+                    Created_At = v.Created_At
                 };
             }).OrderByDescending(v => v.Id).ToList();
         }
@@ -86,7 +87,8 @@ namespace BOA.Comercial.Services
                     Metodo_Pago = transaccion?.Metodo_Pago ?? "-",
                     Monto_Total = v.Monto_Total,
                     Estado = v.Estado,
-                    Transaccion_Estado = transaccion?.Estado ?? "-"
+                    Transaccion_Estado = transaccion?.Estado ?? "-",
+                    Created_At = v.Created_At
                 };
             }).OrderByDescending(v => v.Id).ToList();
         }
