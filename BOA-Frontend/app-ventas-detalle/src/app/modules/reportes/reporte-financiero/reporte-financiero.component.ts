@@ -5,16 +5,6 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
 
-interface MovimientoFinanciero {
-  id: number;
-  codigo_Venta: string;
-  monto: number;
-  concepto?: string;
-  motivo?: string;
-  fecha: string;
-  tipo: 'Ingreso' | 'Egreso';
-}
-
 @Component({
   selector: 'app-reporte-financiero',
   standalone: true,
@@ -24,8 +14,8 @@ interface MovimientoFinanciero {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReporteFinancieroComponent implements OnInit {
-  movimientos: MovimientoFinanciero[] = [];
-  movimientosFiltrados: MovimientoFinanciero[] = [];
+  ingresos: any[] = [];
+  egresos: any[] = [];
   cargando: boolean = true;
 
   fechaInicio: string = '';
@@ -38,8 +28,8 @@ export class ReporteFinancieroComponent implements OnInit {
   mensajeEnvio: string = '';
 
   constructor(
-    private http: HttpClient,
     private router: Router,
+    private http: HttpClient,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -47,51 +37,61 @@ export class ReporteFinancieroComponent implements OnInit {
     this.load();
   }
 
-  private getHeaders(): HttpHeaders {
+  private headers(): HttpHeaders {
     const token = sessionStorage.getItem('token');
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 
   load(): void {
-    const headers = this.getHeaders();
-    const urlIngresos = `${environment.URL_SERVICIOS}/ingreso`;
-    const urlEgresos = `${environment.URL_SERVICIOS}/egreso`;
+    this.cargando = true;
+    this.cdr.markForCheck();
 
-    this.http.get<any[]>(urlIngresos, { headers }).subscribe(ingresos => {
-      this.http.get<any[]>(urlEgresos, { headers }).subscribe(egresos => {
-        const ingresosMapeados: MovimientoFinanciero[] = ingresos.map(i => ({
-          id: i.id,
-          codigo_Venta: i.codigo_Venta,
-          monto: i.monto,
-          concepto: i.concepto,
-          fecha: i.fecha,
-          tipo: 'Ingreso'
-        }));
-
-        const egresosMapeados: MovimientoFinanciero[] = egresos.map(e => ({
-          id: e.id,
-          codigo_Venta: e.codigo_Venta,
-          monto: e.monto,
-          motivo: e.motivo,
-          fecha: e.fecha,
-          tipo: 'Egreso'
-        }));
-
-        this.movimientos = [...ingresosMapeados, ...egresosMapeados]
-          .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
-        this.movimientosFiltrados = this.movimientos;
+    this.http.get<any[]>(`${environment.URL_SERVICIOS}/ingreso`, { headers: this.headers() }).subscribe({
+      next: (ingresos) => {
+        this.ingresos = ingresos;
+        this.http.get<any[]>(`${environment.URL_SERVICIOS}/egreso`, { headers: this.headers() }).subscribe({
+          next: (egresos) => {
+            this.egresos = egresos;
+            this.cargando = false;
+            this.cdr.markForCheck();
+          },
+          error: () => {
+            this.cargando = false;
+            this.cdr.markForCheck();
+          }
+        });
+      },
+      error: () => {
         this.cargando = false;
         this.cdr.markForCheck();
-      });
+      }
+    });
+  }
+
+  get ingresosFiltrados(): any[] {
+    return this.filtrarPorFecha(this.ingresos);
+  }
+
+  get egresosFiltrados(): any[] {
+    return this.filtrarPorFecha(this.egresos);
+  }
+
+  private filtrarPorFecha(lista: any[]): any[] {
+    if (!this.fechaInicio && !this.fechaFin) return lista;
+    return lista.filter(item => {
+      const fecha = new Date(item.fecha);
+      if (this.fechaInicio && fecha < new Date(this.fechaInicio)) return false;
+      if (this.fechaFin && fecha > new Date(this.fechaFin + 'T23:59:59')) return false;
+      return true;
     });
   }
 
   get totalIngresos(): number {
-    return this.movimientosFiltrados.filter(m => m.tipo === 'Ingreso').reduce((s, m) => s + m.monto, 0);
+    return this.ingresosFiltrados.reduce((sum, i) => sum + i.monto, 0);
   }
 
   get totalEgresos(): number {
-    return this.movimientosFiltrados.filter(m => m.tipo === 'Egreso').reduce((s, m) => s + m.monto, 0);
+    return this.egresosFiltrados.reduce((sum, e) => sum + e.monto, 0);
   }
 
   get balance(): number {
@@ -99,19 +99,12 @@ export class ReporteFinancieroComponent implements OnInit {
   }
 
   filtrar(): void {
-    this.movimientosFiltrados = this.movimientos.filter(m => {
-      const fecha = new Date(m.fecha);
-      if (this.fechaInicio && fecha < new Date(this.fechaInicio)) return false;
-      if (this.fechaFin && fecha > new Date(this.fechaFin + 'T23:59:59')) return false;
-      return true;
-    });
     this.cdr.markForCheck();
   }
 
   limpiar(): void {
     this.fechaInicio = '';
     this.fechaFin = '';
-    this.movimientosFiltrados = this.movimientos;
     this.cdr.markForCheck();
   }
 
@@ -128,7 +121,7 @@ export class ReporteFinancieroComponent implements OnInit {
 
     const url = `${environment.URL_SERVICIOS}/reporte/financiero/pdf${this.construirQueryParams()}`;
 
-    this.http.get(url, { headers: this.getHeaders(), responseType: 'blob' }).subscribe({
+    this.http.get(url, { headers: this.headers(), responseType: 'blob' }).subscribe({
       next: (blob) => {
         const urlBlob = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -170,11 +163,6 @@ export class ReporteFinancieroComponent implements OnInit {
     this.mensajeEnvio = '';
     this.cdr.markForCheck();
 
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
-      'Content-Type': 'application/json'
-    });
-
     const body = {
       tipo: 'financiero',
       desde: this.fechaInicio || null,
@@ -182,7 +170,7 @@ export class ReporteFinancieroComponent implements OnInit {
       email: this.emailDestino
     };
 
-    this.http.post<any>(`${environment.URL_SERVICIOS}/reporte/enviar`, body, { headers }).subscribe({
+    this.http.post<any>(`${environment.URL_SERVICIOS}/reporte/enviar`, body, { headers: this.headers() }).subscribe({
       next: (res) => {
         this.mensajeEnvio = res.message || 'Reporte enviado correctamente.';
         this.enviando = false;

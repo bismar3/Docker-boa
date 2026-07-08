@@ -15,16 +15,16 @@ export class ReportesDashboardComponent {
   irA(ruta: string): void {
     switch (ruta) {
       case 'vuelos':
-        this.router.navigate(['/dashboard/programacion-vuelo/list']);
+        this.router.navigate(['/dashboard/reportes/ocupacion']);
         break;
       case 'ventas':
         this.router.navigate(['/dashboard/reportes/ventas']);
         break;
       case 'ingresos':
-        this.router.navigate(['/dashboard/ingresos/list']);
+        this.router.navigate(['/dashboard/reportes/financiero']);
         break;
       case 'egresos':
-        this.router.navigate(['/dashboard/egresos/list']);
+        this.router.navigate(['/dashboard/reportes/financiero']);
         break;
     }
   }

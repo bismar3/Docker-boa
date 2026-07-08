@@ -12,6 +12,16 @@ export const reportes_routes: Routes = [
       import('./reporte-ventas/reporte-ventas.component').then(m => m.ReporteVentasComponent)
   },
   {
+    path: 'financiero',
+    loadComponent: () =>
+      import('./reporte-financiero/reporte-financiero.component').then(m => m.ReporteFinancieroComponent)
+  },
+  {
+    path: 'ocupacion',
+    loadComponent: () =>
+      import('./reporte-ocupacion/reporte-ocupacion.component').then(m => m.ReporteOcupacionComponent)
+  },
+  {
     path: '**',
     redirectTo: 'dashboard'
   }

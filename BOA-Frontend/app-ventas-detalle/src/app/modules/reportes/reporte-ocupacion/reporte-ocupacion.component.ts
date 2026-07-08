@@ -5,16 +5,6 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
 
-interface OcupacionVuelo {
-  programacionId: number;
-  codigo_Vuelo: string;
-  fecha_Salida: string;
-  hora_Salida: string;
-  total_Asientos: number;
-  asientos_Ocupados: number;
-  porcentaje_Ocupacion: number;
-}
-
 @Component({
   selector: 'app-reporte-ocupacion',
   standalone: true,
@@ -24,8 +14,7 @@ interface OcupacionVuelo {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReporteOcupacionComponent implements OnInit {
-  vuelos: OcupacionVuelo[] = [];
-  vuelosFiltrados: OcupacionVuelo[] = [];
+  vuelos: any[] = [];
   cargando: boolean = true;
 
   fechaInicio: string = '';
@@ -38,8 +27,8 @@ export class ReporteOcupacionComponent implements OnInit {
   mensajeEnvio: string = '';
 
   constructor(
-    private http: HttpClient,
     private router: Router,
+    private http: HttpClient,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -47,17 +36,18 @@ export class ReporteOcupacionComponent implements OnInit {
     this.load();
   }
 
-  private getHeaders(): HttpHeaders {
+  private headers(): HttpHeaders {
     const token = sessionStorage.getItem('token');
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 
   load(): void {
-    const url = `${environment.URL_SERVICIOS}/programacionvuelo/ocupacion`;
-    this.http.get<OcupacionVuelo[]>(url, { headers: this.getHeaders() }).subscribe({
+    this.cargando = true;
+    this.cdr.markForCheck();
+
+    this.http.get<any[]>(`${environment.URL_SERVICIOS}/programacionvuelo/ocupacion`, { headers: this.headers() }).subscribe({
       next: (data) => {
         this.vuelos = data;
-        this.vuelosFiltrados = data;
         this.cargando = false;
         this.cdr.markForCheck();
       },
@@ -68,32 +58,37 @@ export class ReporteOcupacionComponent implements OnInit {
     });
   }
 
-  get promedioOcupacion(): number {
-    if (this.vuelosFiltrados.length === 0) return 0;
-    const suma = this.vuelosFiltrados.reduce((s, v) => s + v.porcentaje_Ocupacion, 0);
-    return Math.round((suma / this.vuelosFiltrados.length) * 10) / 10;
-  }
-
-  private normalizarFecha(fecha: string): string {
-    if (!fecha) return '';
-    return fecha.split(' ')[0];
-  }
-
-  filtrar(): void {
-    this.vuelosFiltrados = this.vuelos.filter(v => {
-      const fechaStr = this.normalizarFecha(v.fecha_Salida);
+  get vuelosFiltrados(): any[] {
+    if (!this.fechaInicio && !this.fechaFin) return this.vuelos;
+    return this.vuelos.filter(v => {
+      const fechaStr = (v.fecha_Salida || '').split(' ')[0];
       const fecha = new Date(fechaStr);
       if (this.fechaInicio && fecha < new Date(this.fechaInicio)) return false;
       if (this.fechaFin && fecha > new Date(this.fechaFin + 'T23:59:59')) return false;
       return true;
     });
+  }
+
+  get promedioOcupacion(): number {
+    const lista = this.vuelosFiltrados;
+    if (lista.length === 0) return 0;
+    const suma = lista.reduce((sum, v) => sum + v.porcentaje_Ocupacion, 0);
+    return suma / lista.length;
+  }
+
+  getColorOcupacion(porcentaje: number): string {
+    if (porcentaje >= 70) return 'bg-green-600';
+    if (porcentaje >= 40) return 'bg-yellow-600';
+    return 'bg-red-600';
+  }
+
+  filtrar(): void {
     this.cdr.markForCheck();
   }
 
   limpiar(): void {
     this.fechaInicio = '';
     this.fechaFin = '';
-    this.vuelosFiltrados = this.vuelos;
     this.cdr.markForCheck();
   }
 
@@ -110,7 +105,7 @@ export class ReporteOcupacionComponent implements OnInit {
 
     const url = `${environment.URL_SERVICIOS}/reporte/ocupacion/pdf${this.construirQueryParams()}`;
 
-    this.http.get(url, { headers: this.getHeaders(), responseType: 'blob' }).subscribe({
+    this.http.get(url, { headers: this.headers(), responseType: 'blob' }).subscribe({
       next: (blob) => {
         const urlBlob = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -152,11 +147,6 @@ export class ReporteOcupacionComponent implements OnInit {
     this.mensajeEnvio = '';
     this.cdr.markForCheck();
 
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
-      'Content-Type': 'application/json'
-    });
-
     const body = {
       tipo: 'ocupacion',
       desde: this.fechaInicio || null,
@@ -164,7 +154,7 @@ export class ReporteOcupacionComponent implements OnInit {
       email: this.emailDestino
     };
 
-    this.http.post<any>(`${environment.URL_SERVICIOS}/reporte/enviar`, body, { headers }).subscribe({
+    this.http.post<any>(`${environment.URL_SERVICIOS}/reporte/enviar`, body, { headers: this.headers() }).subscribe({
       next: (res) => {
         this.mensajeEnvio = res.message || 'Reporte enviado correctamente.';
         this.enviando = false;
