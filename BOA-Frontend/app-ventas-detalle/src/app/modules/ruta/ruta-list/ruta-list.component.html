@@ -12,24 +12,40 @@
     <table class="min-w-full table-auto text-sm text-center bg-gray-800 rounded-lg shadow-lg border-separate border-spacing-1 border border-gray-700">
       <thead>
         <tr class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
-          <th class="px-1 py-1 text-left rounded-l-lg">ID</th>
-          <th class="px-1 py-1 text-left">Origen</th>
-          <th class="px-1 py-1 text-left">Destino</th>
-          <th class="px-1 py-1 text-left">Distancia (km)</th>
-          <th class="px-1 py-1 text-left">Duración</th>
-          <th class="px-1 py-1 text-left">Tipo</th>
-          <th class="px-1 py-1 text-left rounded-r-lg">Acciones</th>
+          <th class="px-2 py-2 text-left rounded-l-lg">ID</th>
+          <th class="px-2 py-2 text-left">Ruta</th>
+          <th class="px-2 py-2 text-left">Distancia (km)</th>
+          <th class="px-2 py-2 text-left">Duración</th>
+          <th class="px-2 py-2 text-left">Tipo</th>
+          <th class="px-2 py-2 text-left rounded-r-lg">Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let r of rutas" class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
-          <td class="px-1 py-1">{{r.id}}</td>
-          <td class="px-1 py-1">{{getNombreAeropuerto(r.aeropuerto_Origen_Id)}}</td>
-          <td class="px-1 py-1">{{getNombreAeropuerto(r.aeropuerto_Destino_Id)}}</td>
-          <td class="px-1 py-1">{{r.distancia}}</td>
-          <td class="px-1 py-1">{{r.duracion_Estimada}}</td>
-          <td class="px-1 py-1">{{r.tipo}}</td>
-          <td class="px-2 py-1">
+          <td class="px-2 py-2">{{r.id}}</td>
+          <td class="px-2 py-2 text-left">
+            <div class="flex items-center gap-3">
+              <div>
+                <p class="font-bold text-white text-base">{{getCiudad(r.aeropuerto_Origen_Id)}}</p>
+                <p class="text-xs text-gray-400">{{getCodigoIATA(r.aeropuerto_Origen_Id)}} · {{getNombreCompleto(r.aeropuerto_Origen_Id)}}</p>
+              </div>
+              <span class="text-cyan-400 text-lg">→</span>
+              <div>
+                <p class="font-bold text-white text-base">{{getCiudad(r.aeropuerto_Destino_Id)}}</p>
+                <p class="text-xs text-gray-400">{{getCodigoIATA(r.aeropuerto_Destino_Id)}} · {{getNombreCompleto(r.aeropuerto_Destino_Id)}}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-2 py-2">{{r.distancia}}</td>
+          <td class="px-2 py-2">{{r.duracion_Estimada}}</td>
+          <td class="px-2 py-2">
+            <span class="px-2 py-1 rounded-full text-xs font-semibold"
+              [class.bg-blue-600]="r.tipo === 'Nacional'"
+              [class.bg-purple-600]="r.tipo === 'Internacional'">
+              {{r.tipo}}
+            </span>
+          </td>
+          <td class="px-2 py-2">
             <div class="flex gap-2 justify-center">
               <a [routerLink]="['../tramos', r.id]"
                 class="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white px-2 py-1 rounded-lg shadow-md hover:from-cyan-700 hover:to-cyan-800 transition-all duration-300"

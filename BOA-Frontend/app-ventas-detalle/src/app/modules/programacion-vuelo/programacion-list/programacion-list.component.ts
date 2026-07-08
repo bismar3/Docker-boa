@@ -60,12 +60,32 @@ export class ProgramacionListComponent implements OnInit {
     return a ? `${a.matricula}` : `ID: ${id}`;
   }
 
-  getRuta(id: number): string {
-    const r = this.rutas.find(r => r.id === id);
-    if (!r) return `ID: ${id}`;
-    const origen = this.aeropuertos.find(a => a.id === r.aeropuerto_Origen_Id);
-    const destino = this.aeropuertos.find(a => a.id === r.aeropuerto_Destino_Id);
-    return `${origen?.codigo_IATA || '?'} → ${destino?.codigo_IATA || '?'}`;
+  private getRutaObj(rutaId: number): Ruta | undefined {
+    return this.rutas.find(r => r.id === rutaId);
+  }
+
+  getCiudadOrigen(rutaId: number): string {
+    const r = this.getRutaObj(rutaId);
+    if (!r) return '?';
+    return this.aeropuertos.find(a => a.id === r.aeropuerto_Origen_Id)?.ciudad || '?';
+  }
+
+  getCiudadDestino(rutaId: number): string {
+    const r = this.getRutaObj(rutaId);
+    if (!r) return '?';
+    return this.aeropuertos.find(a => a.id === r.aeropuerto_Destino_Id)?.ciudad || '?';
+  }
+
+  getCodigoOrigen(rutaId: number): string {
+    const r = this.getRutaObj(rutaId);
+    if (!r) return '?';
+    return this.aeropuertos.find(a => a.id === r.aeropuerto_Origen_Id)?.codigo_IATA || '?';
+  }
+
+  getCodigoDestino(rutaId: number): string {
+    const r = this.getRutaObj(rutaId);
+    if (!r) return '?';
+    return this.aeropuertos.find(a => a.id === r.aeropuerto_Destino_Id)?.codigo_IATA || '?';
   }
 
   getEstadoClass(estado: string): string {

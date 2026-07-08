@@ -29,6 +29,10 @@
             <p>Vuelo ID: <span class="text-cyan-400 font-bold">{{ v.programacion_Vuelo_Id }}</span></p>
             <p>Pago: <span class="text-white">{{ v.metodo_Pago }}</span></p>
           </div>
+          <div class="text-gray-400 text-sm">
+            <p>📅 Fecha de compra</p>
+            <p class="text-white font-semibold">{{ formatearFecha(v.created_At) }}</p>
+          </div>
           <div>
             <p class="text-white font-bold text-lg">${{ v.monto_Total.toFixed(2) }}</p>
           </div>
@@ -53,6 +57,10 @@
         <div>
           <p class="text-gray-400">Estado transacción</p>
           <p class="text-green-400 font-semibold">{{ v.transaccion_Estado }}</p>
+        </div>
+        <div>
+          <p class="text-gray-400">Fecha y hora exacta</p>
+          <p class="text-white font-semibold">{{ formatearFecha(v.created_At) }}</p>
         </div>
       </div>
     </div>

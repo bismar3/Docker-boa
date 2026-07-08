@@ -23,28 +23,21 @@ export class AuthService {
     return this.http.post<any>(this.urlAuth, user, httpOptions).pipe(
       map((res: HttpResponse<any>) => {
         if (res.headers.has("Authorization")) {
-          const token = res.headers.get("Authorization"); // Obtener el token desde los headers
-          /* user.token = res.headers.get("Authorization");
-          localStorage.setItem('token', 'Bearer ' + res.headers.get("Authorization")); */
-          if (token) { // Solo asigna si no es null
+          const token = res.headers.get("Authorization");
+          if (token) {
             user.token = token;
-            //localStorage.setItem('token', 'Bearer ' + token);
             sessionStorage.setItem('token', 'Bearer ' + token);
-
           }
         }
-        //return user;
-        // Retornar la data del usuario correctamente
-      return { ...user, ...res.body.user };
+        return { ...user, ...res.body.user };
       }),
       catchError(this.handleError)
     );
   }
 
-
-
   private handleError(error: any) {
     console.error("AuthService error", error);
-    return throwError(() => new Error("Error de autenticación: " + error.message));
+    const mensajeReal = error?.error?.message || error?.message || "Error de autenticación.";
+    return throwError(() => new Error(mensajeReal));
   }
 }

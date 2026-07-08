@@ -366,11 +366,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/rutatramo/ruta/{rutaId}",
-      "UpstreamHttpMethod": [ "Get" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "SECURITY-TOKEN",
-        "AllowedScopes": []
-      }
+      "UpstreamHttpMethod": [ "Get" ]
     },
     {
       "DownstreamPathTemplate": "/api/rutatramo",

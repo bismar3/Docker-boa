@@ -30,14 +30,15 @@ namespace MSVenta.Seguridad.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AuthRequest request)
         {
-            var usuario = _accessService.Validate(request.UserName, request.Password);
-            if (usuario == null)
-                return Unauthorized();
+            var resultado = await _accessService.ValidateAsync(request.UserName, request.Password);
 
-            UsuarioDTO userPermisos = await _accessService.GetUsuarioById(usuario.UserId);
+            if (!resultado.Exitoso)
+            {
+                return Unauthorized(new { message = resultado.Mensaje });
+            }
 
+            UsuarioDTO userPermisos = await _accessService.GetUsuarioById(resultado.Usuario.UserId);
             var token = JwtToken.Create(_jwtOption);
-
             Response.Headers.Add("access-control-expose-headers", "Authorization");
             Response.Headers.Add("Authorization", token);
 
@@ -68,7 +69,6 @@ namespace MSVenta.Seguridad.Controllers
                     token,
                 }
             };
-
             return Ok(response);
         }
     }

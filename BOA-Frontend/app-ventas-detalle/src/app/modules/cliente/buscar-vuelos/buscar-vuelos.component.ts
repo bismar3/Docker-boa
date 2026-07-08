@@ -4,7 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { BuscarVueloService, VueloDisponible } from '../service/buscar-vuelo.service';
 import { AeropuertoService } from '../../aeropuerto/service/aeropuerto.service';
+import { RutaTramoService } from '../../ruta/service/ruta-tramo.service';
 import { Aeropuerto } from '../../../interfaces/aeropuerto.interface';
+
+interface TramoInfo {
+  esRaiz: boolean;
+  origen: string;
+  destino: string;
+  duracion: string;
+}
 
 @Component({
   selector: 'app-buscar-vuelos',
@@ -29,9 +37,15 @@ export class BuscarVuelosComponent implements OnInit {
   buscado: boolean = false;
   hoy: string = new Date().toISOString().split('T')[0];
 
+  // --- Ver escalas ---
+  escalasExpandidas = new Set<number>();
+  escalasCache: { [programacionId: number]: TramoInfo[] } = {};
+  cargandoEscalas = new Set<number>();
+
   constructor(
     private buscarVueloService: BuscarVueloService,
     private aeropuertoService: AeropuertoService,
+    private rutaTramoService: RutaTramoService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -103,6 +117,9 @@ export class BuscarVuelosComponent implements OnInit {
     if (!this.fecha) return;
     if (this.origenSeleccionado.id === this.destinoSeleccionado.id) return;
 
+    this.escalasExpandidas.clear();
+    this.escalasCache = {};
+
     this.buscarVueloService.buscarPorTramo(
       this.origenSeleccionado.id!,
       this.destinoSeleccionado.id!
@@ -151,5 +168,58 @@ export class BuscarVuelosComponent implements OnInit {
     const h = Math.floor(Math.abs(minutos) / 60);
     const m = Math.abs(minutos) % 60;
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  }
+
+  // --- Ver escalas ---
+
+  estaExpandido(vuelo: VueloDisponible): boolean {
+    return this.escalasExpandidas.has(vuelo.programacionId);
+  }
+
+  estaCargandoEscalas(vuelo: VueloDisponible): boolean {
+    return this.cargandoEscalas.has(vuelo.programacionId);
+  }
+
+  getEscalasDe(vuelo: VueloDisponible): TramoInfo[] {
+    return this.escalasCache[vuelo.programacionId] || [];
+  }
+
+  toggleVerEscalas(vuelo: VueloDisponible): void {
+    const id = vuelo.programacionId;
+
+    if (this.escalasExpandidas.has(id)) {
+      this.escalasExpandidas.delete(id);
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.escalasExpandidas.add(id);
+
+    if (this.escalasCache[id]) {
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.cargandoEscalas.add(id);
+    this.cdr.markForCheck();
+
+    this.rutaTramoService.getByRutaId(vuelo.ruta_Id).subscribe(rts => {
+      const rtsOrdenados = rts.sort((a, b) => a.orden - b.orden);
+
+      const tramosInfo: TramoInfo[] = rtsOrdenados.map(rt => {
+        const o = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Origen_Id);
+        const d = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Destino_Id);
+        return {
+          esRaiz: !rt.tramo?.tramo_Padre_Id,
+          origen: o ? `${o.ciudad} (${o.codigo_IATA})` : '?',
+          destino: d ? `${d.ciudad} (${d.codigo_IATA})` : '?',
+          duracion: rt.tramo?.duracion_Estimada || '--'
+        };
+      });
+
+      this.escalasCache[id] = tramosInfo;
+      this.cargandoEscalas.delete(id);
+      this.cdr.markForCheck();
+    });
   }
 }

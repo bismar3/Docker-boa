@@ -35,6 +35,7 @@
         "dependencies": {
           "Aforo255.Cross.Discovery": "1.0.0",
           "Aforo255.Cross.Token": "2.0.0",
+          "BCrypt.Net-Next": "4.0.3",
           "MySql.EntityFrameworkCore": "5.0.3.1",
           "Microsoft.AspNetCore.Antiforgery": "5.0.0.0",
           "Microsoft.AspNetCore.Authentication.Abstractions": "5.0.0.0",
@@ -359,6 +360,17 @@
         },
         "compile": {
           "lib/net5.0/Aforo255.Cross.Token.dll": {}
+        }
+      },
+      "BCrypt.Net-Next/4.0.3": {
+        "runtime": {
+          "lib/net5.0/BCrypt.Net-Next.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.0.3.0"
+          }
+        },
+        "compile": {
+          "lib/net5.0/BCrypt.Net-Next.dll": {}
         }
       },
       "BouncyCastle.NetCore/1.8.5": {
@@ -3262,6 +3274,13 @@
       "sha512": "sha512-E5EudMcYnBlAnoPpAnfdGgEYmu3wpFQrkrfmoiP7B+674wWXEVde1Uv+74BaczZ8zFC3ghj1aKY3fWiJDY/HjA==",
       "path": "aforo255.cross.token/2.0.0",
       "hashPath": "aforo255.cross.token.2.0.0.nupkg.sha512"
+    },
+    "BCrypt.Net-Next/4.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-W+U9WvmZQgi5cX6FS5GDtDoPzUCV4LkBLkywq/kRZhuDwcbavOzcDAr3LXJFqHUi952Yj3LEYoWW0jbEUQChsA==",
+      "path": "bcrypt.net-next/4.0.3",
+      "hashPath": "bcrypt.net-next.4.0.3.nupkg.sha512"
     },
     "BouncyCastle.NetCore/1.8.5": {
       "type": "package",

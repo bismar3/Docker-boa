@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MSVenta.Seguridad.Models;
 using MSVenta.Seguridad.Services;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,7 +13,6 @@ namespace MSVenta.Seguridad.Controllers
     public class UsuarioController : Controller
     {
         private readonly IUsuarioService _usuarioService;
-
         public UsuarioController(IUsuarioService usuarioService)
         {
             _usuarioService = usuarioService;
@@ -33,10 +33,21 @@ namespace MSVenta.Seguridad.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Usuario>> CreateUsuario(Usuario usuario)
+        public async Task<ActionResult> CreateUsuario(Usuario usuario)
         {
-            var createdUsuario = await _usuarioService.CreateUsuario(usuario);
-            return CreatedAtAction(nameof(GetUsuario), new { id = createdUsuario.UserId }, createdUsuario);
+            try
+            {
+                var createdUsuario = await _usuarioService.CreateUsuario(usuario);
+                return CreatedAtAction(nameof(GetUsuario), new { id = createdUsuario.UserId }, createdUsuario);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPost("registro")]
@@ -44,18 +55,19 @@ namespace MSVenta.Seguridad.Controllers
         {
             try
             {
-                // Asignar rol Cliente por defecto (id: 3)
                 if (usuario.Rol_Id == null)
                     usuario.Rol_Id = 3;
-
                 usuario.Estado = "Activo";
                 usuario.Intentos_Fallidos = 0;
                 usuario.Veces_Bloqueado = 0;
-
                 var creado = await _usuarioService.CreateUsuario(usuario);
                 return Ok(new { message = "Usuario registrado exitosamente.", data = creado });
             }
-            catch (System.Exception ex)
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, new { message = ex.Message });
             }
@@ -73,6 +85,10 @@ namespace MSVenta.Seguridad.Controllers
             {
                 if (!await UsuarioExists(id)) return NotFound();
                 throw;
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             return NoContent();
         }

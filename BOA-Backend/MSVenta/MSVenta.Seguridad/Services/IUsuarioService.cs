@@ -7,16 +7,11 @@ namespace MSVenta.Seguridad.Services
 {
     public interface IUsuarioService
     {
-        //Task<IEnumerable<Usuario>> GetAllUsuarios();
         Task<IEnumerable<UsuarioDTO>> GetAllUsuarios();
-
-        //Task<Usuario> GetUsuarioById(int id);
         Task<UsuarioDTO> GetUsuarioById(int id);
-        
         Task<Usuario> CreateUsuario(Usuario usuario);
         Task UpdateUsuario(Usuario usuario);
         Task DeleteUsuario(int id);
-
-        Usuario Validate(string userName, string password);
+        Task<LoginResult> ValidateAsync(string userName, string password);
     }
 }

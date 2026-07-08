@@ -51,3 +51,4 @@ C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\MSVenta.Seguridad\obj\Debug\n
 C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\MSVenta.Seguridad\obj\Debug\net5.0\ref\BOA.Seguridad.dll
 C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\MSVenta.Seguridad\obj\Debug\net5.0\BOA.Seguridad.pdb
 C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\MSVenta.Seguridad\obj\Debug\net5.0\BOA.Seguridad.genruntimeconfig.cache
+C:\Users\Mi DELL\Documents\BOA\BOA-Backend\MSVenta\MSVenta.Seguridad\bin\Debug\net5.0\BCrypt.Net-Next.dll

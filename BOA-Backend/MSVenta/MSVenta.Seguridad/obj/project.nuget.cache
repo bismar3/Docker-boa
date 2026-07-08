@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "y0qzw8EKUEyIIJzF1U/u36eHg+U1nFe85hWjSjzN/10EEUdGjI+05/aiM8Yvx5twbUczfb/gHdzcJCYL/WuvAQ==",
+  "dgSpecHash": "fTm1z4e4zQS8PMMKqFZBPbAfAwCZiWV4JhFxQYjNo4ud6oeDNiLL9oA54o0Rok5qXO2QZjov30pzYRhSQhPwyg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Seguridad\\BOA.Seguridad.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mi DELL\\.nuget\\packages\\aforo255.cross.discovery\\1.0.0\\aforo255.cross.discovery.1.0.0.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\aforo255.cross.token\\2.0.0\\aforo255.cross.token.2.0.0.nupkg.sha512",
+    "C:\\Users\\Mi DELL\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\bouncycastle.netcore\\1.8.5\\bouncycastle.netcore.1.8.5.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\consul\\1.6.1.1\\consul.1.6.1.1.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\google.protobuf\\3.14.0\\google.protobuf.3.14.0.nupkg.sha512",

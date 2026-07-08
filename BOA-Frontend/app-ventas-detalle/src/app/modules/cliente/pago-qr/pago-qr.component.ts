@@ -66,9 +66,11 @@ export class PagoQrComponent implements OnInit, OnDestroy {
       'Authorization': `Bearer ${token}`
     });
 
+    const programacionVueloId = this.vuelo.programacionId ?? this.vuelo.id;
+
     const body = {
       clienteId: this.usuarioId,
-      programacionVueloId: this.vuelo.id,
+      programacionVueloId: programacionVueloId,
       montoTotal: this.precio,
       asientoId: this.asiento.id,
       pasajeroNombre: this.pasajero.nombre,

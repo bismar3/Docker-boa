@@ -31,6 +31,12 @@ export class RutaTramoService {
     return of([]);
   }
 
+  public getByRutaIdPublic(rutaId: number): Observable<RutaTramo[]> {
+    return this.http.get<RutaTramo[]>(`${this.url}/ruta/${rutaId}`).pipe(
+      catchError(this.handleError('getByRutaIdPublic', []))
+    );
+  }
+
   public add(rutaTramo: RutaTramo): Observable<any> {
     const token = sessionStorage.getItem('token');
     if (token) return this.http.post(this.url, rutaTramo, httpOptions(token)).pipe(catchError(this.handleError('add')));

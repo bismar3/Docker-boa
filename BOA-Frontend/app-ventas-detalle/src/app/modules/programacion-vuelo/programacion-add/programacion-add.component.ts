@@ -13,12 +13,20 @@ import { Aeronave } from '../../../interfaces/aeronave.interface';
 import { Ruta } from '../../../interfaces/ruta.interface';
 import { Aeropuerto } from '../../../interfaces/aeropuerto.interface';
 
+interface TramoInfo {
+  esRaiz: boolean;
+  origen: string;
+  destino: string;
+  duracion: string;
+}
+
 interface RutaOpcion {
   rutaId: number;
   rutaTramoId: number;
   label: string;
   origenId: number;
   destinoId: number;
+  tramos: TramoInfo[];
 }
 
 @Component({
@@ -43,10 +51,13 @@ export class ProgramacionAddComponent implements OnInit {
   };
 
   aeronaves: Aeronave[] = [];
+  aeronavesDisponibles: Aeronave[] = [];
+  todasLasProgramaciones: ProgramacionVuelo[] = [];
   rutas: Ruta[] = [];
   aeropuertos: Aeropuerto[] = [];
   rutaOpciones: RutaOpcion[] = [];
   rutaSeleccionada: number = 0;
+  tramosDeRutaSeleccionada: TramoInfo[] = [];
   calculandoLlegada: boolean = false;
   llegadaCalculada: boolean = false;
 
@@ -64,13 +75,51 @@ export class ProgramacionAddComponent implements OnInit {
     forkJoin({
       aeropuertos: this.aeropuertoService.getAll(),
       aeronaves: this.aeronaveService.getAll(),
-      rutas: this.rutaService.getAll()
-    }).subscribe(({ aeropuertos, aeronaves, rutas }) => {
+      rutas: this.rutaService.getAll(),
+      programaciones: this.programacionService.getAll()
+    }).subscribe(({ aeropuertos, aeronaves, rutas, programaciones }) => {
       this.aeropuertos = aeropuertos;
       this.aeronaves = aeronaves;
       this.rutas = rutas;
+      this.todasLasProgramaciones = programaciones;
+      this.calcularAeronavesDisponibles();
       this.cargarRutas(rutas);
     });
+  }
+
+  private calcularAeronavesDisponibles(): void {
+    const ahora = new Date();
+    const estadosOcupando = ['Programado', 'Reprogramado'];
+    const aeronavesOcupadasIds = new Set<number>();
+
+    this.todasLasProgramaciones.forEach(p => {
+      if (!estadosOcupando.includes(p.estado)) return;
+
+      const fechaLlegadaStr = this.normalizarFecha(p.fecha_Llegada);
+      const horaLlegadaStr = (p.hora_Llegada || '00:00').substring(0, 5);
+      const fechaLlegadaCompleta = new Date(`${fechaLlegadaStr}T${horaLlegadaStr}:00`);
+
+      if (!isNaN(fechaLlegadaCompleta.getTime()) && fechaLlegadaCompleta > ahora) {
+        aeronavesOcupadasIds.add(p.aeronave_Id);
+      }
+    });
+
+    this.aeronavesDisponibles = this.aeronaves.filter(a => !aeronavesOcupadasIds.has(a.id!));
+    this.cdr.markForCheck();
+  }
+
+  private normalizarFecha(valor: string): string {
+    if (!valor) return '';
+    if (/^\d{4}-\d{2}-\d{2}/.test(valor)) {
+      return valor.substring(0, 10);
+    }
+    const soloFechaParte = valor.split(' ')[0];
+    const partes = soloFechaParte.split('/');
+    if (partes.length === 3) {
+      const [dia, mes, anio] = partes;
+      return `${anio}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+    }
+    return valor;
   }
 
   cargarRutas(rutas: Ruta[]): void {
@@ -83,8 +132,9 @@ export class ProgramacionAddComponent implements OnInit {
         const origenRuta = this.aeropuertos.find(a => a.id === ruta.aeropuerto_Origen_Id);
         const destinoRuta = this.aeropuertos.find(a => a.id === ruta.aeropuerto_Destino_Id);
 
-        const tramosDesc = rts
-          .sort((a, b) => a.orden - b.orden)
+        const rtsOrdenados = rts.sort((a, b) => a.orden - b.orden);
+
+        const tramosDesc = rtsOrdenados
           .map(rt => {
             const o = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Origen_Id);
             const d = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Destino_Id);
@@ -92,18 +142,32 @@ export class ProgramacionAddComponent implements OnInit {
           }).join(', ');
 
         const tipoRuta = ruta.tipo || '';
-        const numTramos = rts.length;
+        const numTramos = rtsOrdenados.length;
 
         const label = `${origenRuta?.codigo_IATA || '?'} → ${destinoRuta?.codigo_IATA || '?'} (${origenRuta?.ciudad || '?'} → ${destinoRuta?.ciudad || '?'}) | ${numTramos} tramo(s): ${tramosDesc} — ${tipoRuta}`;
 
-        const primerRutaTramo = rts.sort((a, b) => a.orden - b.orden)[0];
+        const primerRutaTramo = rtsOrdenados[0];
+
+        // Armamos el detalle de tramos: el primero (orden 1, sin padre) es el Tramo Raíz.
+        // Los demás son escalas/sub-tramos.
+        const tramosInfo: TramoInfo[] = rtsOrdenados.map((rt, index) => {
+          const o = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Origen_Id);
+          const d = this.aeropuertos.find(a => a.id === rt.tramo?.aeropuerto_Destino_Id);
+          return {
+            esRaiz: !rt.tramo?.tramo_Padre_Id,
+            origen: o ? `${o.ciudad} (${o.codigo_IATA})` : '?',
+            destino: d ? `${d.ciudad} (${d.codigo_IATA})` : '?',
+            duracion: rt.tramo?.duracion_Estimada || '--'
+          };
+        });
 
         this.rutaOpciones.push({
           rutaId: ruta.id!,
           rutaTramoId: primerRutaTramo?.id || 0,
           label,
           origenId: ruta.aeropuerto_Origen_Id,
-          destinoId: ruta.aeropuerto_Destino_Id
+          destinoId: ruta.aeropuerto_Destino_Id,
+          tramos: tramosInfo
         });
 
         pendientes--;
@@ -119,6 +183,9 @@ export class ProgramacionAddComponent implements OnInit {
       this.programacion.ruta_Tramo_Id = opcion.rutaTramoId;
       this.programacion.aeropuerto_Origen_Id = opcion.origenId;
       this.programacion.aeropuerto_Destino_Id = opcion.destinoId;
+      this.tramosDeRutaSeleccionada = opcion.tramos;
+    } else {
+      this.tramosDeRutaSeleccionada = [];
     }
     this.intentarCalcularLlegada();
   }

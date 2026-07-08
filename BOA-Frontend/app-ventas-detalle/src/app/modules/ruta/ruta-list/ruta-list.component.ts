@@ -43,9 +43,19 @@ export class RutaListComponent implements OnInit {
     });
   }
 
-  getNombreAeropuerto(id: number): string {
-    const aeropuerto = this.aeropuertos.find(a => a.id === id);
-    return aeropuerto ? `${aeropuerto.nombre} (${aeropuerto.codigo_IATA})` : `ID: ${id}`;
+  getCiudad(id: number): string {
+    const a = this.aeropuertos.find(a => a.id === id);
+    return a ? a.ciudad : `ID: ${id}`;
+  }
+
+  getCodigoIATA(id: number): string {
+    const a = this.aeropuertos.find(a => a.id === id);
+    return a ? a.codigo_IATA : '?';
+  }
+
+  getNombreCompleto(id: number): string {
+    const a = this.aeropuertos.find(a => a.id === id);
+    return a ? a.nombre : '';
   }
 
   delete(id: number): void {

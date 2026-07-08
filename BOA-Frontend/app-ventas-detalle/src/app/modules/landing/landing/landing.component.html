@@ -1,4 +1,6 @@
-<div class="min-h-screen bg-gray-900 text-white">
+<div id="theme-root" class="min-h-screen bg-gray-900 text-white">
+  <div *ngIf="themeService.mode === 'light'"
+    class="pointer-events-none fixed inset-0 z-40 bg-sky-300 opacity-30 mix-blend-soft-light"></div>
 
   <!-- Header -->
   <header class="bg-gray-950 px-6 py-4 flex justify-between items-center border-b border-gray-800">
@@ -6,7 +8,45 @@
       <span class="text-2xl">✈</span>
       <span class="text-xl font-bold">BoA</span>
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-3">
+
+      <!-- Selector de Apariencia -->
+      <div class="relative">
+        <button (click)="toggleMenuTema()"
+          class="border border-gray-600 text-gray-300 hover:bg-gray-800 px-3 py-2 rounded-xl text-sm transition-all">
+          🎨
+        </button>
+
+        <div *ngIf="mostrarMenuTema" (click)="cerrarMenuTema()" class="fixed inset-0 z-40"></div>
+
+        <div *ngIf="mostrarMenuTema"
+          class="absolute right-0 mt-2 w-64 bg-white text-gray-900 rounded-xl shadow-2xl z-50 overflow-hidden">
+          <div class="p-4 border-b border-gray-200">
+            <p class="text-xs font-semibold text-gray-500 mb-2">🎨 Apariencia</p>
+            <div class="flex items-center gap-3">
+              <button (click)="setColor('blue')"
+                class="w-7 h-7 rounded-full bg-blue-600 border-2 transition-all"
+                [class.border-gray-900]="themeService.color === 'blue'"
+                [class.border-transparent]="themeService.color !== 'blue'"></button>
+              <button (click)="setColor('orange')"
+                class="w-7 h-7 rounded-full bg-orange-500 border-2 transition-all"
+                [class.border-gray-900]="themeService.color === 'orange'"
+                [class.border-transparent]="themeService.color !== 'orange'"></button>
+              <button (click)="setColor('green')"
+                class="w-7 h-7 rounded-full bg-green-600 border-2 transition-all"
+                [class.border-gray-900]="themeService.color === 'green'"
+                [class.border-transparent]="themeService.color !== 'green'"></button>
+              <span class="text-xs text-gray-500 ml-1">Color</span>
+            </div>
+          </div>
+          <button (click)="toggleModo()"
+            class="w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors flex items-center gap-2 text-sm">
+            <span>{{ themeService.mode === 'dark' ? '☀️' : '🌙' }}</span>
+            <span>Modo {{ themeService.mode === 'dark' ? 'Día' : 'Noche' }}</span>
+          </button>
+        </div>
+      </div>
+
       <button (click)="irLogin()"
         class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white px-5 py-2 rounded-xl text-sm font-semibold transition-all">
         Iniciar sesión
@@ -57,8 +97,8 @@
             <label class="block text-sm font-semibold text-gray-600 mb-1">📍 Origen</label>
             <input type="text" [(ngModel)]="origenTexto" (input)="filtrarOrigen()"
               (focus)="filtrarOrigen()"
-              placeholder="Ciudad o código IATA..."
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+              placeholder="Ciudad o país..."
+              class="w-full px-4 py-3 bg-gray-900 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-white font-bold text-lg placeholder-gray-400"/>
             <div *ngIf="sugerenciasOrigen.length > 0"
               class="absolute z-20 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 overflow-hidden">
               <div *ngFor="let a of sugerenciasOrigen; let i = index"
@@ -66,8 +106,10 @@
                 [class.bg-blue-600]="i === 0"
                 [class.text-white]="i === 0"
                 class="px-4 py-3 cursor-pointer border-b border-gray-100 last:border-0 hover:bg-blue-50 hover:text-gray-900 transition-colors">
-                <span class="font-bold" [class.text-blue-600]="i !== 0" [class.text-white]="i === 0">{{ a.codigo_IATA }}</span>
-                <span class="ml-2" [class.text-gray-600]="i !== 0" [class.text-blue-100]="i === 0">{{ a.ciudad }} — {{ a.nombre }}</span>
+                <span class="font-bold" [class.text-white]="i === 0" [class.text-gray-900]="i !== 0">{{ a.ciudad }}, {{ a.pais }}</span>
+                <div class="text-sm" [class.text-blue-100]="i === 0" [class.text-gray-500]="i !== 0">
+                  ✈ {{ a.nombre }} ({{ a.codigo_IATA }})
+                </div>
               </div>
             </div>
           </div>
@@ -77,8 +119,8 @@
             <label class="block text-sm font-semibold text-gray-600 mb-1">🎯 Destino</label>
             <input type="text" [(ngModel)]="destinoTexto" (input)="filtrarDestino()"
               (focus)="filtrarDestino()"
-              placeholder="Ciudad o código IATA..."
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+              placeholder="Ciudad o país..."
+              class="w-full px-4 py-3 bg-gray-900 border-2 border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-white font-bold text-lg placeholder-gray-400"/>
             <div *ngIf="sugerenciasDestino.length > 0"
               class="absolute z-20 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 overflow-hidden">
               <div *ngFor="let a of sugerenciasDestino; let i = index"
@@ -86,8 +128,10 @@
                 [class.bg-blue-600]="i === 0"
                 [class.text-white]="i === 0"
                 class="px-4 py-3 cursor-pointer border-b border-gray-100 last:border-0 hover:bg-blue-50 hover:text-gray-900 transition-colors">
-                <span class="font-bold" [class.text-blue-600]="i !== 0" [class.text-white]="i === 0">{{ a.codigo_IATA }}</span>
-                <span class="ml-2" [class.text-gray-600]="i !== 0" [class.text-blue-100]="i === 0">{{ a.ciudad }} — {{ a.nombre }}</span>
+                <span class="font-bold" [class.text-white]="i === 0" [class.text-gray-900]="i !== 0">{{ a.ciudad }}, {{ a.pais }}</span>
+                <div class="text-sm" [class.text-blue-100]="i === 0" [class.text-gray-500]="i !== 0">
+                  ✈ {{ a.nombre }} ({{ a.codigo_IATA }})
+                </div>
               </div>
             </div>
           </div>
@@ -131,6 +175,7 @@
                     <button (click)="cambiarNinos(1)" class="w-8 h-8 rounded-full border border-gray-300 hover:bg-gray-100 font-bold">+</button>
                   </div>
                 </div>
+                <p class="text-xs text-gray-400 mt-2">Máximo 3 pasajeros por compra.</p>
                 <button (click)="mostrarPasajeros = false"
                   class="w-full mt-3 bg-blue-600 text-white py-2 rounded-xl text-sm font-semibold">
                   Confirmar
@@ -169,7 +214,7 @@
         Se encontraron <span class="text-white font-bold">{{ vuelosEncontrados.length }}</span> vuelo(s) disponible(s)
       </p>
       <p class="text-gray-400 mb-4" *ngIf="vuelosEncontrados.length === 0">
-        No se encontraron vuelos para esa ruta.
+        No se encontraron vuelos para esa ruta{{ fecha ? ' en esa fecha o fechas anteriores cercanas' : '' }}.
       </p>
 
       <div *ngFor="let vuelo of vuelosEncontrados"
@@ -219,15 +264,40 @@
             <div class="text-green-400 font-bold text-xl">Bs. {{ vuelo.precio_Base }}</div>
             <div class="text-xs text-gray-400 mb-3">precio base</div>
             <div class="flex gap-2">
-              <button
+              <button (click)="toggleVerEscalas(vuelo)"
                 class="px-3 py-2 border border-gray-500 text-gray-300 rounded-lg text-sm hover:bg-gray-700 transition-all">
-                Ver escalas
+                {{ estaExpandido(vuelo) ? '▲ Ocultar' : 'Ver escalas' }}
               </button>
               <button (click)="seleccionarVuelo(vuelo)"
                 class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-cyan-600 transition-all">
                 Seleccionar
               </button>
             </div>
+          </div>
+        </div>
+
+        <!-- Panel de escalas expandible -->
+        <div *ngIf="estaExpandido(vuelo)" class="mt-4 pt-4 border-t border-gray-700">
+          <p *ngIf="estaCargandoEscalas(vuelo)" class="text-cyan-400 text-sm">🔄 Cargando detalle de escalas...</p>
+
+          <div *ngIf="!estaCargandoEscalas(vuelo)">
+            <p class="text-xs font-semibold text-gray-400 mb-2">📍 Detalle del itinerario:</p>
+
+            <div *ngFor="let t of getEscalasDe(vuelo)" class="mb-2 last:mb-0">
+              <div *ngIf="t.esRaiz" class="flex items-center gap-2">
+                <span class="px-2 py-1 bg-blue-600 rounded-full text-xs font-bold">VUELO PRINCIPAL</span>
+                <span class="text-white font-semibold text-sm">{{t.origen}} → {{t.destino}}</span>
+                <span class="text-gray-400 text-xs">({{t.duracion}})</span>
+              </div>
+              <div *ngIf="!t.esRaiz" class="flex items-center gap-2 ml-4">
+                <span class="text-yellow-400">↳</span>
+                <span class="px-2 py-1 bg-yellow-600 rounded-full text-xs font-bold">ESCALA</span>
+                <span class="text-white text-sm">{{t.origen}} → {{t.destino}}</span>
+                <span class="text-gray-400 text-xs">({{t.duracion}})</span>
+              </div>
+            </div>
+
+            <p *ngIf="getEscalasDe(vuelo).length === 1" class="text-green-400 text-xs mt-2">✅ Vuelo directo, sin escalas.</p>
           </div>
         </div>
       </div>

@@ -56,6 +56,14 @@ export class MisComprasComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  formatearFecha(fecha: any): string {
+    if (!fecha) return '-';
+    const d = new Date(fecha);
+    if (isNaN(d.getTime())) return '-';
+    return d.toLocaleDateString('es-BO', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+      ' ' + d.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
+  }
+
   buscarVuelos(): void {
     this.router.navigate(['/dashboard/cliente/buscar-vuelos']);
   }

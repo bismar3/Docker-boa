@@ -29,7 +29,19 @@
           <td class="px-2 py-2">
             <span class="text-cyan-400 font-bold">{{p.codigo_Vuelo}}</span>
           </td>
-          <td class="px-2 py-2">{{getRuta(p.ruta_Id)}}</td>
+          <td class="px-2 py-2 text-left">
+            <div class="flex items-center gap-2">
+              <div>
+                <p class="font-bold text-white text-sm">{{getCiudadOrigen(p.ruta_Id)}}</p>
+                <p class="text-xs text-gray-400">{{getCodigoOrigen(p.ruta_Id)}}</p>
+              </div>
+              <span class="text-cyan-400">→</span>
+              <div>
+                <p class="font-bold text-white text-sm">{{getCiudadDestino(p.ruta_Id)}}</p>
+                <p class="text-xs text-gray-400">{{getCodigoDestino(p.ruta_Id)}}</p>
+              </div>
+            </div>
+          </td>
           <td class="px-2 py-2">{{getNombreAeronave(p.aeronave_Id)}}</td>
           <td class="px-2 py-2">
             <div>{{p.fecha_Salida}}</div>
