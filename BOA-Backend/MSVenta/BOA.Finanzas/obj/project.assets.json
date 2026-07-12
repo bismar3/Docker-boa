@@ -15,6 +15,36 @@
           "lib/netcoreapp3.1/HarfBuzzSharp.dll": {}
         }
       },
+      "HarfBuzzSharp.NativeAssets.Linux/2.8.2.3": {
+        "type": "package",
+        "dependencies": {
+          "HarfBuzzSharp": "2.8.2.3"
+        },
+        "compile": {
+          "lib/net5.0/_._": {}
+        },
+        "runtime": {
+          "lib/net5.0/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-arm/native/libHarfBuzzSharp.so": {
+            "assetType": "native",
+            "rid": "linux-arm"
+          },
+          "runtimes/linux-arm64/native/libHarfBuzzSharp.so": {
+            "assetType": "native",
+            "rid": "linux-arm64"
+          },
+          "runtimes/linux-musl-x64/native/libHarfBuzzSharp.so": {
+            "assetType": "native",
+            "rid": "linux-musl-x64"
+          },
+          "runtimes/linux-x64/native/libHarfBuzzSharp.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          }
+        }
+      },
       "HarfBuzzSharp.NativeAssets.macOS/7.3.0.1": {
         "type": "package",
         "compile": {
@@ -318,6 +348,36 @@
           "lib/netcoreapp3.1/SkiaSharp.HarfBuzz.dll": {}
         }
       },
+      "SkiaSharp.NativeAssets.Linux.NoDependencies/2.88.6": {
+        "type": "package",
+        "dependencies": {
+          "SkiaSharp": "2.88.6"
+        },
+        "compile": {
+          "lib/netcoreapp3.1/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-arm/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-arm"
+          },
+          "runtimes/linux-arm64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-arm64"
+          },
+          "runtimes/linux-musl-x64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-musl-x64"
+          },
+          "runtimes/linux-x64/native/libSkiaSharp.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          }
+        }
+      },
       "SkiaSharp.NativeAssets.macOS/2.88.7": {
         "type": "package",
         "compile": {
@@ -608,6 +668,29 @@
         "lib/xamarinwatchos1.0/HarfBuzzSharp.dll",
         "lib/xamarinwatchos1.0/HarfBuzzSharp.pdb",
         "lib/xamarinwatchos1.0/HarfBuzzSharp.xml"
+      ]
+    },
+    "HarfBuzzSharp.NativeAssets.Linux/2.8.2.3": {
+      "sha512": "Qu1yJSHEN7PD3+fqfkaClnORWN5e2xJ2Xoziz/GUi/oBT1Z+Dp2oZeiONKP6NFltboSOBkvH90QuOA6YN/U1zg==",
+      "type": "package",
+      "path": "harfbuzzsharp.nativeassets.linux/2.8.2.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "THIRD-PARTY-NOTICES.txt",
+        "build/net462/HarfBuzzSharp.NativeAssets.Linux.targets",
+        "buildTransitive/net462/HarfBuzzSharp.NativeAssets.Linux.targets",
+        "harfbuzzsharp.nativeassets.linux.2.8.2.3.nupkg.sha512",
+        "harfbuzzsharp.nativeassets.linux.nuspec",
+        "lib/net462/_._",
+        "lib/net5.0/_._",
+        "lib/netcoreapp3.1/_._",
+        "lib/netstandard1.3/_._",
+        "runtimes/linux-arm/native/libHarfBuzzSharp.so",
+        "runtimes/linux-arm64/native/libHarfBuzzSharp.so",
+        "runtimes/linux-musl-x64/native/libHarfBuzzSharp.so",
+        "runtimes/linux-x64/native/libHarfBuzzSharp.so"
       ]
     },
     "HarfBuzzSharp.NativeAssets.macOS/7.3.0.1": {
@@ -1158,6 +1241,29 @@
         "skiasharp.harfbuzz.nuspec"
       ]
     },
+    "SkiaSharp.NativeAssets.Linux.NoDependencies/2.88.6": {
+      "sha512": "ecgMclPor+X1wi2dZSVDo1sV2Dm8gwEKNRtS+qiE9qfnQzGHbYWlbTBWalnZBaIl3BLC21b1QO8gMgabhSAh+g==",
+      "type": "package",
+      "path": "skiasharp.nativeassets.linux.nodependencies/2.88.6",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "THIRD-PARTY-NOTICES.txt",
+        "build/net462/SkiaSharp.NativeAssets.Linux.NoDependencies.targets",
+        "buildTransitive/net462/SkiaSharp.NativeAssets.Linux.NoDependencies.targets",
+        "lib/net462/_._",
+        "lib/net6.0/_._",
+        "lib/netcoreapp3.1/_._",
+        "lib/netstandard1.3/_._",
+        "runtimes/linux-arm/native/libSkiaSharp.so",
+        "runtimes/linux-arm64/native/libSkiaSharp.so",
+        "runtimes/linux-musl-x64/native/libSkiaSharp.so",
+        "runtimes/linux-x64/native/libSkiaSharp.so",
+        "skiasharp.nativeassets.linux.nodependencies.2.88.6.nupkg.sha512",
+        "skiasharp.nativeassets.linux.nodependencies.nuspec"
+      ]
+    },
     "SkiaSharp.NativeAssets.macOS/2.88.7": {
       "sha512": "3jNzco4VjcYPFNxR9aNWcgweFXbTSdM1VpNRzCS4X0i1A1OuNqcaulrAvmntNpujeWxHo9e6WGh6FN8Jf5+XhA==",
       "type": "package",
@@ -1645,10 +1751,12 @@
   },
   "projectFileDependencyGroups": {
     "net5.0": [
+      "HarfBuzzSharp.NativeAssets.Linux >= 2.8.2.3",
       "Microsoft.EntityFrameworkCore >= 5.0.17",
       "Pomelo.EntityFrameworkCore.MySql >= 5.0.4",
       "QuestPDF >= 2023.12.6",
       "RabbitMQ.Client >= 7.2.1",
+      "SkiaSharp.NativeAssets.Linux.NoDependencies >= 2.88.6",
       "Swashbuckle.AspNetCore >= 5.6.3",
       "System.Net.Http.Json >= 5.0.0"
     ]
@@ -1659,11 +1767,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
+      "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
       "projectName": "BOA.Finanzas",
-      "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
+      "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
       "packagesPath": "C:\\Users\\Mi DELL\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Finanzas\\obj\\",
+      "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Finanzas\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Mi DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1692,6 +1800,10 @@
       "net5.0": {
         "targetAlias": "net5.0",
         "dependencies": {
+          "HarfBuzzSharp.NativeAssets.Linux": {
+            "target": "Package",
+            "version": "[2.8.2.3, )"
+          },
           "Microsoft.EntityFrameworkCore": {
             "target": "Package",
             "version": "[5.0.17, )"
@@ -1707,6 +1819,10 @@
           "RabbitMQ.Client": {
             "target": "Package",
             "version": "[7.2.1, )"
+          },
+          "SkiaSharp.NativeAssets.Linux.NoDependencies": {
+            "target": "Package",
+            "version": "[2.88.6, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

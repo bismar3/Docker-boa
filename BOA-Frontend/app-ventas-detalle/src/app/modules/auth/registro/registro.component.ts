@@ -23,7 +23,6 @@ export class RegistroComponent {
   username: string = '';
   password: string = '';
   confirmarPassword: string = '';
-
   cargando: boolean = false;
   error: string = '';
   exito: boolean = false;
@@ -40,13 +39,11 @@ export class RegistroComponent {
       this.cdr.markForCheck();
       return;
     }
-
     if (this.password.length < 6) {
       this.error = 'La contraseña debe tener al menos 6 caracteres.';
       this.cdr.markForCheck();
       return;
     }
-
     this.cargando = true;
     this.error = '';
 
@@ -69,13 +66,39 @@ export class RegistroComponent {
       body,
       { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
     ).subscribe({
-      next: () => {
-        this.exito = true;
-        this.cargando = false;
-        this.cdr.markForCheck();
-        setTimeout(() => {
-          this.router.navigate(['/auth/login']);
-        }, 2000);
+      next: (res) => {
+        const usuarioId = res?.data?.userId ?? res?.data?.UserId;
+
+        const clienteBody = {
+          Nombre: this.nombre,
+          Apellido: this.apellido,
+          Documento_Identidad: this.documento,
+          Fecha_Nacimiento: this.fechaNacimiento,
+          Email: this.email,
+          Telefono: this.telefono,
+          Usuario_Id: usuarioId,
+          Estado: 'Activo'
+        };
+
+        this.http.post<any>(
+          `${environment.URL_SERVICIOS}/cliente`,
+          clienteBody,
+          { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
+        ).subscribe({
+          next: () => {
+            this.exito = true;
+            this.cargando = false;
+            this.cdr.markForCheck();
+            setTimeout(() => {
+              this.router.navigate(['/auth/login']);
+            }, 2000);
+          },
+          error: (err) => {
+            this.error = 'Usuario creado, pero hubo un error al registrar el cliente. Contacta a soporte.';
+            this.cargando = false;
+            this.cdr.markForCheck();
+          }
+        });
       },
       error: (err) => {
         this.error = 'Error al registrar. Intenta de nuevo.';

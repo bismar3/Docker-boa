@@ -14,34 +14,28 @@ namespace MSVenta.Seguridad.Controllers
     {
         private readonly IUsuarioService _accessService;
         private readonly JwtOptions _jwtOption;
-
         public AuthController(IUsuarioService accessService,
             IOptionsSnapshot<JwtOptions> jwtOption)
         {
             _accessService = accessService;
             _jwtOption = jwtOption.Value;
         }
-
         public IActionResult Get()
         {
             return Ok(_accessService.GetAllUsuarios());
         }
-
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AuthRequest request)
         {
             var resultado = await _accessService.ValidateAsync(request.UserName, request.Password);
-
             if (!resultado.Exitoso)
             {
                 return Unauthorized(new { message = resultado.Mensaje });
             }
-
-            UsuarioDTO userPermisos = await _accessService.GetUsuarioById(resultado.Usuario.UserId);
+            UsuarioDTO userPermisos = resultado.UsuarioConPermisos;
             var token = JwtToken.Create(_jwtOption);
             Response.Headers.Add("access-control-expose-headers", "Authorization");
             Response.Headers.Add("Authorization", token);
-
             var response = new
             {
                 user = new

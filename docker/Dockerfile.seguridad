@@ -1,0 +1,12 @@
+﻿FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY BOA-Backend/MSVenta/MSVenta.Seguridad/*.csproj ./MSVenta.Seguridad/
+RUN dotnet restore ./MSVenta.Seguridad/BOA.Seguridad.csproj
+COPY BOA-Backend/MSVenta/MSVenta.Seguridad/ ./MSVenta.Seguridad/
+WORKDIR /src/MSVenta.Seguridad
+RUN dotnet publish BOA.Seguridad.csproj -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "BOA.Seguridad.dll"]

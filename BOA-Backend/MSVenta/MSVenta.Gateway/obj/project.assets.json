@@ -720,11 +720,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Gateway\\BOA.Gateway.csproj",
+      "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\MSVenta.Gateway\\BOA.Gateway.csproj",
       "projectName": "BOA.Gateway",
-      "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Gateway\\BOA.Gateway.csproj",
+      "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\MSVenta.Gateway\\BOA.Gateway.csproj",
       "packagesPath": "C:\\Users\\Mi DELL\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Gateway\\obj\\",
+      "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\MSVenta.Gateway\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Mi DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -24,6 +24,7 @@ namespace MSVenta.Seguridad.Services
         public async Task<IEnumerable<UsuarioDTO>> GetAllUsuarios()
         {
             var usuarios = await _context.Usuarios
+                .AsNoTracking()
                 .Include(u => u.Rol)
                     .ThenInclude(r => r.RolPermisos)
                         .ThenInclude(rp => rp.Permiso)
@@ -34,6 +35,7 @@ namespace MSVenta.Seguridad.Services
         public async Task<UsuarioDTO> GetUsuarioById(int id)
         {
             var usuario = await _context.Usuarios
+                .AsNoTracking()
                 .Include(u => u.Rol)
                     .ThenInclude(r => r.RolPermisos)
                         .ThenInclude(rp => rp.Permiso)
@@ -139,6 +141,9 @@ namespace MSVenta.Seguridad.Services
         public async Task<LoginResult> ValidateAsync(string userName, string password)
         {
             var usuario = await _context.Usuarios
+                .Include(u => u.Rol)
+                    .ThenInclude(r => r.RolPermisos)
+                        .ThenInclude(rp => rp.Permiso)
                 .FirstOrDefaultAsync(x => x.Username == userName);
 
             if (usuario == null)
@@ -203,7 +208,12 @@ namespace MSVenta.Seguridad.Services
             usuario.Intentos_Fallidos = 0;
             await _context.SaveChangesAsync();
 
-            return new LoginResult { Exitoso = true, Usuario = usuario };
+            return new LoginResult
+            {
+                Exitoso = true,
+                Usuario = usuario,
+                UsuarioConPermisos = MapToDTO(usuario)
+            };
         }
     }
 }

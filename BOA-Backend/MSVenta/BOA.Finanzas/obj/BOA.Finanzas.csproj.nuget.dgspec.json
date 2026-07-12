@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj": {}
+    "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj": {
+    "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
+        "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
         "projectName": "BOA.Finanzas",
-        "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
+        "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
         "packagesPath": "C:\\Users\\Mi DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Finanzas\\obj\\",
+        "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Finanzas\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Mi DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,6 +40,10 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
+            "HarfBuzzSharp.NativeAssets.Linux": {
+              "target": "Package",
+              "version": "[2.8.2.3, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[5.0.17, )"
@@ -55,6 +59,10 @@
             "RabbitMQ.Client": {
               "target": "Package",
               "version": "[7.2.1, )"
+            },
+            "SkiaSharp.NativeAssets.Linux.NoDependencies": {
+              "target": "Package",
+              "version": "[2.88.6, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

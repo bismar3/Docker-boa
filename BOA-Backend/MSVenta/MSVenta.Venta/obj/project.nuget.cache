@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "c40XefNFbCTpxi7riGMnDCp7CfRtIw+9tfL/bvcLeMWD1D9hn21VKuV/k+47C/Pq0y26SH2i8ZMIukHdnsfQ3Q==",
+  "dgSpecHash": "bwMcM3pdPWdQ/r/I1BoNhj3yjUTJ5yxOstTBm+loVVZX5DIcL0hT4ENZXbB2ER/0nLoWes4swQksMgDm4Mh6pw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Venta\\BOA.Operaciones.csproj",
+  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\MSVenta.Venta\\BOA.Operaciones.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mi DELL\\.nuget\\packages\\aforo255.cross.discovery\\1.0.0\\aforo255.cross.discovery.1.0.0.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\aforo255.cross.http\\1.0.0\\aforo255.cross.http.1.0.0.nupkg.sha512",

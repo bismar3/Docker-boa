@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "oJm48shMGg7Nj4YfGPWyhN+4GiKK28WBDXuAboDku5Jc+5p4veX9Eok/P30nLVohIiNd0kV5PqyisvtP98n5bg==",
+  "dgSpecHash": "f/1FbzKhbqLDezbQyc8bkmr78v8GBWVnZ0HpNyJaSm6zLjHYZcMq/LgZ2uXcgu7X5fL4YzvTlL6jV1AUqrBYNA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
+  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Finanzas\\BOA.Finanzas.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mi DELL\\.nuget\\packages\\harfbuzzsharp\\7.3.0.1\\harfbuzzsharp.7.3.0.1.nupkg.sha512",
+    "C:\\Users\\Mi DELL\\.nuget\\packages\\harfbuzzsharp.nativeassets.linux\\2.8.2.3\\harfbuzzsharp.nativeassets.linux.2.8.2.3.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\harfbuzzsharp.nativeassets.macos\\7.3.0.1\\harfbuzzsharp.nativeassets.macos.7.3.0.1.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\harfbuzzsharp.nativeassets.win32\\7.3.0.1\\harfbuzzsharp.nativeassets.win32.7.3.0.1.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",
@@ -29,6 +30,7 @@
     "C:\\Users\\Mi DELL\\.nuget\\packages\\rabbitmq.client\\7.2.1\\rabbitmq.client.7.2.1.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\skiasharp\\2.88.7\\skiasharp.2.88.7.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\skiasharp.harfbuzz\\2.88.7\\skiasharp.harfbuzz.2.88.7.nupkg.sha512",
+    "C:\\Users\\Mi DELL\\.nuget\\packages\\skiasharp.nativeassets.linux.nodependencies\\2.88.6\\skiasharp.nativeassets.linux.nodependencies.2.88.6.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\skiasharp.nativeassets.macos\\2.88.7\\skiasharp.nativeassets.macos.2.88.7.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\skiasharp.nativeassets.win32\\2.88.7\\skiasharp.nativeassets.win32.2.88.7.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\swashbuckle.aspnetcore\\5.6.3\\swashbuckle.aspnetcore.5.6.3.nupkg.sha512",

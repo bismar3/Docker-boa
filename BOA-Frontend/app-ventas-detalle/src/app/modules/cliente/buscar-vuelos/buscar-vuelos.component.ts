@@ -26,12 +26,8 @@ export class BuscarVuelosComponent implements OnInit {
   aeropuertos: Aeropuerto[] = [];
   vuelosFiltrados: VueloDisponible[] = [];
 
-  origenTexto: string = '';
-  destinoTexto: string = '';
-  sugerenciasOrigen: Aeropuerto[] = [];
-  sugerenciasDestino: Aeropuerto[] = [];
-  origenSeleccionado: Aeropuerto | null = null;
-  destinoSeleccionado: Aeropuerto | null = null;
+  origenId: number | null = null;
+  destinoId: number | null = null;
 
   fecha: string = '';
   buscado: boolean = false;
@@ -52,51 +48,9 @@ export class BuscarVuelosComponent implements OnInit {
 
   ngOnInit(): void {
     this.aeropuertoService.getAll().subscribe(data => {
-      this.aeropuertos = data;
+      this.aeropuertos = data.sort((a, b) => a.ciudad.localeCompare(b.ciudad));
       this.cdr.markForCheck();
     });
-  }
-
-  filtrarOrigen(): void {
-    const texto = this.origenTexto.toLowerCase();
-    this.origenSeleccionado = null;
-    this.sugerenciasOrigen = texto.length > 1
-      ? this.aeropuertos.filter(a =>
-          a.ciudad.toLowerCase().includes(texto) ||
-          a.pais.toLowerCase().includes(texto) ||
-          a.codigo_IATA.toLowerCase().includes(texto) ||
-          a.nombre.toLowerCase().includes(texto)
-        ).slice(0, 5)
-      : [];
-    this.cdr.markForCheck();
-  }
-
-  filtrarDestino(): void {
-    const texto = this.destinoTexto.toLowerCase();
-    this.destinoSeleccionado = null;
-    this.sugerenciasDestino = texto.length > 1
-      ? this.aeropuertos.filter(a =>
-          a.ciudad.toLowerCase().includes(texto) ||
-          a.pais.toLowerCase().includes(texto) ||
-          a.codigo_IATA.toLowerCase().includes(texto) ||
-          a.nombre.toLowerCase().includes(texto)
-        ).slice(0, 5)
-      : [];
-    this.cdr.markForCheck();
-  }
-
-  seleccionarOrigen(a: Aeropuerto): void {
-    this.origenSeleccionado = a;
-    this.origenTexto = `${a.ciudad} (${a.codigo_IATA})`;
-    this.sugerenciasOrigen = [];
-    this.cdr.markForCheck();
-  }
-
-  seleccionarDestino(a: Aeropuerto): void {
-    this.destinoSeleccionado = a;
-    this.destinoTexto = `${a.ciudad} (${a.codigo_IATA})`;
-    this.sugerenciasDestino = [];
-    this.cdr.markForCheck();
   }
 
   getCodigoIATA(id: number): string {
@@ -110,19 +64,22 @@ export class BuscarVuelosComponent implements OnInit {
   }
 
   buscar(): void {
-    if (!this.origenSeleccionado || !this.destinoSeleccionado) {
-      alert('Selecciona origen y destino de la lista de sugerencias');
+    if (!this.origenId || !this.destinoId) {
+      alert('Selecciona origen y destino.');
       return;
     }
     if (!this.fecha) return;
-    if (this.origenSeleccionado.id === this.destinoSeleccionado.id) return;
+    if (this.origenId === this.destinoId) {
+      alert('El origen y destino no pueden ser el mismo.');
+      return;
+    }
 
     this.escalasExpandidas.clear();
     this.escalasCache = {};
 
     this.buscarVueloService.buscarPorTramo(
-      this.origenSeleccionado.id!,
-      this.destinoSeleccionado.id!
+      this.origenId,
+      this.destinoId
     ).subscribe(data => {
       this.buscado = true;
 

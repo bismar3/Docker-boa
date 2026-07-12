@@ -2209,11 +2209,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Venta\\BOA.Operaciones.csproj",
+      "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\MSVenta.Venta\\BOA.Operaciones.csproj",
       "projectName": "BOA.Operaciones",
-      "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Venta\\BOA.Operaciones.csproj",
+      "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\MSVenta.Venta\\BOA.Operaciones.csproj",
       "packagesPath": "C:\\Users\\Mi DELL\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Venta\\obj\\",
+      "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\MSVenta.Venta\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Mi DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",

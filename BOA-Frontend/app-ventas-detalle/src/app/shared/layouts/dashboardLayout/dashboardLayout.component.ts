@@ -46,6 +46,13 @@ export class DashboardLayoutComponent implements OnInit, AfterViewInit {
   buscandoGlobal: boolean = false;
   private debounceTimer: any;
 
+  // Cache local para el buscador global (se carga una sola vez)
+  private cacheVuelos: any[] = [];
+  private cacheUsuarios: any[] = [];
+  private cacheAeropuertos: any[] = [];
+  private cacheRutas: any[] = [];
+  private cacheCargado: boolean = false;
+
   constructor(
     private router: Router,
     public themeService: ThemeService,
@@ -107,70 +114,83 @@ export class DashboardLayoutComponent implements OnInit, AfterViewInit {
 
     this.debounceTimer = setTimeout(() => {
       this.buscarGlobal();
-    }, 400);
+    }, 300);
   }
 
   private buscarGlobal(): void {
-    const texto = this.searchTerm.toLowerCase();
-    this.buscandoGlobal = true;
-    this.cdr.markForCheck();
-
-    forkJoin({
-      vuelos: this.programacionVueloService.getAll(),
-      usuarios: this.usuarioService.getUsuarios(),
-      aeropuertos: this.aeropuertoService.getAll(),
-      rutas: this.rutaService.getAll()
-    }).subscribe(({ vuelos, usuarios, aeropuertos, rutas }) => {
-      const resultados: ResultadoBusqueda[] = [];
-
-      vuelos
-        .filter(v => v.codigo_Vuelo?.toLowerCase().includes(texto))
-        .slice(0, 3)
-        .forEach(v => resultados.push({
-          tipo: 'Vuelo',
-          icono: '✈️',
-          titulo: v.codigo_Vuelo,
-          subtitulo: `Estado: ${v.estado}`,
-          ruta: ['/dashboard/programacion-vuelo/view', String(v.id)]
-        }));
-
-      usuarios
-        .filter(u => u.username?.toLowerCase().includes(texto) || u.fullname?.toLowerCase().includes(texto))
-        .slice(0, 3)
-        .forEach(u => resultados.push({
-          tipo: 'Usuario',
-          icono: '👤',
-          titulo: u.fullname || u.username,
-          subtitulo: `@${u.username}`,
-          ruta: ['/dashboard/user/edit', String(u.userId)]
-        }));
-
-      aeropuertos
-        .filter(a => a.ciudad?.toLowerCase().includes(texto) || a.codigo_IATA?.toLowerCase().includes(texto) || a.nombre?.toLowerCase().includes(texto))
-        .slice(0, 3)
-        .forEach(a => resultados.push({
-          tipo: 'Aeropuerto',
-          icono: '📍',
-          titulo: `${a.ciudad} (${a.codigo_IATA})`,
-          subtitulo: a.nombre,
-          ruta: ['/dashboard/aeropuerto/edit', String(a.id)]
-        }));
-
-      rutas
-        .filter(r => r.tipo?.toLowerCase().includes(texto))
-        .slice(0, 3)
-        .forEach(r => resultados.push({
-          tipo: 'Ruta',
-          icono: '🛣️',
-          titulo: `Ruta #${r.id}`,
-          subtitulo: r.tipo,
-          ruta: ['/dashboard/ruta/list']
-        }));
-
-      this.resultadosBusqueda = resultados;
-      this.buscandoGlobal = false;
+    if (!this.cacheCargado) {
+      this.buscandoGlobal = true;
       this.cdr.markForCheck();
-    });
+
+      forkJoin({
+        vuelos: this.programacionVueloService.getAll(),
+        usuarios: this.usuarioService.getUsuarios(),
+        aeropuertos: this.aeropuertoService.getAll(),
+        rutas: this.rutaService.getAll()
+      }).subscribe(({ vuelos, usuarios, aeropuertos, rutas }) => {
+        this.cacheVuelos = vuelos;
+        this.cacheUsuarios = usuarios;
+        this.cacheAeropuertos = aeropuertos;
+        this.cacheRutas = rutas;
+        this.cacheCargado = true;
+        this.buscandoGlobal = false;
+        this.filtrarEnCache();
+      });
+    } else {
+      this.filtrarEnCache();
+    }
+  }
+
+  private filtrarEnCache(): void {
+    const texto = this.searchTerm.toLowerCase();
+    const resultados: ResultadoBusqueda[] = [];
+
+    this.cacheVuelos
+      .filter(v => v.codigo_Vuelo?.toLowerCase().includes(texto))
+      .slice(0, 3)
+      .forEach(v => resultados.push({
+        tipo: 'Vuelo',
+        icono: '✈️',
+        titulo: v.codigo_Vuelo,
+        subtitulo: `Estado: ${v.estado}`,
+        ruta: ['/dashboard/programacion-vuelo/view', String(v.id)]
+      }));
+
+    this.cacheUsuarios
+      .filter(u => u.username?.toLowerCase().includes(texto) || u.fullname?.toLowerCase().includes(texto))
+      .slice(0, 3)
+      .forEach(u => resultados.push({
+        tipo: 'Usuario',
+        icono: '👤',
+        titulo: u.fullname || u.username,
+        subtitulo: `@${u.username}`,
+        ruta: ['/dashboard/user/edit', String(u.userId)]
+      }));
+
+    this.cacheAeropuertos
+      .filter(a => a.ciudad?.toLowerCase().includes(texto) || a.codigo_IATA?.toLowerCase().includes(texto) || a.nombre?.toLowerCase().includes(texto))
+      .slice(0, 3)
+      .forEach(a => resultados.push({
+        tipo: 'Aeropuerto',
+        icono: '📍',
+        titulo: `${a.ciudad} (${a.codigo_IATA})`,
+        subtitulo: a.nombre,
+        ruta: ['/dashboard/aeropuerto/edit', String(a.id)]
+      }));
+
+    this.cacheRutas
+      .filter(r => r.tipo?.toLowerCase().includes(texto))
+      .slice(0, 3)
+      .forEach(r => resultados.push({
+        tipo: 'Ruta',
+        icono: '🛣️',
+        titulo: `Ruta #${r.id}`,
+        subtitulo: r.tipo,
+        ruta: ['/dashboard/ruta/list']
+      }));
+
+    this.resultadosBusqueda = resultados;
+    this.cdr.markForCheck();
   }
 
   irAResultado(resultado: ResultadoBusqueda): void {

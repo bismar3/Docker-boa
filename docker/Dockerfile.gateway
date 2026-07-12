@@ -1,0 +1,13 @@
+﻿FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY BOA-Backend/MSVenta/MSVenta.Gateway/*.csproj ./MSVenta.Gateway/
+RUN dotnet restore ./MSVenta.Gateway/BOA.Gateway.csproj
+COPY BOA-Backend/MSVenta/MSVenta.Gateway/ ./MSVenta.Gateway/
+WORKDIR /src/MSVenta.Gateway
+RUN dotnet publish BOA.Gateway.csproj -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+COPY docker/ocelot.docker.json /app/ocelot.json
+ENTRYPOINT ["dotnet", "BOA.Gateway.dll"]

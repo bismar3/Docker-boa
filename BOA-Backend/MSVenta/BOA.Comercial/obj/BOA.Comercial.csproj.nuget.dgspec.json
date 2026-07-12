@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj": {}
+    "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj": {
+    "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj",
+        "projectUniqueName": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj",
         "projectName": "BOA.Comercial",
-        "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj",
+        "projectPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj",
         "packagesPath": "C:\\Users\\Mi DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Comercial\\obj\\",
+        "outputPath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Comercial\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Mi DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",

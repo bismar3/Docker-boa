@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using BOA.Comercial.Models;
 using BOA.Comercial.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,6 +96,7 @@ namespace BOA.Comercial.Services
 
         public async Task<Venta> Create(Venta v)
         {
+            v.Created_At = DateTime.Now;
             _context.Ventas.Add(v);
             await _context.SaveChangesAsync();
             return v;

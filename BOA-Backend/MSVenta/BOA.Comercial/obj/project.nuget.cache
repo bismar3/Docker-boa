@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Vn/ILW9gnmqRHsTGzluI6KmUcVv21Rd+RPw1s6CBqxN7HPqysh7uE02Kl47E43hRzGFbT0LAaD/wEy58HOYANg==",
+  "dgSpecHash": "jQlnvRTVujHnolPu3+umV6CVxbckUpK2IV05MF0s/wcTocG32Uh2WPeslIhKrkUu42vEZLez7cQlrC3gliM6pA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj",
+  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\BOA.Comercial\\BOA.Comercial.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mi DELL\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\microsoft.entityframeworkcore\\5.0.17\\microsoft.entityframeworkcore.5.0.17.nupkg.sha512",

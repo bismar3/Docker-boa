@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1YNg1Oyw+MMN6mQXohZ/KskdwYr+m8Q5MEubW/KCFLBDm8K09I7UC0B8oJHGc32vMRWBgM6XC91ILSnur2a+Pg==",
+  "dgSpecHash": "GjLS2OHVFGwSmQt58QZ0SbXXlvIz/lAsGVvIF6JQXJ2apSDja8G/B12dUCYk7fRlUMpKCE8WoyYORqonmiutiA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Gateway\\BOA.Gateway.csproj",
+  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\MSVenta.Gateway\\BOA.Gateway.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mi DELL\\.nuget\\packages\\aforo255.cross.token\\2.0.0\\aforo255.cross.token.2.0.0.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\fluentvalidation\\9.3.0\\fluentvalidation.9.3.0.nupkg.sha512",

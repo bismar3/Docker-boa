@@ -1,0 +1,12 @@
+﻿FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY BOA-Backend/MSVenta/BOA.Comercial/*.csproj ./BOA.Comercial/
+RUN dotnet restore ./BOA.Comercial/BOA.Comercial.csproj
+COPY BOA-Backend/MSVenta/BOA.Comercial/ ./BOA.Comercial/
+WORKDIR /src/BOA.Comercial
+RUN dotnet publish BOA.Comercial.csproj -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "BOA.Comercial.dll"]

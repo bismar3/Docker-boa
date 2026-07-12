@@ -1,0 +1,161 @@
+version: '3.8'
+
+services:
+  db-seguridad:
+    image: mysql:8
+    container_name: boa-docker-db-seguridad
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ect*123
+      MYSQL_DATABASE: db_boa_seguridad
+    ports:
+      - "3411:3306"
+    volumes:
+      - boa-docker-seguridad-data:/var/lib/mysql
+
+  db-operaciones:
+    image: mysql:8
+    container_name: boa-docker-db-operaciones
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ect*123
+      MYSQL_DATABASE: db_boa_operaciones
+    ports:
+      - "3412:3306"
+    volumes:
+      - boa-docker-operaciones-data:/var/lib/mysql
+
+  db-comercial:
+    image: mysql:8
+    container_name: boa-docker-db-comercial
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ect*123
+      MYSQL_DATABASE: db_boa_comercial
+    ports:
+      - "3413:3306"
+    volumes:
+      - boa-docker-comercial-data:/var/lib/mysql
+
+  db-finanzas:
+    image: mariadb:10.11
+    container_name: boa-docker-db-finanzas
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ect*123
+      MARIADB_DATABASE: db_boa_finanzas
+    ports:
+      - "3414:3306"
+    volumes:
+      - boa-docker-finanzas-data:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: boa-docker-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+
+  seguridad:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.seguridad
+    container_name: boa-docker-seguridad
+    restart: unless-stopped
+    depends_on:
+      - db-seguridad
+    environment:
+      ASPNETCORE_URLS: "http://+:80"
+      mysql__cn: "Server=db-seguridad;Port=3306;Database=db_boa_seguridad;User=root;Password=ect*123;"
+    ports:
+      - "7001:80"
+
+  operaciones:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.operaciones
+    container_name: boa-docker-operaciones
+    restart: unless-stopped
+    depends_on:
+      - db-operaciones
+    environment:
+      ASPNETCORE_URLS: "http://+:80"
+      mysql__cn: "Server=db-operaciones;Port=3306;Database=db_boa_operaciones;User=root;Password=ect*123;"
+    ports:
+      - "7002:80"
+
+  finanzas:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.finanzas
+    container_name: boa-docker-finanzas
+    restart: unless-stopped
+    depends_on:
+      - db-finanzas
+      - rabbitmq
+    environment:
+      ASPNETCORE_URLS: "http://+:80"
+      ConnectionStrings__DefaultConnection: "Server=db-finanzas;Port=3306;Database=db_boa_finanzas;User=root;Password=ect*123;"
+      RABBITMQ_HOST: "rabbitmq"
+      ServiciosUrls__Comercial: "http://comercial:80"
+      ServiciosUrls__Operaciones: "http://operaciones:80"
+      Smtp__Host: "192.168.0.10"
+      Smtp__Port: "25"
+      Smtp__From: "damaris@tecnoweb.edu"
+    ports:
+      - "7003:80"
+
+  comercial:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.comercial
+    container_name: boa-docker-comercial
+    restart: unless-stopped
+    depends_on:
+      - db-comercial
+      - rabbitmq
+    environment:
+      ASPNETCORE_URLS: "http://+:80"
+      mysql__cn: "Server=db-comercial;Port=3306;Database=db_boa_comercial;User=root;Password=ect*123;"
+      RABBITMQ_HOST: "rabbitmq"
+      OPERACIONES_URL: "http://operaciones:80"
+      CALLBACK_URL: "https://aviation-overfill-confidant.ngrok-free.dev/api/pago/callback"
+      URL_RETORNO: "https://aviation-overfill-confidant.ngrok-free.dev/dashboard/cliente/mis-compras"
+    ports:
+      - "7004:80"
+
+  gateway:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.gateway
+    container_name: boa-docker-gateway
+    restart: unless-stopped
+    depends_on:
+      - seguridad
+      - operaciones
+      - finanzas
+      - comercial
+    environment:
+      ASPNETCORE_URLS: "http://+:80"
+    ports:
+      - "7005:80"
+
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    container_name: boa-docker-frontend
+    restart: unless-stopped
+    depends_on:
+      - gateway
+    ports:
+      - "7200:80"
+
+volumes:
+  boa-docker-seguridad-data:
+  boa-docker-operaciones-data:
+  boa-docker-comercial-data:
+  boa-docker-finanzas-data:
+

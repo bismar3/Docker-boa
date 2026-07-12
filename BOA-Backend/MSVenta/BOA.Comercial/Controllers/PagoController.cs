@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using BOA.Comercial.Models;
 using BOA.Comercial.Services;
 using System;
@@ -25,9 +25,9 @@ namespace BOA.Comercial.Controllers
         private const string LIBELULA_APPKEY = "11bb10ce-68ba-4af1-8eb7-4e6624fed729";
         private const string LIBELULA_URL = "https://api.libelula.bo/rest/deuda/registrar";
         private const string LIBELULA_VERIFICAR_URL = "https://api.libelula.bo/rest/deuda/consultar_pagos";
-        private const string CALLBACK_URL = "https://daybed-ivory-rewire.ngrok-free.dev/api/pago/callback";
-        private const string URL_RETORNO = "https://daybed-ivory-rewire.ngrok-free.dev/dashboard/cliente/mis-compras";
-        private const string OPERACIONES_URL = "http://localhost:6002";
+        private static readonly string CALLBACK_URL = Environment.GetEnvironmentVariable("CALLBACK_URL") ?? "https://daybed-ivory-rewire.ngrok-free.dev/api/pago/callback";
+        private static readonly string URL_RETORNO = Environment.GetEnvironmentVariable("URL_RETORNO") ?? "https://daybed-ivory-rewire.ngrok-free.dev/dashboard/cliente/mis-compras";
+        private static readonly string OPERACIONES_URL = Environment.GetEnvironmentVariable("OPERACIONES_URL") ?? "http://localhost:6002";
 
         public PagoController(
             IVentaService ventaService,
@@ -64,7 +64,6 @@ namespace BOA.Comercial.Controllers
                 };
                 var ventaCreada = await _ventaService.Create(venta);
 
-                // Crear ticket con estado Emitido
                 var numeroTicket = "TKT-" + Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
                 var ticket = new Ticket
                 {
@@ -151,7 +150,7 @@ namespace BOA.Comercial.Controllers
                     });
                 }
 
-                return StatusCode(500, new { message = "Error al registrar pago en Libélula." });
+                return StatusCode(500, new { message = "Error al registrar pago en Lib�lula." });
             }
             catch (Exception ex)
             {
@@ -173,11 +172,9 @@ namespace BOA.Comercial.Controllers
                 if (venta == null)
                     return NotFound(new { message = "Venta no encontrada para: " + transaction_id });
 
-                // Actualizar venta a Confirmada
                 venta.Estado = "Confirmada";
                 await _ventaService.Update(venta);
 
-                // Actualizar transacción a Aprobado
                 var transacciones = await _transaccionService.GetAll();
                 var transaccion = transacciones.FirstOrDefault(t => t.Venta_Id == venta.Id);
                 if (transaccion != null)
@@ -186,7 +183,6 @@ namespace BOA.Comercial.Controllers
                     await _transaccionService.Update(transaccion);
                 }
 
-                // Ticket ya fue creado en RegistrarPago — marcar asiento como ocupado
                 var tickets = await _ticketService.GetByVentaId(venta.Id);
                 var ticket = tickets.FirstOrDefault();
                 if (ticket != null && ticket.Asiento_Id.HasValue)
@@ -204,7 +200,6 @@ namespace BOA.Comercial.Controllers
                     }
                 }
 
-                // Publicar evento en RabbitMQ
                 _rabbitPublisher.PublicarPagoConfirmado(new
                 {
                     CodigoVenta = venta.Codigo_Venta,

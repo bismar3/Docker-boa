@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fTm1z4e4zQS8PMMKqFZBPbAfAwCZiWV4JhFxQYjNo4ud6oeDNiLL9oA54o0Rok5qXO2QZjov30pzYRhSQhPwyg==",
+  "dgSpecHash": "ljFdUAqbLXI3qcmHhybyK+PyG/ixubEfCI36WA4H4OcMAdT18O7i7T0j4XdUWI/kxtXEXsh6FkZDpm0cdFxs/Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA\\BOA-Backend\\MSVenta\\MSVenta.Seguridad\\BOA.Seguridad.csproj",
+  "projectFilePath": "C:\\Users\\Mi DELL\\Documents\\BOA-Docker\\BOA-Backend\\MSVenta\\MSVenta.Seguridad\\BOA.Seguridad.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mi DELL\\.nuget\\packages\\aforo255.cross.discovery\\1.0.0\\aforo255.cross.discovery.1.0.0.nupkg.sha512",
     "C:\\Users\\Mi DELL\\.nuget\\packages\\aforo255.cross.token\\2.0.0\\aforo255.cross.token.2.0.0.nupkg.sha512",
