@@ -43,6 +43,7 @@ namespace BOA.Finanzas.Services
                             table.ColumnsDefinition(c =>
                             {
                                 c.RelativeColumn(2);
+                                c.RelativeColumn(2);
                                 c.RelativeColumn(3);
                                 c.RelativeColumn(2);
                                 c.RelativeColumn(2);
@@ -52,6 +53,7 @@ namespace BOA.Finanzas.Services
                             table.Header(header =>
                             {
                                 header.Cell().Text("Codigo").Bold();
+                                header.Cell().Text("Fecha").Bold();
                                 header.Cell().Text("Cliente").Bold();
                                 header.Cell().Text("Pago").Bold();
                                 header.Cell().Text("Monto").Bold();
@@ -61,6 +63,7 @@ namespace BOA.Finanzas.Services
                             foreach (var v in ventas)
                             {
                                 table.Cell().Text(v.Codigo_Venta ?? "-");
+                                table.Cell().Text(v.Created_At.HasValue ? v.Created_At.Value.ToString("dd/MM/yyyy HH:mm") : "-");
                                 table.Cell().Text(v.Cliente_Nombre ?? "-");
                                 table.Cell().Text(v.Metodo_Pago ?? "-");
                                 table.Cell().Text($"Bs. {v.Monto_Total:F2}");

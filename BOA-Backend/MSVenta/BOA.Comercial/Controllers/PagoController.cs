@@ -40,6 +40,7 @@ namespace BOA.Comercial.Controllers
             _transaccionService = transaccionService;
             _clienteService = clienteService;
             _httpClient = new HttpClient();
+            _httpClient.Timeout = TimeSpan.FromSeconds(8);
             _rabbitPublisher = new RabbitMQPublisher();
         }
 

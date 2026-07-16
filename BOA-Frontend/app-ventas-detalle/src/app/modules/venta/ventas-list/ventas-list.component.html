@@ -4,7 +4,6 @@
     🛒 Gestionar Ventas
   </h2>
 
-  <!-- Cards resumen -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
     <div class="bg-green-700 rounded-2xl p-5 text-center shadow-lg">
       <p class="text-sm text-green-200 font-semibold">Total Recaudado</p>
@@ -20,7 +19,6 @@
     </div>
   </div>
 
-  <!-- Filtros -->
   <div class="flex flex-wrap gap-3 items-center mb-6 bg-gray-800 p-4 rounded-2xl">
     <div class="flex items-center gap-2 bg-gray-700 rounded-xl px-3 py-2 flex-1 min-w-48">
       <span>🔍</span>
@@ -47,13 +45,13 @@
     </button>
   </div>
 
-  <!-- Tabla -->
   <div class="overflow-x-auto">
     <table class="min-w-full table-auto text-sm text-center bg-gray-800 rounded-lg shadow-lg border-separate border-spacing-1 border border-gray-700">
       <thead>
         <tr class="bg-gradient-to-r from-orange-600 to-red-500 text-white">
           <th class="px-2 py-2 text-left rounded-l-lg">#</th>
           <th class="px-2 py-2 text-left">CÓDIGO</th>
+          <th class="px-2 py-2 text-left">FECHA</th>
           <th class="px-2 py-2 text-left">CLIENTE</th>
           <th class="px-2 py-2 text-left">VUELO</th>
           <th class="px-2 py-2 text-left">ASIENTO</th>
@@ -69,6 +67,9 @@
           class="hover:bg-gray-700 transition-colors duration-300 border-b border-gray-700">
           <td class="px-2 py-2">{{ v.id }}</td>
           <td class="px-2 py-2 font-bold text-orange-400">{{ v.codigo_Venta }}</td>
+          <td class="px-2 py-2 text-xs text-gray-300">
+            {{ v.created_At ? (v.created_At | date:'dd/MM/yyyy HH:mm') : '-' }}
+          </td>
           <td class="px-2 py-2 text-left">
             <div class="font-semibold">{{ v.cliente_Nombre }}</div>
             <div class="text-gray-400 text-xs">{{ v.cliente_Documento }}</div>
@@ -108,7 +109,7 @@
           </td>
         </tr>
         <tr *ngIf="ventasFiltradas.length === 0">
-          <td colspan="10" class="px-2 py-6 text-gray-400">No hay ventas registradas</td>
+          <td colspan="11" class="px-2 py-6 text-gray-400">No hay ventas registradas</td>
         </tr>
       </tbody>
     </table>

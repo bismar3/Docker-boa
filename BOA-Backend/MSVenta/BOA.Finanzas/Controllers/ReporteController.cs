@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -154,6 +155,50 @@ namespace BOA.Finanzas.Controllers
             }
         }
 
+        private string ConstruirCuerpoHtmlVentas(List<VentaDetalleDto> ventas, DateTime? desde, DateTime? hasta)
+        {
+            var confirmadas = ventas.Where(v => v.Estado == "Confirmada").ToList();
+            var montoTotal = confirmadas.Sum(v => v.Monto_Total);
+            var periodo = (desde.HasValue ? desde.Value.ToString("dd/MM/yyyy") : "Todo el periodo")
+                + " al " + (hasta.HasValue ? hasta.Value.ToString("dd/MM/yyyy") : "Todo el periodo");
+
+            var sb = new StringBuilder();
+            sb.Append("<html><body style='font-family:Arial,sans-serif;color:#222;'>");
+            sb.Append("<h2 style='color:#1a1a1a;'>BoA - Reporte de Ventas</h2>");
+            sb.Append($"<p style='color:#666;margin:2px 0;'>Periodo: {periodo}</p>");
+            sb.Append($"<p style='color:#999;font-size:12px;margin:2px 0 16px 0;'>Generado: {DateTime.Now:dd/MM/yyyy HH:mm}</p>");
+            sb.Append($"<p><b>Total Ventas:</b> {ventas.Count} &nbsp;&nbsp; <b>Confirmadas:</b> {confirmadas.Count} &nbsp;&nbsp; <b>Monto Confirmado:</b> Bs. {montoTotal:F2}</p>");
+
+            sb.Append("<table style='border-collapse:collapse;width:100%;margin-top:10px;font-size:13px;'>");
+            sb.Append("<tr style='background:#1e293b;color:#fff;'>");
+            sb.Append("<th style='padding:6px;text-align:left;'>Codigo</th>");
+            sb.Append("<th style='padding:6px;text-align:left;'>Fecha</th>");
+            sb.Append("<th style='padding:6px;text-align:left;'>Cliente</th>");
+            sb.Append("<th style='padding:6px;text-align:left;'>Pago</th>");
+            sb.Append("<th style='padding:6px;text-align:left;'>Monto</th>");
+            sb.Append("<th style='padding:6px;text-align:left;'>Estado</th>");
+            sb.Append("</tr>");
+
+            foreach (var v in ventas)
+            {
+                var fecha = v.Created_At.HasValue ? v.Created_At.Value.ToString("dd/MM/yyyy HH:mm") : "-";
+                sb.Append("<tr style='border-bottom:1px solid #ddd;'>");
+                sb.Append($"<td style='padding:6px;'>{v.Codigo_Venta}</td>");
+                sb.Append($"<td style='padding:6px;'>{fecha}</td>");
+                sb.Append($"<td style='padding:6px;'>{v.Cliente_Nombre}</td>");
+                sb.Append($"<td style='padding:6px;'>{v.Metodo_Pago}</td>");
+                sb.Append($"<td style='padding:6px;'>Bs. {v.Monto_Total:F2}</td>");
+                sb.Append($"<td style='padding:6px;'>{v.Estado}</td>");
+                sb.Append("</tr>");
+            }
+
+            sb.Append("</table>");
+            sb.Append("<p style='color:#888;font-size:12px;margin-top:16px;'>Tambien encontraras este reporte adjunto en formato PDF.</p>");
+            sb.Append("</body></html>");
+
+            return sb.ToString();
+        }
+
         public class EnviarReporteRequest
         {
             public string Tipo { get; set; }
@@ -175,6 +220,7 @@ namespace BOA.Finanzas.Controllers
                 byte[] pdfBytes;
                 string nombreArchivo;
                 string asunto;
+                string cuerpoHtml;
 
                 switch (req.Tipo?.ToLower())
                 {
@@ -183,6 +229,7 @@ namespace BOA.Finanzas.Controllers
                         pdfBytes = _pdfService.GenerarReporteVentas(ventas, req.Desde, req.Hasta);
                         nombreArchivo = "reporte-ventas.pdf";
                         asunto = "BoA - Reporte de Ventas";
+                        cuerpoHtml = ConstruirCuerpoHtmlVentas(ventas, req.Desde, req.Hasta);
                         break;
 
                     case "financiero":
@@ -190,6 +237,7 @@ namespace BOA.Finanzas.Controllers
                         pdfBytes = _pdfService.GenerarReporteFinanciero(ingresos, egresos, req.Desde, req.Hasta);
                         nombreArchivo = "reporte-financiero.pdf";
                         asunto = "BoA - Reporte Financiero";
+                        cuerpoHtml = $"<html><body style='font-family:Arial,sans-serif;'><p>Adjunto encontrara el Reporte Financiero generado el {DateTime.Now:dd/MM/yyyy HH:mm}.</p></body></html>";
                         break;
 
                     case "ocupacion":
@@ -197,6 +245,7 @@ namespace BOA.Finanzas.Controllers
                         pdfBytes = _pdfService.GenerarReporteOcupacion(vuelos, req.Desde, req.Hasta);
                         nombreArchivo = "reporte-ocupacion.pdf";
                         asunto = "BoA - Reporte de Ocupacion de Vuelos";
+                        cuerpoHtml = $"<html><body style='font-family:Arial,sans-serif;'><p>Adjunto encontrara el Reporte de Ocupacion de Vuelos generado el {DateTime.Now:dd/MM/yyyy HH:mm}.</p></body></html>";
                         break;
 
                     default:
@@ -206,7 +255,7 @@ namespace BOA.Finanzas.Controllers
                 await _emailService.EnviarConAdjunto(
                     req.Email,
                     asunto,
-                    $"Adjunto encontrara el {asunto.Replace("BoA - ", "")} generado el {DateTime.Now:dd/MM/yyyy HH:mm}.",
+                    cuerpoHtml,
                     pdfBytes,
                     nombreArchivo
                 );

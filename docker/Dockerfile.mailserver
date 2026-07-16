@@ -1,0 +1,24 @@
+FROM debian:bullseye-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    postfix \
+    dovecot-imapd \
+    dovecot-pop3d \
+    dos2unix \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY mailserver-config/main.cf /etc/postfix/main.cf
+COPY mailserver-config/master.cf /etc/postfix/master.cf
+COPY mailserver-config/entrypoint.sh /entrypoint.sh
+
+RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
+
+RUN sed -i 's/^mail_location.*/mail_location = maildir:~\/Maildir/' /etc/dovecot/conf.d/10-mail.conf && \
+    sed -i "s/^#auth_mechanisms.*/auth_mechanisms = plain/" /etc/dovecot/conf.d/10-auth.conf && \
+    sed -i "s/^auth_mechanisms.*/auth_mechanisms = plain/" /etc/dovecot/conf.d/10-auth.conf
+
+EXPOSE 25 143
+
+CMD ["/entrypoint.sh"]
